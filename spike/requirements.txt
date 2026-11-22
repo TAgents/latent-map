@@ -1,0 +1,5 @@
+mlx-lm @ git+https://github.com/jundot/mlx-lm@e2b5bbd3bd9d186dea895e60802aa765e70b9d93
+numpy
+matplotlib
+pytest
+psutil

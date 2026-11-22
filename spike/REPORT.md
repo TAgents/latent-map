@@ -16,11 +16,11 @@ The automatic verdict in `results/measure.json` is **no-go**, and the only faili
 | MLX peak memory | at most 26GB | 18.3GB | pass |
 | Swap growth during a run | at most 0.1GB | 0.46GB in one of four runs | fail, but see below |
 
-All 17 tests pass.
+All 20 tests pass.
 
 ## Speed and memory
 
-Twenty prompts, 128 new tokens each, run four times (off, on, off, on):
+Twenty prompts, up to 128 new tokens each (some stop early), run four times (off, on, off, on):
 
 | Run | Capture | Tokens | Seconds | Tokens per second | MLX peak (GB) | Swap before (GB) | Swap after (GB) |
 |---|---|---|---|---|---|---|---|
@@ -29,11 +29,13 @@ Twenty prompts, 128 new tokens each, run four times (off, on, off, on):
 | 3 | off | 2,413 | 133.0 | 18.14 | 18.3 | 28.94 | 28.94 |
 | 4 | on | 2,413 | 146.7 | 16.45 | 18.3 | 28.94 | 29.40 |
 
-Capture costs about 10% of speed. It converts every snapshot to numpy during the forward pass, which is the simplest possible approach; projecting on the GPU, as the design intends, should cost less.
+Capture costs about 10% of speed. It converts every snapshot to numpy during the forward pass, which forces the model to finish each step before the next can be queued. Projecting on the GPU, as the design intends, should cost less.
+
+These figures were taken before the capture also recorded the end-of-pass state (one more small snapshot per pass); the measurement was not repeated after that change. They were also taken with 29 to 32GB of system swap in use, so absolute speeds may be pessimistic.
 
 ## Swap
 
-The machine already had 29 to 32GB of swap in use before any run, left over from earlier activity, and it moved in both directions during the measurement: down 2.85GB in run 1, up 0.46GB in run 4, down 2.6GB overall. System-wide swap therefore says nothing about this process here. Memory pressure after the runs showed 76% free. A valid check needs a re-run after a restart with other apps closed, or a per-process measure.
+The machine already had 29 to 32GB of swap in use before any run, left over from earlier activity, and it moved in both directions during the measurement: down 2.85GB in run 1, up 0.46GB in run 4, down 2.6GB overall. System-wide swap therefore says nothing about this process here. A valid check needs a re-run after a restart with other apps closed, or a per-process measure.
 
 ## Which checkpoint
 
@@ -41,32 +43,59 @@ The official checkpoint loaded directly with MLX (19GB on disk). No community co
 
 ## Block state layout
 
-`block_states` has shape (rows, batch, tokens, 2304). Observed rows: 1 after the prelude (block 1), 3 after each loop pass (blocks 1, 2, 3), 4 after the final layers (blocks 1 to 4). There is no separate row for the token embedding. The spike keeps the last token position only.
+The first layer of each block of six appends the RMS-normalised state entering that block to `block_states`, shape (rows, batch, tokens, 2304):
+
+| Row | What it is | When it appears |
+|---|---|---|
+| 0 | the token embedding | after the prelude (1 row) |
+| 1 | output of block 1 | in each pass, identical every pass |
+| 2 | output of block 2 for this pass | in each pass (3 rows) |
+| 3 | output of block 3 for the last pass | after the final layers (4 rows) |
+
+The output of block 3 for passes 1 and 2 is never in `block_states`; it is the hidden state leaving the pass, and the capture records it separately. A test confirms that the recorded end state of pass 3 equals row 3.
+
+An independent review caught that the first version of this spike mislabelled row 2 as block 3. The figures below are from the corrected capture.
 
 ## Check against published findings
 
-Measured on the block 3 sum at the last prompt token, RMS-normalised, over 20 prompts. This is a small sample and a different quantity from Goodfire's per-layer analysis, so differences are not contradictions.
+Measured at the last prompt token over 20 prompts. A small sample.
 
-| Published (Goodfire) | Measured here |
+| Published (Goodfire) | Measured here, block 3 output |
 |---|---|
-| Coordinate 2027 dominates, about 46% of the squared norm | Coordinate 2027 (0-based) is the largest overall, with 21% of the squared norm: 26% after pass 2, 22% after pass 3. After pass 1 a different coordinate (2230) is largest at 15%. |
-| Its mean normalised value is about +32 | +18.0, +24.4, +22.5 after passes 1, 2, 3 |
-| It turns negative at the end of loop 3 | Not seen: it stays positive on the block 3 sum. Goodfire's observation is about layer 18's own output, which the spike does not capture. |
-| States settle across passes | Mean movement between passes falls from 0.52 (pass 1 to 2) to 0.36 (pass 2 to 3). |
+| Coordinate 2027 carries about 46% of the squared norm | 40% after pass 1, 34% after pass 2 |
+| Its mean normalised value is about +32 | +30.2 after pass 1, +28.1 after pass 2 |
+| It is removed at the end of the last loop | 0.6% of the squared norm after pass 3; mean +1.8 (near zero, not negative) |
+
+So the loop signal reproduces: high after the first two passes and gone after the third.
+
+On the block 2 output the same coordinate is weaker and does not collapse: 14%, 26%, 22% across the three passes.
+
+## Do states settle?
+
+Mean movement between consecutive passes, with coordinate 2027 removed:
+
+| State | Pass 1 to 2 | Pass 2 to 3 |
+|---|---|---|
+| Block 2 output | 0.55 | 0.41 |
+| Block 3 output | 0.39 | 1.21 |
+
+Block 2's output settles. Block 3's output does the opposite: it changes most on the last pass, when it stops writing for another pass and feeds the final block instead. The design maps "block 3 on shared axes across passes" and reads settling from it; on this evidence block 2's output is the better state for a settling measure, and block 3's last pass should be treated as a different kind of state.
 
 ## First rough map
 
-`results/pca.png` shows a 2D PCA of the same states, one panel per pass, with coordinate 2027 removed.
+`results/pca.png` shows a 2D PCA fitted separately for each pass, coordinate 2027 removed, for both block outputs.
 
-- Chat prompts separate clearly from the other three topics in every pass.
-- After pass 1, dates, code and math are partly separated.
-- After pass 3 they are bunched together, not further apart.
+- Chat and code each separate clearly from the rest in every pass.
+- Dates and math overlap with each other throughout, which is plausible for related topics.
+- Topic separation (distance between topic centres divided by spread within topics, in the full space) rises with each pass: 1.24, 1.36, 1.56 for block 2 and 1.25, 1.33, 1.53 for block 3.
 
-So the idea drawn in the designs, that territories pull apart from pass to pass, is **not supported by this check**. With 20 prompts, one token position and plain PCA it is not refuted either, but the base-map work must test it properly before the walk-through and the settling flag rely on it.
+So topics do pull apart from pass to pass, as the designs assume. With 20 prompts and one token position this is an indication, not a result.
 
 ## Not checked
 
+- Speed after the end-of-pass snapshot was added.
 - Capture during long conversations or with images.
 - Capture of per-layer outputs, cross-loop read weights, or input shares (needed by the loop inspector).
 - Memory with a Swift app and a web view running alongside.
 - Behaviour when the machine is under real memory pressure.
+- Mapping records to generated tokens: generation makes extra forward calls for prompt chunks and one lookahead step, so records are not one per generated token.

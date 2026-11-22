@@ -26,3 +26,13 @@ def test_pca_2d_shape_and_centering():
     y = pca_2d(np.random.default_rng(1).normal(size=(30, 12)))
     assert y.shape == (30, 2)
     assert np.allclose(y.mean(axis=0), 0, atol=1e-6)
+
+
+def test_topic_separation_higher_for_tight_far_clusters():
+    from latent_capture.metrics import topic_separation
+
+    rng = np.random.default_rng(2)
+    labels = ["a"] * 10 + ["b"] * 10
+    far = np.concatenate([rng.normal(0, 0.1, (10, 5)), rng.normal(5, 0.1, (10, 5))])
+    near = np.concatenate([rng.normal(0, 1.0, (10, 5)), rng.normal(0.2, 1.0, (10, 5))])
+    assert topic_separation(far, labels) > 10 * topic_separation(near, labels)

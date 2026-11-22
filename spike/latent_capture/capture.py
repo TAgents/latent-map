@@ -1,10 +1,19 @@
 """Capture Inkling 2 Mini's block states after each loop pass.
 
-The model has no single residual stream. Each block of six layers keeps a
-running sum, and `TextModel._run_loop` holds them stacked as `block_states`
-with shape (rows, batch, tokens, hidden). This module swaps that method for a
-copy that snapshots `block_states` after the prelude, after each pass through
-the looped layers, and after the final layers. The computation is unchanged.
+The model has no single residual stream. The first layer of each block of six
+appends the RMS-normalised state entering that block to `block_states`, shape
+(rows, batch, tokens, hidden). With 24 layers and a loop over layers 6-17:
+
+    row 0  the token embedding            (appended by layer 0)
+    row 1  output of block 1              (appended by layer 6, same every pass)
+    row 2  output of block 2, this pass   (appended by layer 12)
+    row 3  output of block 3, last pass   (appended by layer 18, final only)
+
+The output of block 3 for each pass is NOT in `block_states` during the loop;
+it is the hidden state leaving the pass. This module swaps `_run_loop` for a
+copy that snapshots `block_states` after the prelude, after each pass and after
+the final layers, plus the normalised hidden state at the end of each pass.
+The computation is unchanged.
 """
 
 from collections import deque
@@ -22,7 +31,19 @@ class StepCapture:
 
     prelude: np.ndarray
     passes: list[np.ndarray] = field(default_factory=list)
+    # Output of block 3 at the end of each pass, RMS-normalised, shape (hidden_size,).
+    pass_end: list[np.ndarray] = field(default_factory=list)
     final: np.ndarray | None = None
+
+    @property
+    def block2(self) -> list[np.ndarray]:
+        """Output of block 2 after each pass."""
+        return [p[-1] for p in self.passes]
+
+    @property
+    def block3(self) -> list[np.ndarray]:
+        """Output of block 3 after each pass."""
+        return self.pass_end
 
 
 def _snapshot(block_states: mx.array) -> np.ndarray:
@@ -32,7 +53,7 @@ def _snapshot(block_states: mx.array) -> np.ndarray:
 class capturing:
     """Context manager: `with capturing(model) as cap: ...; cap.records`."""
 
-    def __init__(self, model, max_records: int = 4096):
+    def __init__(self, model, max_records: int = 512):
         self._lm = model.model.language_model
         self._records: deque[StepCapture] = deque(maxlen=max_records)
 
@@ -45,6 +66,8 @@ class capturing:
 
     def __enter__(self):
         lm = self._lm
+        if "_run_loop" in vars(lm):
+            raise RuntimeError("A capture is already installed on this model.")
         if lm.args.loop_config is None:
             raise ValueError("Model has no loop configuration; nothing to capture.")
         records = self._records
@@ -81,6 +104,8 @@ class capturing:
                     lm.layers[core.start : core.stop], hidden_states, block_states, bank
                 )
                 record.passes.append(_snapshot(block_states))
+                end = unweighted_rms_norm(hidden_states.astype(mx.float32))
+                record.pass_end.append(np.array(end[0, -1, :]))
             out = run(lm.layers[core.stop :], hidden_states, block_states)
             record.final = _snapshot(out[1])
             records.append(record)

@@ -50,3 +50,16 @@ def pca_2d(x: np.ndarray) -> np.ndarray:
     centred = x.astype(np.float64) - x.mean(axis=0, keepdims=True)
     u, s, _ = np.linalg.svd(centred, full_matrices=False)
     return u[:, :2] * s[:2]
+
+
+def topic_separation(x: np.ndarray, labels: list[str]) -> float:
+    """Mean distance between topic centroids divided by mean distance of points
+    to their own centroid. Higher means topics are further apart relative to
+    their spread. x: (n, d)."""
+    x = x.astype(np.float64)
+    names = sorted(set(labels))
+    lab = np.array(labels)
+    cents = np.stack([x[lab == n].mean(axis=0) for n in names])
+    within = np.mean([np.linalg.norm(x[lab == n] - c, axis=1).mean() for n, c in zip(names, cents)])
+    pairs = [np.linalg.norm(cents[i] - cents[j]) for i in range(len(names)) for j in range(i + 1, len(names))]
+    return float(np.mean(pairs) / within)

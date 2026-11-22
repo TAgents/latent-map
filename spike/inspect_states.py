@@ -15,7 +15,6 @@ from latent_capture.loader import load_model
 from latent_capture.metrics import pass_movement, pca_2d, top_coordinate_share
 from prompts import PROMPTS
 
-GOODFIRE_COORDINATE = 2026  # "d_2027" in Goodfire's 1-based numbering; checked both ways below
 RESULTS = Path(__file__).parent / "results"
 
 
@@ -47,6 +46,7 @@ def main() -> None:
     flat = normed.reshape(-1, normed.shape[-1])
     idx, share = top_coordinate_share(flat)
     per_pass = [top_coordinate_share(normed[:, k]) for k in range(3)]
+    # Goodfire reports coordinate 2027; print its neighbour too in case of off-by-one numbering.
     mean_at = {str(i): [float(normed[:, k, i].mean()) for k in range(3)] for i in sorted({idx, 2026, 2027})}
     movement = pass_movement(normed)
 

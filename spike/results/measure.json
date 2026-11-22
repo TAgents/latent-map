@@ -1,0 +1,46 @@
+{
+  "model": "thinkingmachines/Inkling-2-Mini",
+  "max_tokens": 128,
+  "runs": [
+    {
+      "mode": "off",
+      "tokens": 2413,
+      "seconds": 131.86701549997088,
+      "peak_gb": 18.30433719418943,
+      "swap_gb_before": 31.9786376953125,
+      "swap_gb_after": 29.13348388671875
+    },
+    {
+      "mode": "on",
+      "tokens": 2413,
+      "seconds": 146.44994824996684,
+      "peak_gb": 18.304345628246665,
+      "swap_gb_before": 29.13348388671875,
+      "swap_gb_after": 28.93896484375
+    },
+    {
+      "mode": "off",
+      "tokens": 2413,
+      "seconds": 133.0030155000277,
+      "peak_gb": 18.304307436570525,
+      "swap_gb_before": 28.93896484375,
+      "swap_gb_after": 28.94268798828125
+    },
+    {
+      "mode": "on",
+      "tokens": 2413,
+      "seconds": 146.699611500022,
+      "peak_gb": 18.304345628246665,
+      "swap_gb_before": 28.94268798828125,
+      "swap_gb_after": 29.3992919921875
+    }
+  ],
+  "summary": {
+    "tps_off": 18.220256862506375,
+    "tps_on": 16.462586551778656,
+    "speed_ratio": 0.9035320783899238,
+    "peak_gb": 18.304345628246665,
+    "swap_growth_gb": 0.45660400390625
+  },
+  "verdict": "no-go"
+}

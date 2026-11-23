@@ -15,18 +15,29 @@ def group_cells(centres: np.ndarray, n_fine: int = 12, n_broad: int = 4) -> tupl
     return fine, broad
 
 
+def is_marker(token: str) -> bool:
+    """A chat-format marker such as <|content_text|>, not a word."""
+    w = token.strip()
+    return w.startswith("<|") and w.endswith("|>")
+
+
 def _word(token: str) -> str | None:
     w = token.strip().lower()
-    if w.startswith("<|") and w.endswith("|>"):
-        return None  # a chat-format marker, not a word
+    if is_marker(w):
+        return None
     return w if any(ch.isalpha() for ch in w) else None
 
 
 def distinctive_words(
-    tokens: list[str], area_of_point: np.ndarray, top: int = 12, min_count: int = 3, areas=None
+    tokens: list[str], area_of_point: np.ndarray, top: int = 12, min_count: int = 3, areas=None, method: str = "share"
 ) -> dict[int, list[str]]:
-    """Per area, words ranked by their share inside the area minus their share overall.
-    Pass `areas` to get an entry (possibly empty) for areas that hold no points."""
+    """Per area, its most distinctive words. Pass `areas` to get an entry (possibly
+    empty) for areas that hold no points.
+
+    method "share": share inside the area minus share overall. Simple, but common
+    words such as "the" rank high wherever they are slightly over-represented.
+    method "logodds": how many standard errors the word's log-odds inside the area
+    sit above its log-odds everywhere else, so common words need a large excess."""
     words = [_word(t) for t in tokens]
     overall = Counter(w for w in words if w)
     total = sum(overall.values()) or 1
@@ -34,8 +45,18 @@ def distinctive_words(
     for a in sorted(set(int(v) for v in area_of_point) | set(int(v) for v in (areas if areas is not None else []))):
         inside = Counter(w for w, v in zip(words, area_of_point) if w and v == a)
         n = sum(inside.values()) or 1
-        scored = [(c / n - overall[w] / total, w) for w, c in inside.items() if c >= min_count]
-        out[a] = [w for s, w in sorted(scored, key=lambda p: (-p[0], p[1])) if s > 0][:top]
+        if method == "logodds":
+            scored = []
+            for w, c in inside.items():
+                if c < min_count:
+                    continue
+                rest, rest_n = overall[w] - c, total - n
+                delta = np.log((c + 0.5) / (n - c + 0.5)) - np.log((rest + 0.5) / (rest_n - rest + 0.5))
+                scored.append((float(delta / np.sqrt(1 / (c + 0.5) + 1 / (rest + 0.5))), w))
+        else:
+            scored = [(c / n - overall[w] / total, w) for w, c in inside.items() if c >= min_count]
+        floor = 1.0 if method == "logodds" else 0.0  # log-odds: at least one standard error above the rest
+        out[a] = [w for s, w in sorted(scored, key=lambda p: (-p[0], p[1])) if s > floor][:top]
     return out
 
 

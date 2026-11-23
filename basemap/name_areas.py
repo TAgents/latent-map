@@ -1,23 +1,24 @@
 """Have the model name each area, then score each name with a second run.
 
-Run: PYTHONPATH=../spike ../spike/.venv/bin/python name_areas.py
+Run: PYTHONPATH=../spike ../spike/.venv/bin/python name_areas.py [tag]
 """
 
 import json
-from pathlib import Path
+import sys
 
 from mlx_lm import generate
 
 from latent_capture.loader import load_model
+from mapbuild.paths import paths
 from mapbuild.naming import answer_text, name_area, score_name
 
-BUNDLE = Path(__file__).parent / "bundle_v0"
 WEAK = 0.5
-MAX_TOKENS = 400
+MAX_TOKENS = 600
 TRIALS = 8
 
 
 def main() -> None:
+    BUNDLE = paths(sys.argv[1] if len(sys.argv) > 1 else "v1")["bundle"]
     model, tokenizer = load_model()
 
     log = []

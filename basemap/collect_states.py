@@ -1,11 +1,11 @@
 """One forward pass per corpus text, keeping block 2 and block 3 outputs at
 every token position for each loop pass.
 
-Run: PYTHONPATH=../spike ../spike/.venv/bin/python collect_states.py
+Run: PYTHONPATH=../spike ../spike/.venv/bin/python collect_states.py [tag]
 """
 
 import json
-from pathlib import Path
+import sys
 
 import mlx.core as mx
 import numpy as np
@@ -13,14 +13,15 @@ import numpy as np
 from latent_capture.capture import capturing
 from latent_capture.loader import load_model
 from mapbuild.collect import stack
+from mapbuild.paths import paths
 
-DATA = Path(__file__).parent / "data"
 ANSWER_MARK = "<|content_text|>"
 
 
 def main() -> None:
+    where = paths(sys.argv[1] if len(sys.argv) > 1 else "v1")
     model, tokenizer = load_model()
-    rows = [json.loads(line) for line in (DATA / "corpus.jsonl").open()]
+    rows = [json.loads(line) for line in where["corpus"].open()]
     records = []
     with capturing(model, all_positions=True, max_records=1) as cap:
         for row in rows:
@@ -52,9 +53,9 @@ def main() -> None:
             cap.clear()
             mx.clear_cache()
     out = stack(records)
-    np.savez(DATA / "states.npz", block2=out["block2"], block3=out["block3"], is_reply=out["is_reply"])
+    np.savez(where["states"], block2=out["block2"], block3=out["block3"], is_reply=out["is_reply"])
     lists = {k: out[k] for k in ("token", "topic", "form", "text_id", "phase")}
-    (DATA / "tokens.json").write_text(json.dumps(lists))
+    where["tokens"].write_text(json.dumps(lists))
     print(f"N = {len(out['token'])} token positions from {len(records)} texts; "
           f"block2 {out['block2'].shape}, block3 {out['block3'].shape}; reply tokens {int(out['is_reply'].sum())}, "
           f"of which answer {out['phase'].count('answer')}")

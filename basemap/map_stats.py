@@ -1,20 +1,19 @@
 """Context for the map's headline numbers: chance levels, thinking against
 answer, agreement between passes, and how pass-specific the cells are.
 
-Run: ../spike/.venv/bin/python map_stats.py
+Run: ../spike/.venv/bin/python map_stats.py [tag] [states_tag]
 """
 
 import json
+import sys
 from collections import Counter
-from pathlib import Path
 
 import numpy as np
 
-from mapbuild.areas import lift
+from mapbuild.areas import is_marker, lift
+from mapbuild.paths import paths
 from mapbuild.stats import lift_null, pass_agreement
 
-HERE = Path(__file__).parent
-DATA, BUNDLE = HERE / "data", HERE / "bundle_v0"
 
 
 def auc(score: np.ndarray, positive: np.ndarray) -> float:
@@ -29,9 +28,13 @@ def auc(score: np.ndarray, positive: np.ndarray) -> float:
 
 
 def main() -> None:
-    states = np.load(DATA / "states.npz")
-    lists = json.loads((DATA / "tokens.json").read_text())
-    reply = states["is_reply"]
+    tag = sys.argv[1] if len(sys.argv) > 1 else "v1"
+    source = paths(sys.argv[2] if len(sys.argv) > 2 else tag)
+    BUNDLE = paths(tag)["bundle"]
+    states = np.load(source["states"])
+    lists = json.loads(source["tokens"].read_text())
+    # Markers are left out, as in build_map.py (v0 bundles kept them in; the v0 report's numbers include them).
+    reply = states["is_reply"] & ~np.array([is_marker(t) for t in lists["token"]]) if tag != "v0" else states["is_reply"]
     pick = lambda key: np.array([v for v, r in zip(lists[key], reply) if r])
     form, topic, text, phase = pick("form"), pick("topic"), pick("text_id"), pick("phase")
     answer = phase == "answer"
@@ -66,7 +69,7 @@ def main() -> None:
             ((counts[used, 2] == 0) | (counts[used, :2].sum(1) == 0)).mean()
         )
         (BUNDLE / f"{block}_stats.json").write_text(json.dumps(out, indent=1))
-        print(block)
+        print(tag, block)
         for k, v in out["lift"].items():
             print(f"  {k:15s} observed {v['observed']:.2f}  null {v['null_mean']:.2f} ± {v['null_sd']:.2f}  x{v['over_null']:.2f}")
         print("  phase:", {k: (round(v, 3) if isinstance(v, float) else v) for k, v in out["phase"].items()})

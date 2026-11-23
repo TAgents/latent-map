@@ -1,0 +1,339 @@
+{
+ "tag": "v0b",
+ "states_from": "states.npz",
+ "points": 34487,
+ "cells": 256,
+ "occupied_cells": 256,
+ "scale_passes": false,
+ "form_lift": 2.5690715883668904,
+ "topic_lift": 2.585579514824798,
+ "words": {
+  "0": [
+   "need",
+   "i",
+   "such",
+   "request",
+   "in",
+   "cit",
+   "the",
+   "value",
+   "con",
+   "co",
+   "we",
+   "let",
+   "a"
+  ],
+  "1": [
+   "opening",
+   "write",
+   "dialogue",
+   "two",
+   "maybe",
+   "produce",
+   "story",
+   "words",
+   "short",
+   "natural",
+   "between",
+   "writing",
+   "alex",
+   "of",
+   "should",
+   "open"
+  ],
+  "2": [
+   "need",
+   "ensure",
+   "no",
+   "only",
+   "final",
+   "code",
+   "be",
+   "extra",
+   "thinking",
+   "cit",
+   "think",
+   "beyond",
+   "produce",
+   "for",
+   "too",
+   "ations"
+  ],
+  "3": [
+   "short",
+   "one",
+   "cise",
+   "wants",
+   "paragraph",
+   "keep",
+   "list",
+   "clear",
+   "this",
+   "exactly",
+   "request",
+   "user",
+   "benign",
+   "is",
+   "craft",
+   "or"
+  ],
+  "4": [
+   "prime",
+   "n",
+   "index",
+   "if",
+   "return",
+   "time",
+   "number",
+   "g",
+   "sort",
+   "indexes",
+   "days",
+   "o",
+   "total",
+   "c",
+   "hours",
+   "year"
+  ],
+  "5": [
+   "and",
+   "vaccine",
+   "immune",
+   "light",
+   "interest",
+   "bridge",
+   "black",
+   "they",
+   "tide",
+   "from",
+   "ti",
+   "photo",
+   "climate",
+   "are",
+   "on",
+   "energy"
+  ],
+  "6": [
+   "press",
+   "empire",
+   "printing",
+   "revolution",
+   "the",
+   "of",
+   "french",
+   "roman",
+   "ink",
+   "type",
+   "bastille",
+   "ideas",
+   "spread",
+   "legion",
+   "was",
+   "able"
+  ],
+  "7": [
+   "sleep",
+   "jazz",
+   "coffee",
+   "dreams",
+   "e",
+   "marathon",
+   "olympic",
+   "open",
+   "bread",
+   "im",
+   "ans",
+   "mile",
+   "medal",
+   "chess",
+   "baking",
+   "oven"
+  ],
+  "8": [
+   "with",
+   "include",
+   "function",
+   "could",
+   "def",
+   "maybe",
+   "python",
+   "simple",
+   "provide",
+   "craft",
+   "return",
+   "value",
+   "returns",
+   "comments",
+   "estimate",
+   "useful"
+  ],
+  "9": [
+   "facts",
+   "tips",
+   "practical",
+   "avoid",
+   "careful",
+   "content",
+   "ensure",
+   "medical",
+   "no",
+   "not",
+   "include",
+   "etc",
+   "claim",
+   "accurate",
+   "fact",
+   "financial"
+  ],
+  "10": [
+   "i",
+   "alex",
+   "maya",
+   "you",
+   "sam",
+   "that",
+   "jamie",
+   "jonah",
+   "ly",
+   "m",
+   "yeah",
+   "did",
+   "leo",
+   "jordan",
+   "what",
+   "still"
+  ],
+  "11": [
+   "a",
+   "matters",
+   "matter",
+   "we",
+   "the",
+   "related",
+   "make",
+   "because",
+   "where",
+   "must",
+   "which",
+   "her",
+   "stake",
+   "dis",
+   "who",
+   "character"
+  ]
+ },
+ "broad_of_fine": {
+  "0": 0,
+  "1": 1,
+  "2": 1,
+  "3": 1,
+  "4": 2,
+  "5": 2,
+  "6": 2,
+  "7": 2,
+  "8": 3,
+  "9": 3,
+  "10": 3,
+  "11": 3
+ },
+ "area_points": {
+  "0": 1012,
+  "1": 1944,
+  "2": 2570,
+  "3": 2058,
+  "4": 4263,
+  "5": 5916,
+  "6": 1871,
+  "7": 3663,
+  "8": 1970,
+  "9": 2807,
+  "10": 1669,
+  "11": 4744
+ },
+ "area_mix": {
+  "0": {
+   "answer_share": 0.16996047430830039,
+   "top_form": [
+    "dialogue",
+    258
+   ]
+  },
+  "1": {
+   "answer_share": 0.01800411522633745,
+   "top_form": [
+    "dialogue",
+    1051
+   ]
+  },
+  "2": {
+   "answer_share": 0.0,
+   "top_form": [
+    "story",
+    727
+   ]
+  },
+  "3": {
+   "answer_share": 0.00048590864917395527,
+   "top_form": [
+    "steps",
+    766
+   ]
+  },
+  "4": {
+   "answer_share": 0.2735163030729533,
+   "top_form": [
+    "code",
+    2663
+   ]
+  },
+  "5": {
+   "answer_share": 0.3926639621365788,
+   "top_form": [
+    "steps",
+    2030
+   ]
+  },
+  "6": {
+   "answer_share": 0.3682522715125601,
+   "top_form": [
+    "explain",
+    642
+   ]
+  },
+  "7": {
+   "answer_share": 0.3003003003003003,
+   "top_form": [
+    "steps",
+    1221
+   ]
+  },
+  "8": {
+   "answer_share": 0.11776649746192894,
+   "top_form": [
+    "code",
+    1958
+   ]
+  },
+  "9": {
+   "answer_share": 0.1884574278589241,
+   "top_form": [
+    "steps",
+    1280
+   ]
+  },
+  "10": {
+   "answer_share": 0.6572798082684242,
+   "top_form": [
+    "dialogue",
+    1639
+   ]
+  },
+  "11": {
+   "answer_share": 0.02845699831365936,
+   "top_form": [
+    "story",
+    4139
+   ]
+  }
+ }
+}

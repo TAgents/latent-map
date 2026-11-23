@@ -129,3 +129,33 @@ PYTHONPATH=../spike ../spike/.venv/bin/python name_areas.py        # about 25 mi
 ../spike/.venv/bin/python map_stats.py
 ../spike/.venv/bin/python draw_map.py
 ```
+
+## Follow-up on the same states: map v0b
+
+Built the same day from the v0 states with three builder changes; no new model runs, so areas are unnamed. Files in `bundle_v0b/`.
+
+**Changes:** chat-marker tokens left out of the fit and the statistics; area words ranked by log-odds, not by share difference; block 3 fitted with per-pass scaling.
+
+**Block 2** is essentially unchanged (form 1.98 times chance, topic 1.35), now with all 256 cells in use and no area spent on a marker. Per-pass scaling makes no difference to block 2, because its three passes have the same spread, so it is fitted without it.
+
+**The area words now show topics**, which the old ranking buried under function words:
+
+| Area | Tokens | Answer share | Words |
+| --- | --- | --- | --- |
+| 4 | 4,263 | 27% | prime, n, index, if, return, time, number, sort |
+| 5 | 5,916 | 39% | vaccine, immune, light, interest, bridge, black, tide |
+| 6 | 1,871 | 37% | press, empire, printing, revolution, french, roman, ink |
+| 7 | 3,663 | 30% | sleep, jazz, coffee, dreams, marathon, olympic, bread |
+| 10 | 1,669 | 66% | i, alex, maya, you, sam, that, jamie |
+| 1 | 1,944 | 2% | opening, write, dialogue, two, produce, story, natural |
+
+**Block 3, with per-pass scaling:**
+
+| | Plain fit | Scaled fit |
+| --- | --- | --- |
+| Cells used on passes 1, 2, 3 | 120, 123, 212 | 173, 174, 169 |
+| Form lift over chance on passes 1, 2, 3 | 1.43, 1.42, 1.53 | 1.65, 1.67, 1.56 |
+| Words already in their final cell after passes 1, 2 | 3%, 4% | 4%, 5% |
+| Words already in their final area after passes 1, 2 | 21%, 22% | 32%, 34% |
+
+So the reviewer was right that the weak result on passes 1 and 2 was starvation: given cells, those passes carry text form as well as the last pass does. Scaling does not make the passes agree, though. A word's block 3 state on the last pass still sits in a different cell from its state on passes 1 and 2. That is now better evidence, though still not proof, that block 3's last pass needs its own map.

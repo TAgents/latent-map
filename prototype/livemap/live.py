@@ -36,7 +36,7 @@ class LiveMap:
     @classmethod
     def load(cls, bundle: Path, norms_path: Path, block: str = "block2") -> "LiveMap":
         b = np.load(bundle / f"{block}.npz")
-        m = {k: b[k] for k in ("drop", "pass_means", "components", "centres")}
+        m = {k: b[k] for k in ("drop", "pass_means", "pass_scales", "components", "centres") if k in b}
         return cls(m, b["fine"], json.loads(norms_path.read_text()))
 
     def describe(self, block2: np.ndarray, block3: np.ndarray) -> dict:

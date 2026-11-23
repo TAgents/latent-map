@@ -1,10 +1,10 @@
 """Draw each block's map with its named areas, and how cells change by pass.
 
-Run: ../spike/.venv/bin/python draw_map.py
+Run: ../spike/.venv/bin/python draw_map.py [tag] [states_tag]
 """
 
 import json
-from pathlib import Path
+import sys
 
 import matplotlib
 
@@ -12,8 +12,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-HERE = Path(__file__).parent
-DATA, BUNDLE = HERE / "data", HERE / "bundle_v0"
+from mapbuild.paths import paths
+
 
 
 def label(info: dict, a: str) -> str:
@@ -25,7 +25,11 @@ def label(info: dict, a: str) -> str:
 
 
 def main() -> None:
-    reply = np.load(DATA / "states.npz")["is_reply"]
+    tag = sys.argv[1] if len(sys.argv) > 1 else "v1"
+    BUNDLE = paths(tag)["bundle"]
+    states = np.load(paths(sys.argv[2] if len(sys.argv) > 2 else tag)["states"])
+    first = np.load(BUNDLE / "block2.npz")
+    reply = first["used"] if "used" in first else states["is_reply"]
     fig2, axes2 = plt.subplots(2, 3, figsize=(15, 9))
     for row, block in enumerate(("block2", "block3")):
         b = np.load(BUNDLE / f"{block}.npz")
@@ -45,7 +49,7 @@ def main() -> None:
             text = label(info, str(a)) + (f"\n({score:.2f})" if score is not None else "")
             ax.text(cx, cy, text, ha="center", va="center", fontsize=9, weight="bold",
                     bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=cmap(a % 20), alpha=0.85))
-        ax.set_title(f"Base map v0, {block} output at pass 3: {n_cells} cells, sized by reply tokens, "
+        ax.set_title(f"Base map {tag}, {block} output at pass 3: {n_cells} cells, sized by reply tokens, "
                      f"coloured by fine area\n(name score in brackets; chance is 0.25)")
         ax.set_xticks([]); ax.set_yticks([])
         fig.tight_layout(); fig.savefig(BUNDLE / f"{block}.png", dpi=130); plt.close(fig)

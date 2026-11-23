@@ -7,4 +7,4 @@ __pycache__/
 spike/results/*.npz
 basemap/data/*.npz
 basemap/data/*.npy
-basemap/bundle_v0/*.npz
+basemap/bundle_*/*.npz

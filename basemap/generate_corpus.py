@@ -1,7 +1,8 @@
 """Have the model write the v0 corpus: one short text per topic and form.
 
-The model writes a thinking section before its answer. Thinking effort is
-lowered and the token limit raised so that both sections appear in each text.
+The model writes a thinking section before its answer, so the token limit is
+high enough for both sections to appear. The chat template's setting is called
+reasoning_effort; 0.9 is its default and is what the v0 corpus was written with.
 
 Run: PYTHONPATH=../spike ../spike/.venv/bin/python generate_corpus.py
 """
@@ -16,12 +17,12 @@ from mapbuild.corpus import build_prompts
 
 OUT = Path(__file__).parent / "data" / "corpus.jsonl"
 MAX_TOKENS = 300
-THINKING_EFFORT = 0.3
+REASONING_EFFORT = 0.9
 
 
 def chat_prompt(tokenizer, text: str) -> str:
     return tokenizer.apply_chat_template(
-        [{"role": "user", "content": text}], add_generation_prompt=True, tokenize=False, thinking_effort=THINKING_EFFORT
+        [{"role": "user", "content": text}], add_generation_prompt=True, tokenize=False, reasoning_effort=REASONING_EFFORT
     )
 
 
@@ -38,7 +39,7 @@ def main() -> None:
             if not text.strip():
                 print(f"skipped {item['id']}: empty generation", flush=True)
                 continue
-            f.write(json.dumps({**item, "thinking_effort": THINKING_EFFORT, "text": text}) + "\n")
+            f.write(json.dumps({**item, "reasoning_effort": REASONING_EFFORT, "text": text}) + "\n")
             f.flush()
             written += 1
             if written % 20 == 0:

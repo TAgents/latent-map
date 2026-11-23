@@ -26,7 +26,7 @@ def main() -> None:
         for row in rows:
             head = tokenizer.apply_chat_template(
                 [{"role": "user", "content": row["prompt"]}], add_generation_prompt=True, tokenize=False,
-                thinking_effort=row["thinking_effort"],
+                reasoning_effort=row["reasoning_effort"],
             )
             head_ids = tokenizer.encode(head)
             reply_ids = tokenizer.encode(row["text"], add_special_tokens=False)

@@ -1,0 +1,373 @@
+{
+ "points": 34977,
+ "cells": 256,
+ "occupied_cells": 255,
+ "form_lift": 2.5140277777777778,
+ "topic_lift": 2.1573333333333333,
+ "phase_lift": 1.017434665501929,
+ "answer_only": {
+  "points": 7503,
+  "form_lift": 1.4606741573033708,
+  "topic_lift": 2.3806451612903228
+ },
+ "area_mix": {
+  "0": {
+   "answer_share": 0.018976011457214465,
+   "top_form": [
+    "story",
+    1699
+   ]
+  },
+  "1": {
+   "answer_share": 0.08165910563836681,
+   "top_form": [
+    "code",
+    1515
+   ]
+  },
+  "2": {
+   "answer_share": 0.0,
+   "top_form": [
+    "steps",
+    687
+   ]
+  },
+  "3": {
+   "answer_share": 0.0076947739660147485,
+   "top_form": [
+    "explain",
+    740
+   ]
+  },
+  "4": {
+   "answer_share": 0.0,
+   "top_form": [
+    "explain",
+    24
+   ]
+  },
+  "5": {
+   "answer_share": 0.21523579201934703,
+   "top_form": [
+    "dialogue",
+    232
+   ]
+  },
+  "6": {
+   "answer_share": 0.26317974263179744,
+   "top_form": [
+    "code",
+    3211
+   ]
+  },
+  "7": {
+   "answer_share": 0.3019491245457549,
+   "top_form": [
+    "explain",
+    958
+   ]
+  },
+  "8": {
+   "answer_share": 0.37799926172019194,
+   "top_form": [
+    "steps",
+    2818
+   ]
+  },
+  "9": {
+   "answer_share": 0.16703176341730558,
+   "top_form": [
+    "steps",
+    1359
+   ]
+  },
+  "10": {
+   "answer_share": 0.6383593298671288,
+   "top_form": [
+    "dialogue",
+    1684
+   ]
+  },
+  "11": {
+   "answer_share": 0.04192929569745136,
+   "top_form": [
+    "story",
+    3174
+   ]
+  }
+ },
+ "words": {
+  "0": [
+   "opening",
+   "maybe",
+   "write",
+   "story",
+   "dialogue",
+   "need",
+   "craft",
+   "creative",
+   "two",
+   "friends",
+   "writing",
+   "words",
+   "with",
+   "short",
+   "produce",
+   "of"
+  ],
+  "1": [
+   "function",
+   "comments",
+   "with",
+   "code",
+   "python",
+   "maybe",
+   "a",
+   "include",
+   "provide",
+   "could",
+   "craft",
+   "s",
+   "block",
+   "coding",
+   "write",
+   "ensure"
+  ],
+  "2": [
+   "short",
+   "paragraph",
+   "one",
+   "cise",
+   "five",
+   "clear",
+   "keep",
+   "list",
+   "numbered",
+   "exactly",
+   "or",
+   "craft",
+   "could",
+   "wants",
+   "facts",
+   "explanation"
+  ],
+  "3": [
+   "need",
+   "user",
+   "final",
+   "ensure",
+   "answer",
+   "only",
+   "no",
+   "request",
+   "wants",
+   "asks",
+   "this",
+   "extra",
+   "is",
+   "benign",
+   "be",
+   "s"
+  ],
+  "4": [],
+  "5": [
+   "i",
+   "such",
+   "a",
+   "let",
+   "in",
+   "con",
+   "cit",
+   "we",
+   "the",
+   "co",
+   "value",
+   "paragraph"
+  ],
+  "6": [
+   "n",
+   "return",
+   "prime",
+   "index",
+   "if",
+   "def",
+   "g",
+   "time",
+   "or",
+   "number",
+   "sort",
+   "returns",
+   "for",
+   "indexes",
+   "bubble",
+   "total"
+  ],
+  "7": [
+   "the",
+   "roman",
+   "and",
+   "of",
+   "jazz",
+   "in",
+   "open",
+   "e",
+   "to",
+   "french",
+   "olympic",
+   "was",
+   "bastille",
+   "empire",
+   "revolution",
+   "chess"
+  ],
+  "8": [
+   "and",
+   "to",
+   "immune",
+   "con",
+   "by",
+   "the",
+   "are",
+   "light",
+   "vaccine",
+   "they",
+   "water",
+   "ti",
+   "black",
+   "bridge",
+   "from",
+   "interest"
+  ],
+  "9": [
+   "practical",
+   "tips",
+   "no",
+   "facts",
+   "matters",
+   "matter",
+   "related",
+   "not",
+   "accuracy",
+   "ensure",
+   "avoid",
+   "advice",
+   "claim",
+   "careful",
+   "about",
+   "which"
+  ],
+  "10": [
+   "i",
+   "maya",
+   "alex",
+   "that",
+   "you",
+   "sam",
+   "yeah",
+   "it",
+   "jamie",
+   "jonah",
+   "ly",
+   "m",
+   "did",
+   "let",
+   "leo",
+   "the"
+  ],
+  "11": [
+   "a",
+   "the",
+   "stake",
+   "we",
+   "town",
+   "because",
+   "is",
+   "in",
+   "let",
+   "must",
+   "her",
+   "who",
+   "where",
+   "dis",
+   "mara",
+   "protagonist"
+  ]
+ },
+ "broad_of_fine": {
+  "0": 0,
+  "1": 0,
+  "2": 0,
+  "3": 1,
+  "4": 1,
+  "5": 1,
+  "6": 2,
+  "7": 2,
+  "8": 2,
+  "9": 3,
+  "10": 3,
+  "11": 3
+ },
+ "area_points": {
+  "0": 2793,
+  "1": 1543,
+  "2": 1571,
+  "3": 3119,
+  "4": 120,
+  "5": 827,
+  "6": 4818,
+  "7": 3027,
+  "8": 8127,
+  "9": 3652,
+  "10": 1731,
+  "11": 3649
+ },
+ "names": {
+  "0": "Two-character dialogue crafting",
+  "1": "Python code generation",
+  "2": "",
+  "3": "",
+  "4": "",
+  "5": "",
+  "6": "Sorting algorithms",
+  "7": "",
+  "8": "",
+  "9": "Accuracy caveats",
+  "10": "informal chat tokens",
+  "11": ""
+ },
+ "name_scores": {
+  "0": 0.25,
+  "1": 0.75,
+  "2": 0.0,
+  "3": 0.0,
+  "4": 0.0,
+  "5": 0.0,
+  "6": 1.0,
+  "7": 0.0,
+  "8": 0.0,
+  "9": 1.0,
+  "10": 1.0,
+  "11": 0.0
+ },
+ "broad_names": {
+  "0": "",
+  "1": "",
+  "2": "",
+  "3": ""
+ },
+ "weak": {
+  "0": true,
+  "1": false,
+  "2": true,
+  "3": true,
+  "4": true,
+  "5": true,
+  "6": false,
+  "7": true,
+  "8": true,
+  "9": false,
+  "10": false,
+  "11": true
+ },
+ "mean_name_score": 0.3333333333333333
+}

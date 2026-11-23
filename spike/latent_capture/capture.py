@@ -58,9 +58,14 @@ def _snapshot(block_states: mx.array, all_positions: bool = False) -> np.ndarray
 class capturing:
     """Context manager: `with capturing(model) as cap: ...; cap.records`."""
 
-    def __init__(self, model, max_records: int = 512, all_positions: bool = False):
+    def __init__(self, model, max_records: int = 512, all_positions: bool = False, steer: dict | None = None):
+        """steer: {"vector": (hidden,) array in the units of a normalised block state,
+        "strength": float, "passes": pass indexes to steer}. The vector, times the
+        strength and the state's own RMS, is added where block 2 hands over to block 3,
+        so it shows up in that pass's block 2 output. None leaves the computation unchanged."""
         self._lm = model.model.language_model
         self._all = all_positions
+        self._steer = steer
         self._records: deque[StepCapture] = deque(maxlen=max_records)
 
     @property
@@ -78,14 +83,20 @@ class capturing:
             raise ValueError("Model has no loop configuration; nothing to capture.")
         records = self._records
         every = self._all
+        steer = self._steer
+        vector = None if steer is None else mx.array(np.asarray(steer["vector"], dtype=np.float32))
 
         # Mirrors TextModel._run_loop at mlx-lm commit e2b5bbd3, plus snapshots.
         def run_loop(hidden_states, cache, conv_mask):
             core = lm.args.loop_core
             caches = iter(cache)
 
-            def run(layers, hidden_states, block_states, bank=None):
+            def run(layers, hidden_states, block_states, bank=None, inject_at=None):
                 for i, layer in enumerate(layers):
+                    if i == inject_at:
+                        h = hidden_states.astype(mx.float32)
+                        rms = mx.sqrt(mx.mean(mx.square(h), axis=-1, keepdims=True))
+                        hidden_states = (h + steer["strength"] * rms * vector).astype(hidden_states.dtype)
                     messages = None if bank is None else lm.message_input(bank, i)
                     hidden_states, block_states = layer(
                         hidden_states,
@@ -107,8 +118,10 @@ class capturing:
                         unweighted_rms_norm(hidden_states.astype(mx.float32)),
                     )
                     hidden_states, block_states = prelude
+                # The loop holds two blocks; the second starts halfway through it.
+                inject_at = len(core) // 2 if steer is not None and loop_pass in steer["passes"] else None
                 hidden_states, block_states = run(
-                    lm.layers[core.start : core.stop], hidden_states, block_states, bank
+                    lm.layers[core.start : core.stop], hidden_states, block_states, bank, inject_at
                 )
                 record.passes.append(_snapshot(block_states, every))
                 end = unweighted_rms_norm(hidden_states.astype(mx.float32))

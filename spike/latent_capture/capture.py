@@ -36,6 +36,8 @@ class StepCapture:
     # or (tokens, hidden_size) with all_positions.
     pass_end: list[np.ndarray] = field(default_factory=list)
     final: np.ndarray | None = None
+    # Number of token positions this forward call processed (1 for a generation step).
+    n_tokens: int = 0
 
     @property
     def block2(self) -> list[np.ndarray]:
@@ -96,7 +98,7 @@ class capturing:
 
             prelude = run(lm.layers[: core.start], hidden_states, None)
             hidden_states, block_states = prelude
-            record = StepCapture(prelude=_snapshot(block_states, every))
+            record = StepCapture(prelude=_snapshot(block_states, every), n_tokens=int(hidden_states.shape[1]))
             for loop_pass in range(lm.args.loop_config["num_passes"]):
                 bank = None
                 if loop_pass > 0:

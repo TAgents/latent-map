@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latent Map prototype</title>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#fffefb; --ink:#1c2326; --soft:#59636a; --line:#d9d6cc; --accent:#b4531a;
+  --warn:#b87400; --warn-bg:#fbeecb; --far-bg:#f7c9a8; --think:#7a858c;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#15191b; --panel:#1d2326; --ink:#e8e6df; --soft:#a2abb1; --line:#333c41; --accent:#e58a4d;
+    --warn:#e0a53a; --warn-bg:#4a3a12; --far-bg:#6a3418; --think:#8b959b; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:12px 20px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:650}
+header span{color:var(--soft);font-size:13px}
+main{display:grid;grid-template-columns:minmax(340px,1fr) minmax(420px,1.25fr);gap:16px;padding:16px 20px;align-items:start}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);margin:0 0 8px;font-weight:600}
+textarea{width:100%;min-height:72px;resize:vertical;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px}
+label{font-size:13px;color:var(--soft)}
+select,input[type=number]{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+button{font:inherit;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:8px;padding:7px 16px;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+button.ghost{background:transparent;color:var(--soft);border:1px solid var(--line);font-weight:500}
+#status{font-size:13px;color:var(--soft)}
+#words{margin-top:6px}
+#thinking,#answer{white-space:pre-wrap;word-break:break-word}
+#thinking{color:var(--think);font-size:13.5px;border-left:3px solid var(--line);padding-left:10px;margin:6px 0 12px;max-height:190px;overflow:auto}
+#answer{font-size:16px}
+.t{border-bottom:3px solid transparent;border-radius:2px;cursor:pointer;padding:1px 0}
+.t.high{background:var(--warn-bg)} .t.far{background:var(--far-bg)}
+.t.sel{outline:2px solid var(--ink);outline-offset:1px}
+.t.wait{opacity:.55}
+.sec{font-size:12px;color:var(--soft);margin-top:10px;text-transform:uppercase;letter-spacing:.04em}
+svg{width:100%;height:auto;display:block}
+.cell{stroke:var(--panel);stroke-width:.6}
+.lab{font-size:15px;font-weight:650;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.lab.un{font-weight:400;fill:var(--soft);font-size:12.5px}
+.path{fill:none;stroke:var(--ink);stroke-opacity:.28;stroke-width:1.4}
+.hop{fill:none;stroke:var(--ink);stroke-width:2.6}
+.pd{stroke:var(--ink);stroke-width:2.2;fill:var(--panel)}
+.pt{font-size:13px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+#detail{margin-top:10px;font-size:14px;min-height:112px}
+#detail b{font-weight:650}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:2px 10px;margin-top:6px}
+.kv div:nth-child(odd){color:var(--soft)}
+.bar{display:inline-block;height:9px;background:var(--accent);border-radius:2px;vertical-align:middle;margin-right:5px}
+.note{font-size:12.5px;color:var(--soft);margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.tier{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:0 7px;color:var(--soft);margin-left:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Latent Map prototype</h1>
+  <span>Inkling 2 Mini running on this Mac · block 2 map v0 · nothing leaves this machine</span>
+</header>
+<main>
+  <section class="panel">
+    <h2>Ask the model</h2>
+    <textarea id="prompt">Explain in three sentences why the sky is blue.</textarea>
+    <div class="row">
+      <label>Thinking <select id="effort">
+        <option value="0">none</option><option value="0.2" selected>low</option>
+        <option value="0.5">medium</option><option value="0.9">high (model default)</option></select></label>
+      <label>Max words <input id="max" type="number" value="300" min="20" max="800" step="20" style="width:74px"></label>
+      <button id="go">Run</button><button id="stop" class="ghost" disabled>Stop</button>
+    </div>
+    <div id="status">Loading the map…</div>
+    <div id="words">
+      <div class="sec" id="thinkhead" hidden>Thinking (the model's notes to itself)</div>
+      <div id="thinking" hidden></div>
+      <div class="sec" id="anshead" hidden>Answer</div>
+      <div id="answer"></div>
+    </div>
+    <div class="note">Underline colour = the area a word ends in. Amber background = it moved more than usual on the last pass. It is not known whether that predicts mistakes. Click a word to see its three passes.</div>
+  </section>
+  <section class="panel">
+    <h2>Where the words land <span class="tier">names are untested hypotheses</span></h2>
+    <svg id="map" viewBox="0 0 1000 780" role="img" aria-label="Map of block 2 states, 256 cells in 12 areas"></svg>
+    <div id="detail">Run a prompt, then click a word. Each dot is one of 256 cells; colour is one of 12 areas. Named areas were named by the model; grey labels are areas it could not name.</div>
+    <div id="summary" class="note" hidden></div>
+  </section>
+</main>
+<script>
+const PAL=["#3f7fb5","#d98b2b","#3f9b6d","#c2504d","#8b6fc0","#a1774f","#d67fb3","#6f7b84","#a9a43a","#3aa9b4","#5b63c9","#c96a2c"];
+const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg";
+const el=(n,a={},t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e};
+let MAP=null, toks=[], sel=-1, ctrl=null;
+const W=1000,H=780,PAD=46;
+const px=c=>[PAD+c.x*(W-2*PAD), PAD+(1-c.y)*(H-2*PAD)];
+const areaName=a=>a.name?a.name:`area ${a.id} (unnamed)`;
+
+function drawMap(){
+  const s=$("map"); s.innerHTML="";
+  const g=el("g"); s.append(g);
+  MAP.cells.forEach(c=>{const [x,y]=px(c); g.append(el("circle",{class:"cell",cx:x,cy:y,r:3+Math.sqrt(c.n)*0.55,fill:PAL[c.area%12],"fill-opacity":.6}))});
+  s.append(el("path",{id:"trail",class:"path",d:""}));
+  const lg=el("g"); s.append(lg);
+  MAP.areas.forEach(a=>{
+    let sx=0,sy=0,n=0; MAP.cells.forEach(c=>{if(c.area===a.id){const [x,y]=px(c),w=Math.max(c.n,1);sx+=x*w;sy+=y*w;n+=w}});
+    if(!n) return;
+    const t=el("text",{class:"lab"+(a.name?"":" un"),x:sx/n,y:sy/n,"text-anchor":"middle"},a.name||`area ${a.id}`);
+    t.append(el("title",{},`${areaName(a)}\nwords: ${a.words.join(", ")}\nname score ${a.score.toFixed(2)} (chance 0.25)`)); lg.append(t);
+  });
+  s.append(el("g",{id:"hops"}));
+}
+
+function drawTrail(){
+  const pts=toks.filter(t=>t.s&&t.phase==="answer"&&!t.marker).map(t=>px(MAP.cells[t.s.cells[2]]));
+  $("trail").setAttribute("d",pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" "));
+}
+
+function select(i){
+  sel=i; document.querySelectorAll(".t.sel").forEach(e=>e.classList.remove("sel"));
+  const t=toks[i], g=$("hops"); g.innerHTML="";
+  if(!t) return; t.el.classList.add("sel");
+  if(!t.s){$("detail").textContent="This word's state has not arrived yet.";return}
+  // Passes that share a cell are fanned out a little so every number stays visible.
+  const p=t.s.cells.map((c,k)=>{const q=px(MAP.cells[c]), dup=t.s.cells.slice(0,k).filter(x=>x===c).length; return [q[0]+dup*19,q[1]-dup*6]});
+  g.append(el("path",{class:"hop",d:`M${p[0][0]} ${p[0][1]} L${p[1][0]} ${p[1][1]} L${p[2][0]} ${p[2][1]}`}));
+  p.forEach((q,k)=>{g.append(el("circle",{class:"pd",cx:q[0],cy:q[1],r:11})); g.append(el("text",{class:"pt",x:q[0],y:q[1]},k+1))});
+  const a=MAP.areas.find(x=>x.id===t.s.area), bands=MAP.norms[t.s.area]||MAP.norms.all;
+  const lv={usual:"in the usual range",high:"a little high",far:"far above usual"}[t.s.level];
+  const settle=t.s.settled_by===1?"in its final area from pass 1":t.s.settled_by===2?"reached its final area on pass 2":"only reached its final area on the last pass";
+  const same=new Set(t.s.cells).size;
+  $("detail").innerHTML=`<b>“${esc(t.text.trim()||t.text)}”</b> · ${t.phase}
+  <div class="kv">
+   <div>Ends in</div><div><b style="color:${PAL[t.s.area%12]}">■</b> ${esc(areaName(a))}${a.name?` <span class="tier">name score ${a.score.toFixed(2)}</span>`:""}</div>
+   <div>Typical words there</div><div>${esc(a.words.join(", "))||"—"}</div>
+   <div>Settling</div><div>${settle}; ${same===1?"same cell on all three passes":same===2?"changed cell once":"a different cell on every pass"}</div>
+   <div>Last-pass movement</div><div>${t.s.move[1].toFixed(2)} — ${lv} (usual here: up to ${bands[1].toFixed(2)})</div>
+   <div>Loop signal by pass</div><div>${t.s.loop.map((v,k)=>`<span class="bar" style="width:${Math.max(2,v*90).toFixed(0)}px"></span>${(v*100).toFixed(0)}%`).join(" &nbsp; ")}</div>
+  </div>`;
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function onToken(e){
+  const span=document.createElement("span"); span.className="t wait"; span.textContent=e.text;
+  const t={...e,el:span,s:null}; toks[e.i]=t;
+  if(e.marker){return}
+  span.onclick=()=>select(e.i);
+  const box=e.phase==="thinking"?$("thinking"):$("answer");
+  (e.phase==="thinking"?[$("thinkhead"),$("thinking")]:[$("anshead")]).forEach(x=>x.hidden=false);
+  box.append(span); if(e.phase==="thinking") box.scrollTop=box.scrollHeight;
+}
+function onState(e){
+  const t=toks[e.i]; if(!t) return; t.s=e;
+  t.el.classList.remove("wait"); t.el.style.borderBottomColor=PAL[e.area%12];
+  if(e.level!=="usual") t.el.classList.add(e.level);
+  drawTrail(); if(sel===e.i) select(sel);
+}
+function summarise(d){
+  const ws=toks.filter(t=>t&&t.s&&!t.marker), an=ws.filter(t=>t.phase==="answer");
+  const pct=(a,f)=>a.length?Math.round(100*a.filter(f).length/a.length)+"%":"—";
+  const by={}; an.forEach(t=>by[t.s.area]=(by[t.s.area]||0)+1);
+  const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,n])=>`${areaName(MAP.areas.find(a=>a.id==id))} (${Math.round(100*n/an.length)}%)`).join(", ");
+  $("summary").hidden=false;
+  $("summary").innerHTML=`<b>This run:</b> ${d.tokens} words at ${d.tps.toFixed(1)} per second; ${ws.length-an.length} thinking, ${an.length} answer.<br>
+  In its final area from pass 1: ${pct(ws,t=>t.s.settled_by===1)} of words. Far above usual movement on the last pass: ${ws.filter(t=>t.s.level==="far").length} words; a little high: ${ws.filter(t=>t.s.level==="high").length}.<br>
+  ${an.length?`The answer mostly sits in: ${esc(top)}.`:"The model did not reach an answer before the word limit; raise the limit or lower thinking."}`;
+}
+
+async function run(){
+  toks=[]; sel=-1; ["thinking","answer"].forEach(i=>$(i).innerHTML=""); ["thinkhead","thinking","anshead","summary"].forEach(i=>$(i).hidden=true);
+  $("hops").innerHTML=""; drawTrail(); $("go").disabled=true; $("stop").disabled=false; $("status").textContent="Running…";
+  ctrl=new AbortController();
+  try{
+    const r=await fetch("/api/generate",{method:"POST",signal:ctrl.signal,headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:$("prompt").value,effort:+$("effort").value,max_tokens:+$("max").value})});
+    if(!r.ok){$("status").textContent="Error: "+(await r.text());return}
+    const rd=r.body.getReader(), dec=new TextDecoder(); let buf="";
+    for(;;){
+      const {done,value}=await rd.read(); if(done) break;
+      buf+=dec.decode(value,{stream:true}); let nl;
+      while((nl=buf.indexOf("\n"))>=0){
+        const e=JSON.parse(buf.slice(0,nl)); buf=buf.slice(nl+1);
+        if(e.type==="token") onToken(e); else if(e.type==="state") onState(e);
+        else if(e.type==="done"){summarise(e); $("status").textContent="Done. Click any word."}
+      }
+    }
+  }catch(err){$("status").textContent=err.name==="AbortError"?"Stopped.":"Error: "+err.message}
+  finally{$("go").disabled=false; $("stop").disabled=true}
+}
+$("go").onclick=run; $("stop").onclick=()=>ctrl&&ctrl.abort();
+fetch("/api/map").then(r=>r.json()).then(m=>{MAP=m; drawMap(); $("status").textContent="Ready."}).catch(e=>$("status").textContent="Could not load the map: "+e.message);
+</script>
+</body>
+</html>

@@ -100,3 +100,12 @@ def test_all_positions_keeps_a_token_axis_and_matches_last_token(loaded):
     assert full.block3[2].shape == (n, 2304)
     np.testing.assert_allclose(full.block2[1][-1], last.block2[1], rtol=1e-4, atol=1e-4)
     np.testing.assert_allclose(full.block3[2][-1], last.block3[2], rtol=1e-4, atol=1e-4)
+
+
+def test_records_say_how_many_tokens_the_call_processed(loaded):
+    model, tokenizer = loaded
+    tokens = tokenizer.encode("The capital of France is Paris.")
+    with capturing(model) as cap:
+        model(mx.array([tokens]))
+        model(mx.array([tokens[:1]]))
+    assert [r.n_tokens for r in cap.records] == [len(tokens), 1]

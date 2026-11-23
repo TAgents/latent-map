@@ -5,3 +5,6 @@ __pycache__/
 .pytest_cache/
 .superpowers/
 spike/results/*.npz
+basemap/data/*.npz
+basemap/data/*.npy
+basemap/bundle_v0/*.npz

@@ -1,0 +1,3 @@
+-r ../spike/requirements.txt
+scikit-learn
+umap-learn

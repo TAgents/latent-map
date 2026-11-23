@@ -1,24 +1,27 @@
 """How far block 2 states usually move between pass 2 and pass 3, per fine area,
-measured on the corpus the v0 map was built from. Writes norms.json.
+measured on the corpus that map version was built from. Writes norms_<tag>.json.
 
-Run: PYTHONPATH=../basemap ../spike/.venv/bin/python build_norms.py
+Run: PYTHONPATH=../basemap ../spike/.venv/bin/python build_norms.py [tag]
 """
 
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 
 from mapbuild.fit import _prepare
+from mapbuild.paths import paths
 
 HERE = Path(__file__).parent
-BASE = HERE.parent / "basemap"
 
 
 def main() -> None:
-    states = np.load(BASE / "data" / "states.npz")
-    reply = states["is_reply"]
-    b = np.load(BASE / "bundle_v0" / "block2.npz")
+    tag = sys.argv[1] if len(sys.argv) > 1 else "v1"
+    where = paths(tag)
+    states = np.load(where["states"])
+    b = np.load(where["bundle"] / "block2.npz")
+    reply = b["used"] if "used" in b else states["is_reply"]
     x = states["block2"][reply]
     move = np.concatenate([
         np.linalg.norm(u[:, 2] - u[:, 1], axis=-1)
@@ -30,7 +33,7 @@ def main() -> None:
     for a in np.unique(area):
         if (area == a).sum() >= 200:
             norms[str(int(a))] = bands(move[area == a])
-    (HERE / "norms.json").write_text(json.dumps(norms, indent=1))
+    (HERE / f"norms_{tag}.json").write_text(json.dumps(norms, indent=1))
     print(json.dumps(norms))
 
 

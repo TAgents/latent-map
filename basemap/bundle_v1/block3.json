@@ -1,0 +1,345 @@
+{
+ "tag": "v1",
+ "states_from": "states_v1.npz",
+ "points": 33544,
+ "cells": 256,
+ "occupied_cells": 167,
+ "scale_passes": true,
+ "form_lift": 1.5927797833935018,
+ "topic_lift": 1.1664670658682634,
+ "words": {
+  "0": [
+   "need",
+   "s",
+   "can"
+  ],
+  "1": [
+   "no",
+   "only",
+   "keep",
+   "this",
+   "paragraph",
+   "final",
+   "answer",
+   "ensure",
+   "five",
+   "produce",
+   "opening",
+   "write",
+   "dialogue",
+   "code",
+   "facts",
+   "is"
+  ],
+  "2": [
+   "the",
+   "a",
+   "was",
+   "not",
+   "had",
+   "her",
+   "that",
+   "ed",
+   "at",
+   "she",
+   "way",
+   "side",
+   "out",
+   "it",
+   "said",
+   "like"
+  ],
+  "3": [
+   "it",
+   "maya",
+   "i",
+   "you",
+   "leo",
+   "alex",
+   "just",
+   "s",
+   "re",
+   "but",
+   "did",
+   "m",
+   "that",
+   "so",
+   "not",
+   "jonah"
+  ],
+  "4": [
+   "and",
+   "of",
+   "a",
+   "mention",
+   "maybe",
+   "or",
+   "in",
+   "with",
+   "on",
+   "include",
+   "as",
+   "from",
+   "by",
+   "use",
+   "are",
+   "simple"
+  ],
+  "5": [
+   "can",
+   "they",
+   "sort",
+   "are",
+   "ation",
+   "ity",
+   "light",
+   "s",
+   "cells",
+   "sleep",
+   "primes",
+   "des",
+   "body",
+   "water",
+   "ine",
+   "moon"
+  ],
+  "6": [
+   "function",
+   "friends",
+   "could",
+   "g",
+   "protagonist",
+   "example",
+   "ate",
+   "response",
+   "return",
+   "period",
+   "returns",
+   "ary",
+   "names",
+   "calculate",
+   "height",
+   "rather"
+  ],
+  "7": [
+   "for",
+   "a",
+   "user",
+   "asks",
+   "wants",
+   "of",
+   "paragraph",
+   "in"
+  ],
+  "8": [
+   "short",
+   "about",
+   "tips",
+   "practical",
+   "facts",
+   "friends",
+   "clear",
+   "story",
+   "python",
+   "related",
+   "dialogue",
+   "numbered",
+   "between",
+   "list",
+   "five",
+   "function"
+  ],
+  "9": [],
+  "10": [
+   "oc",
+   "such",
+   "cit",
+   "com",
+   "wasn",
+   "al",
+   "con",
+   "python",
+   "the"
+  ],
+  "11": [
+   "con",
+   "return",
+   "let",
+   "fact",
+   "e",
+   "com",
+   "n",
+   "ti",
+   "co",
+   "python",
+   "dis",
+   "black",
+   "exact",
+   "volcan",
+   "cit",
+   "maya"
+  ]
+ },
+ "broad_of_fine": {
+  "0": 0,
+  "1": 0,
+  "2": 1,
+  "3": 1,
+  "4": 2,
+  "5": 2,
+  "6": 2,
+  "7": 3,
+  "8": 3,
+  "9": 3,
+  "10": 3,
+  "11": 3
+ },
+ "area_points": {
+  "0": 1594,
+  "1": 3893,
+  "2": 7249,
+  "3": 2072,
+  "4": 6022,
+  "5": 4363,
+  "6": 726,
+  "7": 473,
+  "8": 1221,
+  "9": 0,
+  "10": 383,
+  "11": 5548
+ },
+ "area_mix": {
+  "0": {
+   "answer_share": 0.0,
+   "top_form": [
+    "story",
+    491
+   ]
+  },
+  "1": {
+   "answer_share": 0.13871050603647572,
+   "top_form": [
+    "story",
+    1086
+   ]
+  },
+  "2": {
+   "answer_share": 0.9707545868395641,
+   "top_form": [
+    "story",
+    6870
+   ]
+  },
+  "3": {
+   "answer_share": 0.9787644787644788,
+   "top_form": [
+    "dialogue",
+    1882
+   ]
+  },
+  "4": {
+   "answer_share": 0.5919960146130854,
+   "top_form": [
+    "steps",
+    1880
+   ]
+  },
+  "5": {
+   "answer_share": 0.6477194590877836,
+   "top_form": [
+    "steps",
+    1828
+   ]
+  },
+  "6": {
+   "answer_share": 0.6074380165289256,
+   "top_form": [
+    "code",
+    403
+   ]
+  },
+  "7": {
+   "answer_share": 0.0,
+   "top_form": [
+    "explain",
+    104
+   ]
+  },
+  "8": {
+   "answer_share": 0.10647010647010648,
+   "top_form": [
+    "code",
+    289
+   ]
+  },
+  "9": {
+   "answer_share": 0.0,
+   "top_form": null
+  },
+  "10": {
+   "answer_share": 0.6814621409921671,
+   "top_form": [
+    "story",
+    116
+   ]
+  },
+  "11": {
+   "answer_share": 0.7085436193222783,
+   "top_form": [
+    "code",
+    2699
+   ]
+  }
+ },
+ "names": {
+  "0": "",
+  "1": "writing task prompts",
+  "2": "Common English words",
+  "3": "",
+  "4": "high-frequency function words",
+  "5": "",
+  "6": "",
+  "7": "user writing request",
+  "8": "",
+  "9": "",
+  "10": "common subword tokens",
+  "11": ""
+ },
+ "name_scores": {
+  "0": 0.0,
+  "1": 0.625,
+  "2": 0.125,
+  "3": 0.0,
+  "4": 0.125,
+  "5": 0.0,
+  "6": 0.0,
+  "7": 0.25,
+  "8": 0.0,
+  "9": 0.0,
+  "10": 0.0,
+  "11": 0.0
+ },
+ "broad_names": {
+  "0": "",
+  "1": "common English words",
+  "2": "",
+  "3": "short practical facts and tips"
+ },
+ "weak": {
+  "0": true,
+  "1": false,
+  "2": true,
+  "3": true,
+  "4": true,
+  "5": true,
+  "6": true,
+  "7": true,
+  "8": true,
+  "9": true,
+  "10": true,
+  "11": true
+ },
+ "mean_name_score": 0.09375,
+ "naming_calls": 54,
+ "naming_calls_unanswered": 25
+}

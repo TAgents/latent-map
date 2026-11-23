@@ -159,3 +159,70 @@ Built the same day from the v0 states with three builder changes; no new model r
 | Words already in their final area after passes 1, 2 | 21%, 22% | 32%, 34% |
 
 So the reviewer was right that the weak result on passes 1 and 2 was starvation: given cells, those passes carry text form as well as the last pass does. Scaling does not make the passes agree, though. A word's block 3 state on the last pass still sits in a different cell from its state on passes 1 and 2. That is now better evidence, though still not proof, that block 3's last pass needs its own map.
+
+## Map v1 (2026-11-23, after a restart)
+
+Built by `run_v1.sh` on a clean machine. Files in `bundle_v1/`.
+
+### Swap check owed from the capture spike: passed
+
+| Measure | Result | Threshold |
+| --- | --- | --- |
+| Speed with capture on, against off | 0.94 (14.4 against 15.4 tokens per second) | at least 0.8 |
+| Peak memory | 18.3GB | at most 26GB |
+| Swap growth during the run | none (−0.08GB) | at most 0.1GB |
+
+### Corpus v1
+
+Same 24 topics by 5 forms, reasoning effort 0.2, limit 500 tokens. All 120 texts reached their answer and 103 finished it. Answer tokens are now 62% of reply tokens (21% in v0). Still unbalanced by form: story answers are long (7,938 answer tokens, against 2,556 for explanations).
+
+### Structure, against chance
+
+| Lift on fine areas, times chance | Block 2 | Block 3 |
+| --- | --- | --- |
+| Form, all reply tokens | 1.41 | 1.39 |
+| Form, answer tokens only | 1.37 | 1.44 |
+| Topic, all reply tokens | 1.50 | 1.04 |
+| Topic, answer tokens only | 1.54 | 1.02 |
+
+- **Block 2 carries both form and topic, modestly:** about 1.4 to 1.5 times chance. Form fell from v0's 1.98 now that less of the corpus is thinking text restating the request, which is what the review predicted. Topic rose from 1.26.
+- **Block 3 carries form and no topic**, as in v0.
+- **Settling on block 2 repeats:** 74% of words are in their final area after pass 1 and 79% after pass 2 (44% and 53% by cell).
+- **Block 3's last pass still lands elsewhere:** 5% and 7% of words are in their final cell after passes 1 and 2.
+
+### Thinking against answer
+
+With every text now reaching an answer, the confound with form is weaker (though story answers are over-represented).
+
+| How well a token's place tells answer from thinking (0.5 is chance) | Block 2 | Block 3 |
+| --- | --- | --- |
+| By fine area | 0.79 | 0.85 |
+| By cell | 0.89 | 0.97 |
+
+Block 3's cells separate thinking from answer almost completely. This is still not controlled for form, and nothing causal was tested.
+
+### Areas on block 2
+
+| Area | Name | Score | Tokens | Answer share | Words |
+| --- | --- | --- | --- | --- | --- |
+| 0 | fictional dialogue | 0.25 | 7,539 | 91% | the, was, her, had, she, that, side, at |
+| 1 | (none) | 0.00 | 4,711 | 74% | return, sort, index, prime, n, def, simple |
+| 2 | (none) | 0.00 | 8,939 | 68% | and, vaccine, are, sleep, bridge, while, immune |
+| 3 | black hole physics | 1.00 | 681 | 65% | black, holes, event, gravity, stars, horizon |
+| 4 | history of political ideas | 1.00 | 1,212 | 64% | roman, revolution, empire, legion, french, ideas |
+| 5 | Concise list requests | 0.75 | 1,909 | 0% | short, keep, one, for, list, answer, user, five |
+| 6 | Safety policy constraints | 1.00 | 1,633 | 0% | need, no, ensure, final, only, content, safety |
+| 7 | (none) | 0.00 | 449 | 70% | oc, such, cit, com, chloro, al |
+| 8 | (none) | 0.00 | 587 | 55% | function, python, with, write, example, comments |
+| 9 | (none) | 0.00 | 4,288 | 47% | i, mention, no, matters, about, practical |
+| 10 | (none) | 0.00 | 806 | 8% | opening, produce, open, writing, short, story |
+| 11 | name conversation | 1.00 | 790 | 51% | two, dialogue, between, names, talking, lines |
+
+- 6 of 12 areas were named; five of the six scored 0.75 or 1.00. The mean over all twelve is 0.42. 11 of 64 model calls ended without an answer (25 of 54 on block 3).
+- Area 0 is narrative prose, not dialogue; its name is wrong and its score (0.25) says so.
+- The two largest areas (1, code; 2, science and health) have clear words and no name. The model failed to answer, as before.
+- **Area 6 is thinking-only text about what is allowed** ("need", "ensure", "only", "content", "safety"). The model spends about 1,600 tokens there across these benign prompts. For the Guard goal this is the most interesting area on the map, and it is one named area on one corpus: a lead, not a result.
+
+### Still true
+
+One model-written corpus of 120 texts; 256 cells; names not checked by a person; nothing causal.

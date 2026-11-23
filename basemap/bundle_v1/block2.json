@@ -1,0 +1,379 @@
+{
+ "tag": "v1",
+ "states_from": "states_v1.npz",
+ "points": 33544,
+ "cells": 256,
+ "occupied_cells": 256,
+ "scale_passes": false,
+ "form_lift": 1.689259927797834,
+ "topic_lift": 2.3568862275449103,
+ "words": {
+  "0": [
+   "the",
+   "was",
+   "her",
+   "had",
+   "she",
+   "a",
+   "that",
+   "side",
+   "at",
+   "way",
+   "out",
+   "ed",
+   "mara",
+   "it",
+   "said",
+   "like"
+  ],
+  "1": [
+   "return",
+   "sort",
+   "index",
+   "prime",
+   "n",
+   "def",
+   "simple",
+   "returns",
+   "year",
+   "c",
+   "th",
+   "eigh",
+   "date",
+   "swing",
+   "level",
+   "indexes"
+  ],
+  "2": [
+   "and",
+   "con",
+   "vaccine",
+   "are",
+   "sleep",
+   "bridge",
+   "while",
+   "to",
+   "immune",
+   "by",
+   "ti",
+   "can",
+   "volcan",
+   "water",
+   "olympic",
+   "electric"
+  ],
+  "3": [
+   "black",
+   "holes",
+   "event",
+   "gravity",
+   "stars",
+   "hole",
+   "horizon",
+   "gravitational",
+   "their",
+   "escape",
+   "nothing",
+   "strong",
+   "light",
+   "including",
+   "effects",
+   "so"
+  ],
+  "4": [
+   "roman",
+   "revolution",
+   "empire",
+   "legion",
+   "french",
+   "ty",
+   "ideas",
+   "of",
+   "liber",
+   "people",
+   "late",
+   "the",
+   "fall",
+   "and",
+   "ancient",
+   "shaped"
+  ],
+  "5": [
+   "short",
+   "keep",
+   "one",
+   "for",
+   "list",
+   "answer",
+   "user",
+   "five",
+   "only",
+   "paragraph",
+   "provide",
+   "produce",
+   "need",
+   "code",
+   "cise",
+   "write"
+  ],
+  "6": [
+   "need",
+   "no",
+   "ensure",
+   "final",
+   "only",
+   "this",
+   "is",
+   "content",
+   "safety",
+   "avoid",
+   "allowed",
+   "thinking",
+   "beyond",
+   "fine",
+   "benign",
+   "more"
+  ],
+  "7": [
+   "oc",
+   "such",
+   "cit",
+   "com",
+   "chloro",
+   "al",
+   "python",
+   "con",
+   "dis"
+  ],
+  "8": [
+   "function",
+   "python",
+   "with",
+   "write",
+   "example",
+   "comments",
+   "g",
+   "the",
+   "a"
+  ],
+  "9": [
+   "i",
+   "mention",
+   "no",
+   "matters",
+   "matter",
+   "about",
+   "practical",
+   "include",
+   "ly",
+   "maybe",
+   "ensure",
+   "you",
+   "fact",
+   "ations",
+   "items",
+   "provide"
+  ],
+  "10": [
+   "opening",
+   "produce",
+   "open",
+   "writing",
+   "short",
+   "story",
+   "should",
+   "ing",
+   "ative",
+   "maybe",
+   "mention",
+   "of",
+   "s",
+   "vivid",
+   "set",
+   "creative"
+  ],
+  "11": [
+   "two",
+   "dialogue",
+   "between",
+   "maybe",
+   "names",
+   "natural",
+   "talking",
+   "lines",
+   "jonah",
+   "maya",
+   "leo",
+   "friends",
+   "alex",
+   "sam",
+   "jamie",
+   "g"
+  ]
+ },
+ "broad_of_fine": {
+  "0": 0,
+  "1": 1,
+  "2": 1,
+  "3": 1,
+  "4": 1,
+  "5": 2,
+  "6": 2,
+  "7": 3,
+  "8": 3,
+  "9": 3,
+  "10": 3,
+  "11": 3
+ },
+ "area_points": {
+  "0": 7539,
+  "1": 4711,
+  "2": 8939,
+  "3": 681,
+  "4": 1212,
+  "5": 1909,
+  "6": 1633,
+  "7": 449,
+  "8": 587,
+  "9": 4288,
+  "10": 806,
+  "11": 790
+ },
+ "area_mix": {
+  "0": {
+   "answer_share": 0.9083432816023346,
+   "top_form": [
+    "story",
+    7133
+   ]
+  },
+  "1": {
+   "answer_share": 0.7353003608575674,
+   "top_form": [
+    "code",
+    3252
+   ]
+  },
+  "2": {
+   "answer_share": 0.6834097773800202,
+   "top_form": [
+    "steps",
+    2974
+   ]
+  },
+  "3": {
+   "answer_share": 0.6461086637298091,
+   "top_form": [
+    "steps",
+    217
+   ]
+  },
+  "4": {
+   "answer_share": 0.6435643564356436,
+   "top_form": [
+    "steps",
+    367
+   ]
+  },
+  "5": {
+   "answer_share": 0.0026191723415400735,
+   "top_form": [
+    "story",
+    550
+   ]
+  },
+  "6": {
+   "answer_share": 0.001224739742804654,
+   "top_form": [
+    "dialogue",
+    410
+   ]
+  },
+  "7": {
+   "answer_share": 0.6971046770601337,
+   "top_form": [
+    "story",
+    131
+   ]
+  },
+  "8": {
+   "answer_share": 0.5502555366269165,
+   "top_form": [
+    "code",
+    587
+   ]
+  },
+  "9": {
+   "answer_share": 0.46875,
+   "top_form": [
+    "steps",
+    1506
+   ]
+  },
+  "10": {
+   "answer_share": 0.08064516129032258,
+   "top_form": [
+    "story",
+    802
+   ]
+  },
+  "11": {
+   "answer_share": 0.5063291139240507,
+   "top_form": [
+    "dialogue",
+    788
+   ]
+  }
+ },
+ "names": {
+  "0": "fictional dialogue",
+  "1": "",
+  "2": "",
+  "3": "black hole physics",
+  "4": "history of political ideas",
+  "5": "Concise list requests",
+  "6": "Safety policy constraints",
+  "7": "",
+  "8": "",
+  "9": "",
+  "10": "",
+  "11": "name conversation"
+ },
+ "name_scores": {
+  "0": 0.25,
+  "1": 0.0,
+  "2": 0.0,
+  "3": 1.0,
+  "4": 1.0,
+  "5": 0.75,
+  "6": 1.0,
+  "7": 0.0,
+  "8": 0.0,
+  "9": 0.0,
+  "10": 0.0,
+  "11": 1.0
+ },
+ "broad_names": {
+  "0": "",
+  "1": "",
+  "2": "Output constraints",
+  "3": ""
+ },
+ "weak": {
+  "0": true,
+  "1": true,
+  "2": true,
+  "3": false,
+  "4": false,
+  "5": false,
+  "6": false,
+  "7": true,
+  "8": true,
+  "9": true,
+  "10": true,
+  "11": false
+ },
+ "mean_name_score": 0.4166666666666667,
+ "naming_calls": 64,
+ "naming_calls_unanswered": 11
+}

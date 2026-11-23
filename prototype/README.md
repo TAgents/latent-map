@@ -30,4 +30,4 @@ It listens on 127.0.0.1 only. One generation at a time, one turn per run, no his
 - Speed: about 16 words per second once it is writing, close to the model with capture alone. The wait before the first word is under a second when the model is in memory. On a Mac short of memory, macOS compresses and swaps the model out while it sits idle, and the first word can then take 5 to 45 seconds. The server reads every weight every 10 seconds while idle to keep the model in memory, and backs off (up to 2 minutes) when that pass is slow, so it does not make the machine swap continuously. Raising MLX's wired limit was tried and does not help. The real fix is free memory: the model needs about 20GB.
 - The first one-token forward call is treated as the prompt's last token. That holds
   for the pinned mlx-lm commit and would need rechecking on another version.
-- `norms.json` comes from `build_norms.py` and must be rebuilt if the map changes.
+- The server shows map v1 by default (`MAP_TAG=v0 ./run.sh` for the old one). `norms_<tag>.json` comes from `build_norms.py <tag>` and must be rebuilt if that map changes.

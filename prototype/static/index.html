@@ -59,7 +59,7 @@ svg{width:100%;height:auto;display:block}
 <body>
 <header>
   <h1>Latent Map prototype</h1>
-  <span>Inkling 2 Mini running on this Mac · block 2 map v0 · nothing leaves this machine</span>
+  <span>Inkling 2 Mini running on this Mac · block 2 map <span id="tag"></span> · nothing leaves this machine</span>
 </header>
 <main>
   <section class="panel">
@@ -189,7 +189,7 @@ async function run(){
   finally{$("go").disabled=false; $("stop").disabled=true}
 }
 $("go").onclick=run; $("stop").onclick=()=>ctrl&&ctrl.abort();
-fetch("/api/map").then(r=>r.json()).then(m=>{MAP=m; drawMap(); $("status").textContent="Ready."}).catch(e=>$("status").textContent="Could not load the map: "+e.message);
+fetch("/api/map").then(r=>r.json()).then(m=>{MAP=m; $("tag").textContent=m.tag||""; drawMap(); $("status").textContent="Ready."}).catch(e=>$("status").textContent="Could not load the map: "+e.message);
 </script>
 </body>
 </html>

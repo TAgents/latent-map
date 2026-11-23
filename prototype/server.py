@@ -8,6 +8,7 @@ Nothing leaves this machine: the server listens on 127.0.0.1 only.
 """
 
 import json
+import os
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -22,7 +23,8 @@ from latent_capture.loader import load_model
 from livemap.live import LiveMap, PhaseTracker
 
 HERE = Path(__file__).parent
-BUNDLE = HERE.parent / "basemap" / "bundle_v0"
+MAP_TAG = os.environ.get("MAP_TAG", "v1")  # which base map to show
+BUNDLE = HERE.parent / "basemap" / f"bundle_{MAP_TAG}"
 PORT = 8765
 MAX_TOKENS_LIMIT = 800
 HEARTBEAT_SECONDS = 10  # read every weight this often while idle, to keep the model in memory; 0 turns it off
@@ -53,6 +55,7 @@ def map_payload() -> dict:
                   for p, f, n in zip(xy, b["fine"], counts)],
         "areas": areas,
         "norms": LIVE.norms,
+        "tag": MAP_TAG,
     }
 
 
@@ -150,7 +153,7 @@ def main() -> None:
     global MODEL, TOKENIZER, LIVE
     print("loading the model (about a minute)...", flush=True)
     MODEL, TOKENIZER = load_model()
-    LIVE = LiveMap.load(BUNDLE, HERE / "norms.json")
+    LIVE = LiveMap.load(BUNDLE, HERE / f"norms_{MAP_TAG}.json")
     for _ in generate_events("Hello", 0.0, 8):  # warm up so the first real prompt is not the slow one
         pass
     params = [p for _, p in tree_flatten(MODEL.parameters())]

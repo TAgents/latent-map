@@ -1,0 +1,326 @@
+[
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nno, keep, paragraph, answer, five, opening, dialogue, facts\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "writing task prompts",
+  "answered": true,
+  "raw_tail": "ogue, facts. These are words in prompts asking model to write/answer. Name: \"writing task prompts\".\n\nNeed final only.<|end_message|><|message_model|><|content_text|>writing task prompts<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. they, are, ity, s, sleep, des, water, moon\nB. a, not, her, ed, she, side, it, like\nC. maya, you, alex, s, but, m, so, jonah\nD. only, this, final, ensure, produce, write, code, is\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "\"ensure\", \"final\", \"only\", \"this\", \"is\" \u2014 sounds like prompt instructions. Option D clearly.\n\nNeed reply with one letter only. Final: D.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. a, asks, of, in\nB. of, mention, or, with, include, from, use, simple\nC. about, practical, friends, story, related, numbered, list, function\nD. only, this, final, ensure, produce, write, code, is\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": ".\n\nOption D includes \"code\" which is more programming task prompts, not writing. Option B includes \"simple\", \"mention\", \"include\", \"use\" \u2014 writing task prompts often say \"mention\", \"include\", \"use\", \""
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. return, fact, com, ti, python, black, volcan, maya\nB. only, this, final, ensure, produce, write, code, is\nC. a, asks, of, in\nD. s\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": " \u2014 resembles prompt words. C is function words. A random tokens. D single letter. So B. Need reply one letter only. Ensure final only B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. return, fact, com, ti, python, black, volcan, maya\nB. a, not, her, ed, she, side, it, like\nC. friends, g, example, response, period, ary, calculate, rather\nD. only, this, final, ensure, produce, write, code, is\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "tive/task words: ensure, produce, write, code, final, only, this, is. Likely writing task prompts. Answer D.\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. s\nB. only, this, final, ensure, produce, write, code, is\nC. a, asks, of, in\nD. such, com, al, python\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "such, com, al, python\" maybe code-related but less. Option C is function words. Option A single letter.\n\nNeed answer one letter only. B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. such, com, al, python\nB. only, this, final, ensure, produce, write, code, is\nC. of, mention, or, with, include, from, use, simple\nD. about, practical, friends, story, related, numbered, list, function\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ting task prompts\" corresponds to a list of words that are all function words/instructions? Option C has 8 words: of, mention, or, with, include, from, use, simple. This looks like a bag of prompt-ish"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. of, mention, or, with, include, from, use, simple\nB. only, this, final, ensure, produce, write, code, is\nC. friends, g, example, response, period, ary, calculate, rather\nD. such, com, al, python\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "thon, com, al \u2014 code. C includes friends, example, response, calculate \u2014 maybe math/example.\n\nThus answer A. Need reply one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"writing task prompts\". Which word list belongs to it?\nA. only, this, final, ensure, produce, write, code, is\nB. a, not, her, ed, she, side, it, like\nC. such, com, al, python\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": ", \"is\" \u2014 clearly writing task prompts. Option B is random English words. Option D random. So answer A.\n\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nthe, was, had, that, at, way, out, said\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Common English words",
+  "answered": true,
+  "raw_tail": "on English words. Short name: \"Common English words\". Need reply name only.\n\nEnsure no extra explanation. Final only.<|end_message|><|message_model|><|content_text|>Common English words<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. such, com, al, python\nB. s\nC. a, not, her, ed, she, side, it, like\nD. only, this, final, ensure, produce, write, code, is\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "nly, this, final, ensure, produce, write, code, is \u2014 more technical/instruction words, not common.\nAnswer C. Need reply one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. a, not, her, ed, she, side, it, like\nB. of, mention, or, with, include, from, use, simple\nC. s\nD. they, are, ity, s, sleep, des, water, moon\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "rd lists, \"ed\" could be a common English word? No.\n\nLet's think: maybe the lists are from a dataset of \"word lists\" where each list is a set of words from a category. \"Common English words\" might be a"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. such, com, al, python\nB. about, practical, friends, story, related, numbered, list, function\nC. a, not, her, ed, she, side, it, like\nD. friends, g, example, response, period, ary, calculate, rather\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "ord.\nD. friends, g, example, response, period, ary, calculate, rather \u2014 contains \"g\", \"ary\" not words.\nSo B. Need reply one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. about, practical, friends, story, related, numbered, list, function\nB. a, not, her, ed, she, side, it, like\nC. friends, g, example, response, period, ary, calculate, rather\nD. return, fact, com, ti, python, black, volcan, maya\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "e non-word. A has all common words. C has g, ary fragments. D has com, ti, volcan fragments. So A is best.\n\nNeed answer one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. of, mention, or, with, include, from, use, simple\nB. maya, you, alex, s, but, m, so, jonah\nC. a, not, her, ed, she, side, it, like\nD. such, com, al, python\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "mon but still English. Which is more \"common English words\"? A has 8 words all English; C has 7 English + ed. A seems better.\n\nAnswer A.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. friends, g, example, response, period, ary, calculate, rather\nB. a, not, her, ed, she, side, it, like\nC. such, com, al, python\nD. maya, you, alex, s, but, m, so, jonah\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "?) no. A has friends, example, response, period, calculate, rather = 6 common; g and ary not. B has 7 common if ed counts? no. A has 6 common. B has 7 common if ed not counted? Let's count carefully:\n"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. a, not, her, ed, she, side, it, like\nB. friends, g, example, response, period, ary, calculate, rather\nC. about, practical, friends, story, related, numbered, list, function\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": " word. Option D is clearly all common English words. Option A has \"ed\" which is a morpheme, not word. So D.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Common English words\". Which word list belongs to it?\nA. a, not, her, ed, she, side, it, like\nB. a, asks, of, in\nC. about, practical, friends, story, related, numbered, list, function\nD. maya, you, alex, s, but, m, so, jonah\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "on but \"ed\" is a suffix. Option C has 8 words, all common but more varied. The group name \"Common English words\" likely corresponds to a list of high-frequency words. Option B is the highest frequency"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nit, i, leo, just, re, did, that, not\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "rbs/verbs\"? \"it\" pronoun, \"i\" pronoun, \"leo\" proper noun, \"just\" adverb, \"re\" ?, \"did\" verb, \"that\" demonstrative, \"not\" adverb. Not clear.\n\nMaybe they are all words that contain the letter \"i\"? it (i"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nand, a, maybe, in, on, as, by, are\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "high-frequency function words",
+  "answered": true,
+  "raw_tail": "five words. Could be \"high-frequency function words\" (4 words). Need name only. Ensure no extra. Final only.<|end_message|><|message_model|><|content_text|>high-frequency function words<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. they, are, ity, s, sleep, des, water, moon\nB. of, mention, or, with, include, from, use, simple\nC. maya, you, alex, s, but, m, so, jonah\nD. only, this, final, ensure, produce, write, code, is\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " But B includes mention/include/use/simple content. A has 2. C has 3. D has 3. So B likely.\n\nBut maybe \"high-frequency function words\" in some dataset (e.g., word list from a task) includes words like"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. of, mention, or, with, include, from, use, simple\nB. only, this, final, ensure, produce, write, code, is\nC. return, fact, com, ti, python, black, volcan, maya\nD. s\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "content?), ti (?), python (proper), black (content), volcan (?), maya (proper). Mostly content.\nD: s (function/inflectional). Only function.\n\nThus D is the only list entirely of function words. Answer"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. s\nB. friends, g, example, response, period, ary, calculate, rather\nC. of, mention, or, with, include, from, use, simple\nD. maya, you, alex, s, but, m, so, jonah\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "names/m. Option C has 4 function words plus 4 content words. Hmm.\n\nMaybe \"high-frequency function words\" in a list of contexts means the words are high-frequency function words. Option C: of, or, with"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. s\nB. of, mention, or, with, include, from, use, simple\nC. they, are, ity, s, sleep, des, water, moon\nD. maya, you, alex, s, but, m, so, jonah\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "h, m. None are pure. A is pure but only one item. Maybe the intended answer is A.\n\nNeed reply one letter only. Ensure final only letter.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. such, com, al, python\nB. a, not, her, ed, she, side, it, like\nC. of, mention, or, with, include, from, use, simple\nD. they, are, ity, s, sleep, des, water, moon\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "ixes; sleep, water, moon = content. Option A: such (function-ish), com/al/python content/domain. So B best.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. such, com, al, python\nB. maya, you, alex, s, but, m, so, jonah\nC. of, mention, or, with, include, from, use, simple\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "; C has five function? Let's count C: of, or, with, from = 4 function; mention, include, use, simple = 4 content. D: a, of, in = 3 function; asks = 1 content. B: you, but, so = 3 function; maya, alex,"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. return, fact, com, ti, python, black, volcan, maya\nB. only, this, final, ensure, produce, write, code, is\nC. they, are, ity, s, sleep, des, water, moon\nD. of, mention, or, with, include, from, use, simple\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "content), moon (content). Maybe 3-4.\n\nOption D has the most clear function words: of, or, with, from. So D.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"high-frequency function words\". Which word list belongs to it?\nA. of, mention, or, with, include, from, use, simple\nB. such, com, al, python\nC. maya, you, alex, s, but, m, so, jonah\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "high-frequency function words; mention, include, use, simple are not.\n\nMaybe the intended answer is D because it contains only high-frequency function words plus one verb? Hmm.\n\nLet's think of context"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\ncan, sort, ation, light, cells, primes, body, ine\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "tains \"ation\"? \"ation\" = a t i o n yes (positions ... c a t i o n). Contains \"ine\"? no. \"cells\"? no.\n\nMaybe they are all words that are in the word \"classification\"? no.\n\nMaybe they are all words that"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nfunction, could, protagonist, ate, return, returns, names, height\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ate\"?\n\nMaybe these are all words that are in the \"word frequency\" of a particular genre? The prompt says \"These words are typical of one group of contexts in a language model\". This sounds like a task"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nfor, user, wants, paragraph\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "user writing request",
+  "answered": true,
+  "raw_tail": "rompt\" (3 words). Or \"user writing request\". Let's craft concise.\n\nNeed ensure no extra explanation. Final only name.<|end_message|><|message_model|><|content_text|>user writing request<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. they, are, ity, s, sleep, des, water, moon\nB. a, not, her, ed, she, side, it, like\nC. friends, g, example, response, period, ary, calculate, rather\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": " has \"example, response\" maybe not. A/B are mostly stopwords. D is shortest and includes \"asks\". Likely D.\n\nNeed answer one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. s\nB. they, are, ity, s, sleep, des, water, moon\nC. maya, you, alex, s, but, m, so, jonah\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "riting request\" context. A user writing request might be like \"Maya, you ask Alex ...\"? Let's parse C: \"maya, you, alex, s, but, m, so, jonah\". If punctuation removed, maybe \"maya you alex s but m so "
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. maya, you, alex, s, but, m, so, jonah\nB. friends, g, example, response, period, ary, calculate, rather\nC. only, this, final, ensure, produce, write, code, is\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "e code is\" maybe a prompt to write code.\nD. a, asks, of, in \u2014 too few, generic.\n\nLikely C. Need answer one letter only. Ensure no extra.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. maya, you, alex, s, but, m, so, jonah\nB. s\nC. only, this, final, ensure, produce, write, code, is\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "n\" maybe also request? Option A random names. Option B \"s\".\n\nNeed answer one letter. Likely C.\n\nNeed ensure no extra. Final only letter.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. a, asks, of, in\nB. maya, you, alex, s, but, m, so, jonah\nC. return, fact, com, ti, python, black, volcan, maya\nD. s\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "t belongs to it would be the one with words like \"asks\"? Option A has \"asks\" and function words. Likely A.\n\nNeed answer one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. a, not, her, ed, she, side, it, like\nB. a, asks, of, in\nC. only, this, final, ensure, produce, write, code, is\nD. such, com, al, python\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": " where user asks to write code. Option C includes \"write\" and \"code\" and \"ensure\" etc. So C.\n\nNeed reply with one letter only. Final: C.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. only, this, final, ensure, produce, write, code, is\nB. they, are, ity, s, sleep, des, water, moon\nC. maya, you, alex, s, but, m, so, jonah\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": " only, this, is. That seems like a prompt/instruction. Other lists are random. So answer A. Need reply one letter only. Ensure no extra.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"user writing request\". Which word list belongs to it?\nA. a, asks, of, in\nB. return, fact, com, ti, python, black, volcan, maya\nC. s\nD. maya, you, alex, s, but, m, so, jonah\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " it?\" So there are multiple groups of contexts, each named. We need pick the word list that belongs to the group named \"user writing request\". The word lists are sets of words. The group name suggests"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nshort, tips, facts, clear, python, dialogue, between, five\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " between, five \u2014 not all common? python is less common.\n\nMaybe they are all words that appear in the phrase \"between five\"? No.\n\nCould be words with 5 letters? short (5), tips (4), facts (5), clear (5"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\noc, cit, wasn, con, the\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "common subword tokens",
+  "answered": true,
+  "raw_tail": "ommon English word fragments\". Short name: \"common subword tokens\" (3 words). Good.\n\nNeed final only name. No extra.<|end_message|><|message_model|><|content_text|>common subword tokens<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. return, fact, com, ti, python, black, volcan, maya\nB. such, com, al, python\nC. s\nD. friends, g, example, response, period, ary, calculate, rather\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " and subwords g/ary/period.\n\nIf group named \"common subword tokens\", the list should contain only subword tokens, not full words. Option C has only \"s\", definitely a subword token. Option B has \"such\""
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. maya, you, alex, s, but, m, so, jonah\nB. such, com, al, python\nC. about, practical, friends, story, related, numbered, list, function\nD. a, asks, of, in\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "re likely short frequent pieces: \"a\", \"of\", \"in\", \"s\", \"m\", \"al\", \"com\". Option D has \"a\", \"of\", \"in\" (very common) plus \"asks\" (less common). Option B has \"com\", \"al\" (subword) plus \"such\", \"python\"."
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. s\nB. a, asks, of, in\nC. such, com, al, python\nD. about, practical, friends, story, related, numbered, list, function\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "des \"com\" and \"al\" which are subword pieces (e.g., \"common\", \"al\" in \"all\"?), but also \"such\" and \"python\" full words. Maybe these are \"common subword tokens\" in a specific set of contexts? Hmm.\n\nNeed"
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. such, com, al, python\nB. friends, g, example, response, period, ary, calculate, rather\nC. s\nD. they, are, ity, s, sleep, des, water, moon\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": ", water, moon \u2014 fragments ity,s,des; rest full words.\nOnly C consists entirely of subword tokens. Answer C.\n\nNeed final one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. of, mention, or, with, include, from, use, simple\nB. such, com, al, python\nC. friends, g, example, response, period, ary, calculate, rather\nD. return, fact, com, ti, python, black, volcan, maya\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ubwords. Hmm.\n\nMaybe there is an underlying image/table not included? The user only gives text. Need answer one letter. We must infer.\n\nLet's think of tokenization: Common subword tokens in e.g. GPT-2"
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. they, are, ity, s, sleep, des, water, moon\nB. of, mention, or, with, include, from, use, simple\nC. such, com, al, python\nD. a, not, her, ed, she, side, it, like\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " English BPE, \"des\" appears in \"des\"? maybe in \"des\" as in \"des\"? Common subword tokens are often short strings that appear across many words: \"s\", \"ed\", \"ing\", \"tion\", \"er\", \"ly\", \"ity\", \"com\", \"al\","
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. return, fact, com, ti, python, black, volcan, maya\nB. friends, g, example, response, period, ary, calculate, rather\nC. s\nD. such, com, al, python\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "ains tokens that are subwords common to all words in contexts. Option C \"s\" is plausible.\n\nNeed answer one letter only. Ensure no extra.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"common subword tokens\". Which word list belongs to it?\nA. such, com, al, python\nB. of, mention, or, with, include, from, use, simple\nC. they, are, ity, s, sleep, des, water, moon\nD. maya, you, alex, s, but, m, so, jonah\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " The word list that belongs to \"common subword tokens\" would be the list consisting of subword tokens that are common. Option A has \"com\" and \"al\" (subword tokens) but also \"such\" and \"python\". Option"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\ncon, let, e, n, co, dis, exact, cit\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " \"n\", \"co\", \"dis\", \"exact\", \"cit\". In programming? \"let\" is a keyword in JS/Rust. \"co\" maybe? \"dis\"? \"cit\"? \"exact\"? \"con\"? \"e\", \"n\". Hmm.\n\nMaybe these are \"common English words/subwords in legal text"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nneed, s, can, no, only, keep, this, paragraph\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ion: \"You need to keep this paragraph only\"? Hmm.\n\nMaybe the commonality is that they are all words that are in the word \"paragraph\"? No.\n\nLet's check letters: need (n,e,e,d), s, can (c,a,n), no (n,o)"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nthe, a, was, not, had, it, maya, i, you, leo\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "common English words",
+  "answered": true,
+  "raw_tail": "sh sentences\". Short name: \"common English words\" (2 words). That seems safe.\n\nNeed final only name. Ensure no extra.<|end_message|><|message_model|><|content_text|>common English words<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nand, of, a, mention, maybe, can, they, sort, are, ation, function, friends, could, g, protagonist\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "), they (no), sort (no), are (no), ation (no), function (no g), friends (no g), could (no g), g (yes), protagonist (no g). No.\n\nWords containing \"a\"? many.\n\nMaybe they are all words that appear in the"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nfor, a, user, asks, wants, short, about, tips, practical, facts, oc, such, cit, com, wasn, con, return, let, fact, e\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "short practical facts and tips",
+  "answered": true,
+  "raw_tail": "t \"user requests for short facts\"? Let's craft concise.\n\nNeed ensure no extra explanation. Final only name.<|end_message|><|message_model|><|content_text|>short practical facts and tips<|end_message|>"
+ }
+]

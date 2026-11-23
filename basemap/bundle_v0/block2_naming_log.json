@@ -1,0 +1,332 @@
+[
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nopening, write, dialogue, craft, two, writing, with, produce\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Two-character dialogue crafting",
+  "answered": true,
+  "raw_tail": "ally \"Two-character\" one, \"dialogue\" two, \"crafting\" three). Good.\n\nNeed final only name. Ensure no extra.<|end_message|><|message_model|><|content_text|>Two-character dialogue crafting<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. to, con, the, light, they, ti, bridge, interest\nC. comments, code, maybe, include, could, s, coding, ensure\nD. the, we, because, in, must, who, dis, protagonist\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "has protagonist, who, because, must \u2014 maybe narrative but not dialogue. Option A best.\n\nNeed reply one letter only. Ensure final only A.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. to, con, the, light, they, ti, bridge, interest\nB. maybe, story, need, creative, friends, words, short, of\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. return, index, def, time, number, returns, indexes, total\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " words. Option B has story/creative/words/short. Option C has tips/advice/facts/ensure/careful/which/matter/not \u2014 could be \"dialogue crafting\" advice? \"tips\", \"advice\", \"ensure\", \"careful\", \"which\", \""
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. user, ensure, only, request, asks, extra, benign, s\nB. return, index, def, time, number, returns, indexes, total\nC. maybe, story, need, creative, friends, words, short, of\nD. maya, that, sam, it, jonah, m, let, the\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "ds (let, that, it). Option C is creative story words but not two-character dialogue specifically. D likely.\nNeed answer one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. maya, that, sam, it, jonah, m, let, the\nB. return, index, def, time, number, returns, indexes, total\nC. user, ensure, only, request, asks, extra, benign, s\nD. maybe, story, need, creative, friends, words, short, of\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "de character names and dialogue-related words. Option A includes names and \"let\" (dialogue), but also \"m\" maybe \"I'm\"? Option D includes story/creative/friends/words/short, more about creative writing"
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. paragraph, cise, clear, list, exactly, craft, wants, explanation\nC. roman, of, in, e, french, was, empire, chess\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " clear, list, exactly, craft, wants, explanation\" \u2014 \"cise\" maybe part of \"concise\", \"craft\", \"clear\", \"wants\", \"explanation\". Could be about crafting a clear concise explanation/list. Not specifically"
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. the, we, because, in, must, who, dis, protagonist\nC. such, let, con, we, co, paragraph\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " aligned with crafting advice.\n\nNeed be precise. The word lists are likely generated from a set of topics with words. Group name \"Two-character dialogue crafting\" maybe from a set of \"writing\" topics."
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. the, we, because, in, must, who, dis, protagonist\nB. comments, code, maybe, include, could, s, coding, ensure\nC. maya, that, sam, it, jonah, m, let, the\nD. maybe, story, need, creative, friends, words, short, of\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " maya, that, sam, it, jonah, m, let, the \u2014 has Maya, Sam, Jonah, m (maybe initials), that, it, let, the. That's mostly names and function words, could be dialogue. Option A: the, we, because, in, must"
+ },
+ {
+  "prompt": "A group of contexts is named \"Two-character dialogue crafting\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. roman, of, in, e, french, was, empire, chess\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. comments, code, maybe, include, could, s, coding, ensure\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "dialogue. Option D is coding. Option C is advice/tips. Option B is chess/empire. So A.\n\nNeed reply one letter only. Ensure final only A.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nfunction, with, python, a, provide, craft, block, write\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Python code generation",
+  "answered": true,
+  "raw_tail": " writing Python code blocks/functions. Short name: \"Python code generation\" (2 words). That fits. Ensure only name.<|end_message|><|message_model|><|content_text|>Python code generation<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. return, index, def, time, number, returns, indexes, total\nB. paragraph, cise, clear, list, exactly, craft, wants, explanation\nC. user, ensure, only, request, asks, extra, benign, s\nD. comments, code, maybe, include, could, s, coding, ensure\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "ding, ensure. Contains \"s\" and generic words, less specific. A is clearly Python code generation. Answer A.\n\nNeed final only one letter.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. to, con, the, light, they, ti, bridge, interest\nB. such, let, con, we, co, paragraph\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. comments, code, maybe, include, could, s, coding, ensure\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": " s, coding, ensure \u2014 contains code, coding, comments, include, ensure. Clearly Python code generation. Answer D.\nNeed final only letter.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. the, we, because, in, must, who, dis, protagonist\nB. comments, code, maybe, include, could, s, coding, ensure\nC. to, con, the, light, they, ti, bridge, interest\nD. maybe, story, need, creative, friends, words, short, of\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "terest \u2014 unrelated.\nD: maybe, story, need, creative, friends, words, short, of \u2014 creative writing.\nAnswer B. Need reply one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. the, we, because, in, must, who, dis, protagonist\nB. paragraph, cise, clear, list, exactly, craft, wants, explanation\nC. roman, of, in, e, french, was, empire, chess\nD. comments, code, maybe, include, could, s, coding, ensure\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": ", ensure \u2014 contains code, coding, comments, include, ensure. Clearly Python code generation.\n\nNeed reply with one letter only. Final: D.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. comments, code, maybe, include, could, s, coding, ensure\nC. to, con, the, light, they, ti, bridge, interest\nD. maya, that, sam, it, jonah, m, let, the\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "y Python code generation. Option A creative story words. C unrelated. D names. Answer B.\n\nNeed reply with one letter only. Final just B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. maya, that, sam, it, jonah, m, let, the\nB. comments, code, maybe, include, could, s, coding, ensure\nC. such, let, con, we, co, paragraph\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": " we, co, paragraph \u2014 not.\nD tips, facts, matter, not, ensure, advice, careful, which \u2014 advice-ish.\nAnswer B. Need final one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. such, let, con, we, co, paragraph\nB. comments, code, maybe, include, could, s, coding, ensure\nC. roman, of, in, e, french, was, empire, chess\nD. maya, that, sam, it, jonah, m, let, the\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "nclude, could, maybe, s \u2014 clearly Python code generation. Others are unrelated. Need reply with one letter only. Final should be just B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Python code generation\". Which word list belongs to it?\nA. comments, code, maybe, include, could, s, coding, ensure\nB. paragraph, cise, clear, list, exactly, craft, wants, explanation\nC. maya, that, sam, it, jonah, m, let, the\nD. to, con, the, light, they, ti, bridge, interest\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": ", could, s, coding, ensure \u2014 clearly code-related. B is writing/explanation. C names. D unrelated. Answer A. Need final one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nshort, one, five, keep, numbered, or, could, facts\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ort\", \"one\", \"five\", \"keep\", \"numbered\", \"or\", \"could\", \"facts\". Could be words in prompts asking for \"short numbered list of facts\". \"one or five facts\", \"keep short\", \"numbered\". Yes: \"short\", \"one\""
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nneed, final, answer, no, wants, this, is, be\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ed (common), final (less), answer (common), no (very common), wants (common), this (very common), is (very common), be (very common). Yes all are relatively high-frequency function/common words. But \""
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\ni, a, in, cit, the, value\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ybe \"words that are substrings of common words\"? i, a, in, cit, the, value: \"cit\" is substring of \"citation\", \"value\" is a word. Hmm.\n\nMaybe these are tokens from a specific language model's \"context\""
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nn, prime, if, g, or, sort, for, bubble\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Sorting algorithms",
+  "answered": true,
+  "raw_tail": " or, sort, n, g. Likely \"sorting algorithms\". Need short name. Answer only. Ensure no extra. Final: Sorting algorithms.<|end_message|><|message_model|><|content_text|>Sorting algorithms<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. the, we, because, in, must, who, dis, protagonist\nB. tips, facts, matter, not, ensure, advice, careful, which\nC. return, index, def, time, number, returns, indexes, total\nD. comments, code, maybe, include, could, s, coding, ensure\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": " coding-ish but less specific; includes comments, maybe, could. C is more clearly sorting algorithms.\n\nAnswer C. Need final only letter.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. roman, of, in, e, french, was, empire, chess\nB. paragraph, cise, clear, list, exactly, craft, wants, explanation\nC. return, index, def, time, number, returns, indexes, total\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "s, indexes, total). Yes.\nD. tips, facts, matter, not, ensure, advice, careful, which \u2014 unrelated.\n\nAnswer C. Need final one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. user, ensure, only, request, asks, extra, benign, s\nB. tips, facts, matter, not, ensure, advice, careful, which\nC. to, con, the, light, they, ti, bridge, interest\nD. return, index, def, time, number, returns, indexes, total\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": ", time, number, returns, indexes, total \u2014 these are programming/algorithm terms. D clearly belongs. Need reply one letter only. Final D.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. to, con, the, light, they, ti, bridge, interest\nB. the, we, because, in, must, who, dis, protagonist\nC. return, index, def, time, number, returns, indexes, total\nD. comments, code, maybe, include, could, s, coding, ensure\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "es.\nD: comments, code, maybe, include, could, s, coding, ensure \u2014 coding but not specifically sorting.\nAnswer C. Need final only letter.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. such, let, con, we, co, paragraph\nB. to, con, the, light, they, ti, bridge, interest\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. return, index, def, time, number, returns, indexes, total\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "index, def, time, number, returns, indexes, total \u2014 programming/algorithm terms. D clearly belongs. Need reply one letter only. Final D.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. user, ensure, only, request, asks, extra, benign, s\nB. return, index, def, time, number, returns, indexes, total\nC. comments, code, maybe, include, could, s, coding, ensure\nD. maybe, story, need, creative, friends, words, short, of\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "ut not sorting. Option D story creative friends words short of - creative writing. So B.\n\nNeed reply with one letter only. Final just B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. maya, that, sam, it, jonah, m, let, the\nC. return, index, def, time, number, returns, indexes, total\nD. the, we, because, in, must, who, dis, protagonist\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": " names/pronouns - unrelated.\nOption D: the, we, because, in, must, who, dis, protagonist - unrelated.\n\nAnswer C. Need final only letter.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Sorting algorithms\". Which word list belongs to it?\nA. such, let, con, we, co, paragraph\nB. comments, code, maybe, include, could, s, coding, ensure\nC. roman, of, in, e, french, was, empire, chess\nD. return, index, def, time, number, returns, indexes, total\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "dex, returns, time, number, total. Sorting algorithms involve index, returns, time, number, total. Likely D.\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nthe, and, jazz, open, to, olympic, bastille, revolution\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "and, to are high frequency; jazz, open, olympic, bastille, revolution less. Not all high.\n\nCould be all words that are in the vocabulary but not? Let's count letters? the(3), and(3), jazz(4), open(4),"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nand, immune, by, are, vaccine, water, black, from\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "k letters: all contain? \"and\" has a,n,d. \"immune\" has i,m,u,n,e. \"by\" b,y. \"are\" a,r,e. \"vaccine\" v,a,c,c,i,n,e. \"water\" w,a,t,e,r. \"black\" b,l,a,c,k. \"from\" f,r,o,m. Common letter? \"a\" appears in and"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\npractical, no, matters, related, accuracy, avoid, claim, about\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Accuracy caveats",
+  "answered": true,
+  "raw_tail": " accuracy. Short name: \"Accuracy caveats\" (2 words). Need name only.\n\nLet's ensure no extra explanation. Final only name.<|end_message|><|message_model|><|content_text|>Accuracy caveats<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. such, let, con, we, co, paragraph\nB. return, index, def, time, number, returns, indexes, total\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. to, con, the, light, they, ti, bridge, interest\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": " contains \"tips\", \"facts\", \"matter\", \"not\", \"ensure\", \"advice\", \"careful\", \"which\" \u2014 yes caveats. Answer C.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. maya, that, sam, it, jonah, m, let, the\nB. to, con, the, light, they, ti, bridge, interest\nC. return, index, def, time, number, returns, indexes, total\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "ming/math terms. Option D clearly about accuracy caveats (tips/facts/advice/careful/ensure). Answer D.\n\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. roman, of, in, e, french, was, empire, chess\nB. paragraph, cise, clear, list, exactly, craft, wants, explanation\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. to, con, the, light, they, ti, bridge, interest\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "h, was, empire, chess \u2014 random. Option D: to, con, the, light, they, ti, bridge, interest \u2014 random.\n\nThus C. Need reply one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. comments, code, maybe, include, could, s, coding, ensure\nB. tips, facts, matter, not, ensure, advice, careful, which\nC. maybe, story, need, creative, friends, words, short, of\nD. user, ensure, only, request, asks, extra, benign, s\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "areful, which\". B includes \"not\", \"ensure\", \"careful\", \"facts\", \"tips\", \"advice\", \"matter\", \"which\". Yes B.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. such, let, con, we, co, paragraph\nB. tips, facts, matter, not, ensure, advice, careful, which\nC. comments, code, maybe, include, could, s, coding, ensure\nD. roman, of, in, e, french, was, empire, chess\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "o, paragraph \u2014 maybe paragraph. Option D: roman, of, in, e, french, was, empire, chess \u2014 chess/empire. So B. Need reply one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. tips, facts, matter, not, ensure, advice, careful, which\nB. comments, code, maybe, include, could, s, coding, ensure\nC. such, let, con, we, co, paragraph\nD. roman, of, in, e, french, was, empire, chess\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "facts, matter, not, ensure, advice, careful, which\" \u2014 words like facts, ensure, careful, advice. So A.\n\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. user, ensure, only, request, asks, extra, benign, s\nC. return, index, def, time, number, returns, indexes, total\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "sounds like accuracy caveats: tips/facts/advice, careful, not ensure, which matter. Yes D.\n\nNeed final one letter only. Ensure no extra.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Accuracy caveats\". Which word list belongs to it?\nA. to, con, the, light, they, ti, bridge, interest\nB. roman, of, in, e, french, was, empire, chess\nC. paragraph, cise, clear, list, exactly, craft, wants, explanation\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "D",
+  "answered": true,
+  "raw_tail": "ndom. Option B: roman, of, in, e, french, was, empire, chess \u2014 random/history.\n\nThus D. Need reply one letter only. Ensure final only D.<|end_message|><|message_model|><|content_text|>D<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\ni, alex, you, yeah, jamie, ly, did, leo\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "informal chat tokens",
+  "answered": true,
+  "raw_tail": "ry\".\n\nNeed answer only. Maybe \"informal chat tokens\". That's three words. Ensure at most five words. Final only name.<|end_message|><|message_model|><|content_text|>informal chat tokens<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. the, we, because, in, must, who, dis, protagonist\nB. maya, that, sam, it, jonah, m, let, the\nC. maybe, story, need, creative, friends, words, short, of\nD. roman, of, in, e, french, was, empire, chess\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "ot chat.\nD: roman, of, in, e, french, was, empire, chess \u2014 proper nouns/content.\nLikely B. Need answer one letter only. Ensure no extra.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. user, ensure, only, request, asks, extra, benign, s\nB. maya, that, sam, it, jonah, m, let, the\nC. tips, facts, matter, not, ensure, advice, careful, which\nD. to, con, the, light, they, ti, bridge, interest\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": " short tokens, typical chat. Option D has \"con\", \"ti\" maybe abbreviations but also \"bridge\", \"interest\" formal. B seems best.\n\nAnswer B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. maybe, story, need, creative, friends, words, short, of\nB. to, con, the, light, they, ti, bridge, interest\nC. maya, that, sam, it, jonah, m, let, the\nD. tips, facts, matter, not, ensure, advice, careful, which\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "al chat tokens likely include personal names and casual words. C has maya, sam, jonah, m, let. So answer C.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. maya, that, sam, it, jonah, m, let, the\nB. roman, of, in, e, french, was, empire, chess\nC. maybe, story, need, creative, friends, words, short, of\nD. return, index, def, time, number, returns, indexes, total\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "rt, of \u2014 more content words, maybe creative writing. Option B historical/chess. Option D programming. So A.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. such, let, con, we, co, paragraph\nB. maya, that, sam, it, jonah, m, let, the\nC. roman, of, in, e, french, was, empire, chess\nD. the, we, because, in, must, who, dis, protagonist\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "co maybe informal? C has roman/french/empire/chess (proper nouns/topics). D has protagonist (formal). So B.\n\nNeed reply one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. return, index, def, time, number, returns, indexes, total\nB. such, let, con, we, co, paragraph\nC. maya, that, sam, it, jonah, m, let, the\nD. paragraph, cise, clear, list, exactly, craft, wants, explanation\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "t, exactly, craft, wants, explanation \u2014 formal/academic.\nInformal chat tokens likely include names, pronouns, casual words: C. Answer C.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. the, we, because, in, must, who, dis, protagonist\nB. roman, of, in, e, french, was, empire, chess\nC. maybe, story, need, creative, friends, words, short, of\nD. maya, that, sam, it, jonah, m, let, the\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "words\", \"short\"? Not exactly. Option D has proper names (Maya, Sam, Jonah) and \"m\" (maybe \"m\" as in \"m\"?), \"let\", \"that\", \"it\", \"the\". Proper names are not tokens category. Option C has \"maybe\", \"need"
+ },
+ {
+  "prompt": "A group of contexts is named \"informal chat tokens\". Which word list belongs to it?\nA. maya, that, sam, it, jonah, m, let, the\nB. such, let, con, we, co, paragraph\nC. return, index, def, time, number, returns, indexes, total\nD. user, ensure, only, request, asks, extra, benign, s\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "s \u2014 more formal/technical.\nInformal chat tokens likely A: names and casual words. Need answer one letter only. Ensure no extra. Final A.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\na, stake, town, is, let, her, where, mara\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "with the name only.\"\n\nThis resembles tasks where given a set of words, identify the context/domain. Need answer like \"fantasy story dialogue\". Let's infer.\n\nWords: a, stake, town, is, let, her, where,"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nopening, maybe, write, story, dialogue, function, comments, with, code, python, short, paragraph, one, cise, five\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "concise paragraph, five ...\" Hmm.\n\nCommon theme: \"short Python story with dialogue\". That's 5? short1 Python2 story3 with4 dialogue5. Good. But \"function\" and \"comments\" are Python code terms. Maybe \""
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nneed, user, final, ensure, answer, i, such, a, let, in\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " might be the most frequent tokens in \"user prompts\"? Actually \"user\", \"final\", \"answer\", \"ensure\", \"let\", \"such\", \"i\", \"a\", \"in\", \"need\". In language model contexts, these are typical of \"instruction"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nn, return, prime, index, if, the, roman, and, of, jazz, and, to, immune, con, by\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " are \"not in the top 1000\"? Or \"rare words\"? The list includes common words (the, and, of, to, by, if) and rare/technical (prime, index, roman, immune, con, jazz, return, n). Could be typical of \"code"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\npractical, tips, no, facts, matters, i, maya, alex, that, you, a, the, stake, we, town\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ake in the town\"? Maya and Alex are people. \"we\" and \"you\". \"that\". \"i\". \"no\". \"facts\". \"matters\". \"practical\". \"tips\". \"town\".\n\nCould be about \"practical tips\" for \"town\"? Maybe \"local town matters\"?"
+ }
+]

@@ -1,0 +1,188 @@
+[
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nlet, con, e, a, ide, friend, stake, range\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "aybe \"let\", \"con\", \"e\", \"a\", \"ide\", \"friend\", \"stake\", \"range\" are all words that are part of \"let's con...\"? Hmm.\n\nMaybe the words are typical of one group of contexts: they are all words that appear"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nthe, such, cit, co\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "such, cit, co\" are all tokens that appear in \"legal\" contexts? Let's think.\n\nThe phrase \"cit\" and \"co\" are fragments. In language model, tokens like \"the\", \"such\", \"cit\", \"co\" are typical of \"academic"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nneed, could, i, should, me, be, they\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Function words",
+  "answered": true,
+  "raw_tail": "name: \"function words\" (two words). Could be \"pronouns and modals\" but need common. \"Function words\" fits. Reply name only.<|end_message|><|message_model|><|content_text|>Function words<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. s, can, we, maybe, ll, to\nB. ensure, craft, include, write, be, provide, a, it\nC. short, of, five, practical, a, exactly, or, in\nD. maya, stake, dis, return, co, jamie, o, cit\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "e is auxiliary/copula; a article; it pronoun. Not all function.\nC: short, of, five, practical, a, exactly, or, in. Mixed: short/practical/exactly content/adverb; of/a/or/in function. Not all.\nD: maya,"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. let, con, value\nB. s, can, we, maybe, ll, to\nC. i, you, like, so, not, immune, t, first\nD. the, don, exact, ti, arr, open, n, poss\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "un). Not function.\n\nLikely B is closest to function words: s, can, we, maybe, ll, to. But \"maybe\" is adverb, not function. Let's inspect. Maybe this is from a dataset of context words? \"Function words"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. ensure, craft, include, write, be, provide, a, it\nB. s, can, we, maybe, ll, to\nC. request, content, function, ations, comments, bullet, tools, good\nD. maya, stake, dis, return, co, jamie, o, cit\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "h. Option A has mostly content verbs plus be, a, it (some function). Option B is best. Need answer one letter only. Ensure final only B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. ensure, craft, include, write, be, provide, a, it\nB. the, of, a, are, is, for, on, as\nC. short, of, five, practical, a, exactly, or, in\nD. s, can, we, maybe, ll, to\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "ction. Option D has s, can, we, maybe, ll, to \u2014 mixed (maybe content adverb, s/ll contractions). So B.\n\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. user, paragraph, only, comments, this, tips, dialogue, code\nB. the, don, exact, ti, arr, open, n, poss\nC. short, of, five, practical, a, exactly, or, in\nD. s, can, we, maybe, ll, to\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ixed.\nOption A: user, paragraph, only, comments, this, tips, dialogue, code. \"only\" adverb, \"this\" pronoun/determiner, others nouns. Mixed.\n\nNeed identify which list belongs to \"Function words\". Maybe"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. s, can, we, maybe, ll, to\nB. i, you, like, so, not, immune, t, first\nC. the, of, a, are, is, for, on, as\nD. maya, stake, dis, return, co, jamie, o, cit\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": " ll contraction, to preposition). Option B has immune, first etc. Option D proper nouns/content. So C.\n\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. the, to, town, her, must, or, whose, small\nB. short, of, five, practical, a, exactly, or, in\nC. let, con, value\nD. s, can, we, maybe, ll, to\nReply with one letter only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ll\" are contractions/clitics? \"s\" could be possessive/plural suffix? \"ll\" is contraction of will. \"can\" modal, \"we\" pronoun, \"maybe\" adverb (content?), \"to\" preposition. \"maybe\" is an adverb, content-"
+ },
+ {
+  "prompt": "A group of contexts is named \"Function words\". Which word list belongs to it?\nA. s, can, we, maybe, ll, to\nB. the, of, a, are, is, for, on, as\nC. ensure, craft, include, write, be, provide, a, it\nD. user, paragraph, only, comments, this, tips, dialogue, code\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "traction), to (preposition/infinitive) \u2014 mixed, includes maybe adverb. Option B is cleanest. Answer B.\n\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\none, wants, about, clear, numbered, asks, two, python\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " think of language model contexts: words like \"one\", \"wants\", \"about\", \"clear\", \"numbered\", \"asks\", \"two\", \"python\". Could be from \"Stack Overflow questions\"? Typical words in \"Python programming Q&A\""
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nneed, maybe, with, keep, mention, produce, careful, make\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "roduce, careful, make. They are all words that are in the top 100? Let's check frequency: with (very high), make (high), keep (medium), need (medium), maybe (medium), mention (lower), produce (lower),"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nno, final, opening, answer, short, facts, writing, matter\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "answer\", \"short\", \"facts\", \"writing\", \"matter\". They might be tokens that appear in \"prompts for writing\"? Let's think of contexts:\n- \"no\" appears in \"no matter\", \"no facts\", \"no answer\"\n- \"final\" and"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\na, is, because, in, where, who, protagonist, that\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "ve\"? a, is, in are not. \"protagonist\" maybe a \"character\". Common in \"character descriptions\"? Hmm.\n\nMaybe these are words that appear in \"causal reasoning\"? because, where, who, that, protagonist? no"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nand, to, not, in, or, that, by, from\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "Stopwords",
+  "answered": true,
+  "raw_tail": "s\". They ask \"what they have in common\". Short name. Likely \"stopwords\". Need reply with name only. Ensure no extra. Final only.<|end_message|><|message_model|><|content_text|>Stopwords<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. the, to, town, her, must, or, whose, small\nB. user, paragraph, only, comments, this, tips, dialogue, code\nC. the, of, a, are, is, for, on, as\nD. short, of, five, practical, a, exactly, or, in\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": "ly, or, in\n\nStopwords are common words like the, of, a, are, is, for, on, as. That's C. Need reply one letter only. Ensure final only C.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. s, can, we, maybe, ll, to\nB. the, of, a, are, is, for, on, as\nC. short, of, five, practical, a, exactly, or, in\nD. let, con, value\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "con, value\n\nStopwords are common words like the, of, a, are, is, for, on, as. That's B. Need reply one letter only. Ensure final only B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. i, you, like, so, not, immune, t, first\nB. the, of, a, are, is, for, on, as\nC. request, content, function, ations, comments, bullet, tools, good\nD. maya, stake, dis, return, co, jamie, o, cit\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": " jamie, o, cit\n\nStopwords are common words like the, of, a, are, is, for, on, as. So B. Need reply one letter only. Ensure final only B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. let, con, value\nB. request, content, function, ations, comments, bullet, tools, good\nC. the, of, a, are, is, for, on, as\nD. the, to, town, her, must, or, whose, small\nReply with one letter only.",
+  "answer": "C",
+  "answered": true,
+  "raw_tail": ", of, a, are, is, for, on, as. Option C. Option D includes town, small which are content words. So answer C. Need reply one letter only.<|end_message|><|message_model|><|content_text|>C<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. maya, stake, dis, return, co, jamie, o, cit\nB. the, of, a, are, is, for, on, as\nC. the, to, town, her, must, or, whose, small\nD. request, content, function, ations, comments, bullet, tools, good\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "t? Options. Stopwords are common words like the, of, a, are, is, for, on, as. That's B. Need reply one letter only. Ensure final only B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. the, of, a, are, is, for, on, as\nB. ensure, craft, include, write, be, provide, a, it\nC. let, con, value\nD. maya, stake, dis, return, co, jamie, o, cit\nReply with one letter only.",
+  "answer": "A",
+  "answered": true,
+  "raw_tail": "ords.\nC. let, con, value \u2014 not stopwords.\nD. maya, stake, dis, return, co, jamie, o, cit \u2014 random.\nAnswer A. Need reply one letter only.<|end_message|><|message_model|><|content_text|>A<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. user, paragraph, only, comments, this, tips, dialogue, code\nB. the, of, a, are, is, for, on, as\nC. the, don, exact, ti, arr, open, n, poss\nD. let, con, value\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "et, con, value\n\nStopwords are common words like the, of, a, are, is, for, on, as. So B. Need reply one letter only. Ensure final only B.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "A group of contexts is named \"Stopwords\". Which word list belongs to it?\nA. short, of, five, practical, a, exactly, or, in\nB. the, of, a, are, is, for, on, as\nC. maya, stake, dis, return, co, jamie, o, cit\nD. request, content, function, ations, comments, bullet, tools, good\nReply with one letter only.",
+  "answer": "B",
+  "answered": true,
+  "raw_tail": "et, tools, good \u2014 content words\nStopwords are common words like the, of, a, are, is, for, on, as. So B.\nNeed reply with one letter only.<|end_message|><|message_model|><|content_text|>B<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\ns, accuracy, advice, yeah, words, time, ly, etc\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "or \"high-frequency tokens\". Let's see.\n\nThe words listed: s, accuracy, advice, yeah, words, time, ly, etc. They might be examples of \"low-information tokens\"? In language models, common words like \"s\""
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nalex, n, sam, open, g, if, jonah, re\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": " identifiers\".\n\nLet's inspect tokens: alex, n, sam, open, g, if, jonah, re. In Python: `if`, `open`, `re` are keywords/builtins/module; `g`, `n` are variable names; `alex`, `sam`, `jonah` are variable"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nit, s, was, but, that, m, did, just\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "anguage model, these words are typical of \"low-information tokens\"? Or \"high-frequency tokens\". The phrase \"one group of contexts in a language model\" maybe from a dataset/task: given words typical of"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nlet, the, con, don, e, the, let, such, con, cit\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "n English subwords. Maybe \"high-frequency English tokens\". At most five words. Need name only.\n\nLet's consider exact list: let, the, con, don, e, the, let, such, con, cit. These could be tokens from a"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\nneed, s, could, can, i, one, short, wants, of, about, need, ensure, maybe, craft, with, no, user, final, paragraph, opening\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "odel. They ask \"Give a short name for what they have in common\". This resembles word-cluster naming. The cluster likely is \"writing a short paragraph\". Let's craft final only: \"Short paragraph writing"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\na, the, is, to, because, and, the, to, of, not\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "English stopwords",
+  "answered": true,
+  "raw_tail": "uld say \"English stopwords\" (two words). That's apt. Need reply with name only. Ensure no extra explanation. Final only.<|end_message|><|message_model|><|content_text|>English stopwords<|end_message|>"
+ },
+ {
+  "prompt": "These words are typical of one group of contexts in a language model:\ns, request, accuracy, content, advice, alex, maya, n, stake, sam, it, i, s, you, was\nGive a short name for what they have in common, at most five words. Reply with the name only.",
+  "answer": "",
+  "answered": false,
+  "raw_tail": "personal advice requests\". That's three words. But let's be precise.\n\nThe words are typical of one group of contexts in a language model. They might be tokens from \"user asks for advice\". Names Alex, "
+ }
+]

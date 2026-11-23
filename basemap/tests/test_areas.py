@@ -28,3 +28,8 @@ def test_distinctive_words_ignores_special_markers():
     toks = ["<|content_text|>"] * 5 + ["cat"] * 5 + ["dog"] * 5
     w = distinctive_words(toks, np.array([0] * 10 + [1] * 5), top=3, min_count=2)
     assert w[0] == ["cat"]
+
+
+def test_distinctive_words_can_be_asked_for_areas_with_no_points():
+    w = distinctive_words(["cat"] * 3, np.array([0, 0, 0]), top=2, min_count=1, areas=[0, 1])
+    assert w == {0: [], 1: []} or (w[0] == [] and w[1] == [])

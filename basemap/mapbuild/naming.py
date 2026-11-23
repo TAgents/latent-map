@@ -2,6 +2,7 @@
 second run can pick the area's own held-out words from the name alone."""
 
 import random
+import re
 from typing import Callable
 
 LETTERS = "ABCD"
@@ -14,6 +15,16 @@ def answer_text(raw: str) -> str:
     if ANSWER_MARK in raw:
         return raw.split(ANSWER_MARK, 1)[1].split(END_MARK, 1)[0].strip()
     return "" if THINK_MARK in raw else raw.strip()
+
+
+def pick_letter(reply: str) -> str | None:
+    """The option letter a reply chooses: the first standalone capital A to D,
+    or a reply that is nothing but one letter. None when there is no clear pick."""
+    found = re.search(r"(?<![A-Za-z])([A-D])(?![A-Za-z])", reply)
+    if found:
+        return found.group(1)
+    bare = re.fullmatch(r"\W*([a-d])\W*", reply.strip())
+    return bare.group(1).upper() if bare else None
 
 
 def name_area(ask: Callable[[str], str], words: list[str]) -> str:
@@ -32,7 +43,9 @@ def name_area(ask: Callable[[str], str], words: list[str]) -> str:
 
 
 def score_name(ask: Callable[[str], str], name: str, own: list[str], others: list[list[str]], trials: int = 4, seed: int = 0) -> float:
-    """Share of trials in which the reply starts with the letter of the area's own words."""
+    """Share of trials in which the reply picks the letter of the area's own words.
+    This measures whether the name tells this area's words apart from other areas',
+    not whether the name is a correct description."""
     others = [o for o in others if o]
     if not name or not own or not others:
         return 0.0
@@ -47,5 +60,5 @@ def score_name(ask: Callable[[str], str], name: str, own: list[str], others: lis
             f'A group of contexts is named "{name}". Which word list belongs to it?\n{listing}\n'
             "Reply with one letter only."
         )
-        right += reply.strip().upper()[:1] == answer
+        right += pick_letter(reply) == answer
     return right / trials

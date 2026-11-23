@@ -35,7 +35,7 @@ def main() -> None:
         fine, broad = group_cells(m["centres"], N_FINE, N_BROAD)
         last = cell[reply, -1]
         area = fine[last]
-        words = distinctive_words(tokens, area, top=WORDS)
+        words = distinctive_words(tokens, area, top=WORDS, areas=sorted(set(fine.tolist())))
         info = {
             "points": int(reply.sum()),
             "cells": int(len(m["centres"])),

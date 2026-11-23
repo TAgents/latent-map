@@ -26,12 +26,14 @@ from mlx_lm.models.inkling2.layers import unweighted_rms_norm
 
 @dataclass
 class StepCapture:
-    """Block states for one forward call, last token position of batch row 0.
-    Every array is float32 with shape (rows, hidden_size)."""
+    """Block states for one forward call, batch row 0.
+    Every array is float32 with shape (rows, hidden_size) for the last token
+    position, or (rows, tokens, hidden_size) when captured with all_positions."""
 
     prelude: np.ndarray
     passes: list[np.ndarray] = field(default_factory=list)
-    # Output of block 3 at the end of each pass, RMS-normalised, shape (hidden_size,).
+    # Output of block 3 at the end of each pass, RMS-normalised, shape (hidden_size,)
+    # or (tokens, hidden_size) with all_positions.
     pass_end: list[np.ndarray] = field(default_factory=list)
     final: np.ndarray | None = None
 
@@ -46,15 +48,17 @@ class StepCapture:
         return self.pass_end
 
 
-def _snapshot(block_states: mx.array) -> np.ndarray:
-    return np.array(block_states[:, 0, -1, :].astype(mx.float32))
+def _snapshot(block_states: mx.array, all_positions: bool = False) -> np.ndarray:
+    picked = block_states[:, 0] if all_positions else block_states[:, 0, -1, :]
+    return np.array(picked.astype(mx.float32))
 
 
 class capturing:
     """Context manager: `with capturing(model) as cap: ...; cap.records`."""
 
-    def __init__(self, model, max_records: int = 512):
+    def __init__(self, model, max_records: int = 512, all_positions: bool = False):
         self._lm = model.model.language_model
+        self._all = all_positions
         self._records: deque[StepCapture] = deque(maxlen=max_records)
 
     @property
@@ -71,6 +75,7 @@ class capturing:
         if lm.args.loop_config is None:
             raise ValueError("Model has no loop configuration; nothing to capture.")
         records = self._records
+        every = self._all
 
         # Mirrors TextModel._run_loop at mlx-lm commit e2b5bbd3, plus snapshots.
         def run_loop(hidden_states, cache, conv_mask):
@@ -91,7 +96,7 @@ class capturing:
 
             prelude = run(lm.layers[: core.start], hidden_states, None)
             hidden_states, block_states = prelude
-            record = StepCapture(prelude=_snapshot(block_states))
+            record = StepCapture(prelude=_snapshot(block_states, every))
             for loop_pass in range(lm.args.loop_config["num_passes"]):
                 bank = None
                 if loop_pass > 0:
@@ -103,11 +108,11 @@ class capturing:
                 hidden_states, block_states = run(
                     lm.layers[core.start : core.stop], hidden_states, block_states, bank
                 )
-                record.passes.append(_snapshot(block_states))
+                record.passes.append(_snapshot(block_states, every))
                 end = unweighted_rms_norm(hidden_states.astype(mx.float32))
-                record.pass_end.append(np.array(end[0, -1, :]))
+                record.pass_end.append(np.array(end[0] if every else end[0, -1, :]))
             out = run(lm.layers[core.stop :], hidden_states, block_states)
-            record.final = _snapshot(out[1])
+            record.final = _snapshot(out[1], every)
             records.append(record)
             return out
 

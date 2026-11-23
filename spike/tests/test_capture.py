@@ -84,3 +84,19 @@ def test_nested_capture_is_refused(loaded):
             with capturing(model):
                 pass
     assert lm._run_loop == before
+
+
+def test_all_positions_keeps_a_token_axis_and_matches_last_token(loaded):
+    model, tokenizer = loaded
+    ids = mx.array([tokenizer.encode("The capital of France is Paris.")])
+    with capturing(model, all_positions=True) as cap:
+        model(ids)
+    full = cap.records[-1]
+    with capturing(model) as cap:
+        model(ids)
+    last = cap.records[-1]
+    n = ids.shape[1]
+    assert full.block2[0].shape == (n, 2304)
+    assert full.block3[2].shape == (n, 2304)
+    np.testing.assert_allclose(full.block2[1][-1], last.block2[1], rtol=1e-4, atol=1e-4)
+    np.testing.assert_allclose(full.block3[2][-1], last.block3[2], rtol=1e-4, atol=1e-4)

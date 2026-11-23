@@ -1,4 +1,10 @@
-"""Have the model write the v0 corpus: one short text per topic and form."""
+"""Have the model write the v0 corpus: one short text per topic and form.
+
+The model writes a thinking section before its answer. Thinking effort is
+lowered and the token limit raised so that both sections appear in each text.
+
+Run: PYTHONPATH=../spike ../spike/.venv/bin/python generate_corpus.py
+"""
 
 import json
 from pathlib import Path
@@ -9,16 +15,20 @@ from latent_capture.loader import load_model
 from mapbuild.corpus import build_prompts
 
 OUT = Path(__file__).parent / "data" / "corpus.jsonl"
-MAX_TOKENS = 120
+MAX_TOKENS = 300
+THINKING_EFFORT = 0.3
 
 
 def chat_prompt(tokenizer, text: str) -> str:
-    return tokenizer.apply_chat_template([{"role": "user", "content": text}], add_generation_prompt=True, tokenize=False)
+    return tokenizer.apply_chat_template(
+        [{"role": "user", "content": text}], add_generation_prompt=True, tokenize=False, thinking_effort=THINKING_EFFORT
+    )
 
 
 def main() -> None:
     model, tokenizer = load_model()
     written = 0
+    print("prompt head:", repr(chat_prompt(tokenizer, "x")[:90]), flush=True)
     OUT.parent.mkdir(exist_ok=True)
     with OUT.open("w") as f:
         for item in build_prompts():
@@ -28,7 +38,7 @@ def main() -> None:
             if not text.strip():
                 print(f"skipped {item['id']}: empty generation", flush=True)
                 continue
-            f.write(json.dumps({**item, "text": text}) + "\n")
+            f.write(json.dumps({**item, "thinking_effort": THINKING_EFFORT, "text": text}) + "\n")
             f.flush()
             written += 1
             if written % 20 == 0:

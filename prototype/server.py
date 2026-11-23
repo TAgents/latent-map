@@ -12,6 +12,7 @@ import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
+import mlx.core as mx
 import numpy as np
 from mlx_lm import stream_generate
 
@@ -60,6 +61,7 @@ def generate_events(prompt: str, effort: float, max_tokens: int):
     )
     phases = PhaseTracker()
     started, emitted, described, seen = time.time(), 0, 0, 0
+    first_token_at = last = None
     # mlx-lm (pinned commit) feeds the last prompt token in a call of its own, so the
     # first one-token record is the prompt's, not a generated word's. Skip it.
     skipped_prompt_tail = False
@@ -80,6 +82,9 @@ def generate_events(prompt: str, effort: float, max_tokens: int):
                 described += 1
 
         for r in stream_generate(MODEL, TOKENIZER, head, max_tokens=max_tokens):
+            if first_token_at is None:
+                first_token_at = time.time() - started
+            last = r
             text = TOKENIZER.decode([r.token])
             phase, marker = phases.step(text)
             yield {"type": "token", "i": emitted, "text": text, "phase": phase, "marker": marker}
@@ -87,7 +92,11 @@ def generate_events(prompt: str, effort: float, max_tokens: int):
             yield from drain()
         yield from drain()
     seconds = time.time() - started
-    yield {"type": "done", "tokens": emitted, "states": described, "seconds": seconds, "tps": emitted / max(seconds, 1e-6)}
+    yield {
+        "type": "done", "tokens": emitted, "states": described, "seconds": seconds,
+        "wait": first_token_at or 0.0,  # time before the first word: prompt reading, and paging if the model was idle
+        "tps": float(last.generation_tps) if last is not None else 0.0,  # words per second once it is writing
+    }
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -139,6 +148,15 @@ def main() -> None:
     print("loading the model (about a minute)...", flush=True)
     MODEL, TOKENIZER = load_model()
     LIVE = LiveMap.load(BUNDLE, HERE / "norms.json")
+    # Keep the model's memory wired for as long as the server runs. mlx-lm only wires it
+    # during a generation, so on a Mac under memory pressure the weights are paged out
+    # while idle and the next prompt waits many seconds for them to be read back.
+    try:
+        mx.set_wired_limit(int(mx.device_info()["max_recommended_working_set_size"]))
+    except Exception as e:  # older macOS or MLX: carry on without it
+        print(f"could not wire memory ({e}); the first word after an idle period may be slow", flush=True)
+    for _ in generate_events("Hello", 0.0, 8):  # warm up so the first real prompt is not the slow one
+        pass
     print(f"ready: http://127.0.0.1:{PORT}", flush=True)
     HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
 

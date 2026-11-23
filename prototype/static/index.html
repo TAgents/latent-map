@@ -162,7 +162,7 @@ function summarise(d){
   const by={}; an.forEach(t=>by[t.s.area]=(by[t.s.area]||0)+1);
   const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,n])=>`${areaName(MAP.areas.find(a=>a.id==id))} (${Math.round(100*n/an.length)}%)`).join(", ");
   $("summary").hidden=false;
-  $("summary").innerHTML=`<b>This run:</b> ${d.tokens} words at ${d.tps.toFixed(1)} per second; ${ws.length-an.length} thinking, ${an.length} answer.<br>
+  $("summary").innerHTML=`<b>This run:</b> ${d.tokens} words at ${d.tps.toFixed(1)} per second after a ${d.wait.toFixed(1)}s wait for the first word; ${ws.length-an.length} thinking, ${an.length} answer.<br>
   In its final area from pass 1: ${pct(ws,t=>t.s.settled_by===1)} of words. Far above usual movement on the last pass: ${ws.filter(t=>t.s.level==="far").length} words; a little high: ${ws.filter(t=>t.s.level==="high").length}.<br>
   ${an.length?`The answer mostly sits in: ${esc(top)}.`:"The model did not reach an answer before the word limit; raise the limit or lower thinking."}`;
 }

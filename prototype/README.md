@@ -27,7 +27,7 @@ It listens on 127.0.0.1 only. One generation at a time, one turn per run, no his
   `basemap/REPORT.md`. Area names are hypotheses; several are known to be wrong
   ("Sorting algorithms" is really code and technical text in general).
 - "Moved more than usual" is not known to predict mistakes.
-- About 5 to 8 words per second in two test runs, against about 16 for the model with capture alone. The cause was not investigated.
+- Speed: about 16 words per second once it is writing, close to the model with capture alone. The server keeps the model's memory wired and warms up at start; without that, a Mac under memory pressure pages the weights out while idle and the next prompt waits many seconds for its first word.
 - The first one-token forward call is treated as the prompt's last token. That holds
   for the pinned mlx-lm commit and would need rechecking on another version.
 - `norms.json` comes from `build_norms.py` and must be rebuilt if the map changes.

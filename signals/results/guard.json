@@ -1,0 +1,384 @@
+{
+ "n_triples": 24,
+ "area": "Safety policy constraints",
+ "share_by_pass": {
+  "pass1": {
+   "mean": {
+    "harmful": 0.2996527415212286,
+    "topic": 0.11708427440546187,
+    "benign": 0.12904801770453625
+   },
+   "harmful_vs_topic": {
+    "n": 24,
+    "a_higher": 24,
+    "b_higher": 0,
+    "ties": 0,
+    "p": 1.1920928955078125e-07,
+    "median_difference": 0.1718914646996839,
+    "mean_a": 0.2996527415212286,
+    "mean_b": 0.11708427440546187
+   },
+   "topic_vs_benign": {
+    "n": 24,
+    "a_higher": 13,
+    "b_higher": 11,
+    "ties": 0,
+    "p": 0.8388197422027588,
+    "median_difference": 0.0013897426727708835,
+    "mean_a": 0.11708427440546187,
+    "mean_b": 0.12904801770453625
+   },
+   "harmful_vs_benign": {
+    "n": 24,
+    "a_higher": 22,
+    "b_higher": 2,
+    "ties": 0,
+    "p": 3.5881996154785156e-05,
+    "median_difference": 0.16030992239495445,
+    "mean_a": 0.2996527415212286,
+    "mean_b": 0.12904801770453625
+   }
+  },
+  "pass2": {
+   "mean": {
+    "harmful": 0.2985628108610329,
+    "topic": 0.14975342807839734,
+    "benign": 0.16185142265144614
+   },
+   "harmful_vs_topic": {
+    "n": 24,
+    "a_higher": 23,
+    "b_higher": 1,
+    "ties": 0,
+    "p": 2.9802322387695312e-06,
+    "median_difference": 0.1321476518409865,
+    "mean_a": 0.2985628108610329,
+    "mean_b": 0.14975342807839734
+   },
+   "topic_vs_benign": {
+    "n": 24,
+    "a_higher": 10,
+    "b_higher": 14,
+    "ties": 0,
+    "p": 0.5412561893463135,
+    "median_difference": -0.011187203621830719,
+    "mean_a": 0.14975342807839734,
+    "mean_b": 0.16185142265144614
+   },
+   "harmful_vs_benign": {
+    "n": 24,
+    "a_higher": 23,
+    "b_higher": 1,
+    "ties": 0,
+    "p": 2.9802322387695312e-06,
+    "median_difference": 0.11311902458303616,
+    "mean_a": 0.2985628108610329,
+    "mean_b": 0.16185142265144614
+   }
+  },
+  "pass3": {
+   "mean": {
+    "harmful": 0.28904093916411194,
+    "topic": 0.15186741110205657,
+    "benign": 0.17778473924614882
+   },
+   "harmful_vs_topic": {
+    "n": 24,
+    "a_higher": 23,
+    "b_higher": 1,
+    "ties": 0,
+    "p": 2.9802322387695312e-06,
+    "median_difference": 0.1478174100927182,
+    "mean_a": 0.28904093916411194,
+    "mean_b": 0.15186741110205657
+   },
+   "topic_vs_benign": {
+    "n": 24,
+    "a_higher": 9,
+    "b_higher": 15,
+    "ties": 0,
+    "p": 0.30745625495910645,
+    "median_difference": -0.03429652562779498,
+    "mean_a": 0.15186741110205657,
+    "mean_b": 0.17778473924614882
+   },
+   "harmful_vs_benign": {
+    "n": 24,
+    "a_higher": 21,
+    "b_higher": 3,
+    "ties": 0,
+    "p": 0.0002771615982055664,
+    "median_difference": 0.12031326516620634,
+    "mean_a": 0.28904093916411194,
+    "mean_b": 0.17778473924614882
+   }
+  }
+ },
+ "criteria": {
+  "G1": {
+   "harmful_higher_than_topic": 23,
+   "needed": 17,
+   "met": true
+  },
+  "G2": {
+   "topic_higher_than_benign": 9,
+   "needed": 17,
+   "met": false
+  },
+  "G3": {
+   "best": "block2/pass2",
+   "auc": 1.0,
+   "sd_above_null": 5.144415803729826,
+   "met": true,
+   "note": "best of 6 block and pass settings; the null is per setting, so this is optimistic"
+  }
+ },
+ "every_area_harmful_vs_topic_pass3": {
+  "0": {
+   "name": "fictional dialogue",
+   "harmful_higher": 17,
+   "topic_higher": 7,
+   "mean_harmful": 0.1753089865470252,
+   "mean_topic": 0.15447381828232487,
+   "p": 0.06391465663909912
+  },
+  "1": {
+   "name": "",
+   "harmful_higher": 16,
+   "topic_higher": 8,
+   "mean_harmful": 0.06687055818512111,
+   "mean_topic": 0.0666790174331257,
+   "p": 0.15158963203430176
+  },
+  "2": {
+   "name": "",
+   "harmful_higher": 11,
+   "topic_higher": 13,
+   "mean_harmful": 0.22946481666269825,
+   "mean_topic": 0.23160099724033167,
+   "p": 0.8388197422027588
+  },
+  "3": {
+   "name": "black hole physics",
+   "harmful_higher": 0,
+   "topic_higher": 0,
+   "mean_harmful": 0.0,
+   "mean_topic": 0.0,
+   "p": 1.0
+  },
+  "4": {
+   "name": "history of political ideas",
+   "harmful_higher": 0,
+   "topic_higher": 1,
+   "mean_harmful": 0.0005630630630630631,
+   "mean_topic": 0.005733944954128441,
+   "p": 1.0
+  },
+  "5": {
+   "name": "Concise list requests",
+   "harmful_higher": 5,
+   "topic_higher": 19,
+   "mean_harmful": 0.041534473631895365,
+   "mean_topic": 0.06778468481388543,
+   "p": 0.006610751152038574
+  },
+  "6": {
+   "name": "Safety policy constraints",
+   "harmful_higher": 23,
+   "topic_higher": 1,
+   "mean_harmful": 0.28904093916411194,
+   "mean_topic": 0.15186741110205657,
+   "p": 2.9802322387695312e-06
+  },
+  "7": {
+   "name": "",
+   "harmful_higher": 11,
+   "topic_higher": 9,
+   "mean_harmful": 0.010861449582395604,
+   "mean_topic": 0.010258769044874815,
+   "p": 0.8238029479980469
+  },
+  "8": {
+   "name": "",
+   "harmful_higher": 1,
+   "topic_higher": 1,
+   "mean_harmful": 0.001748016673389808,
+   "mean_topic": 0.0015015015015015015,
+   "p": 1.0
+  },
+  "9": {
+   "name": "",
+   "harmful_higher": 4,
+   "topic_higher": 20,
+   "mean_harmful": 0.18225030454579336,
+   "mean_topic": 0.30243152662824774,
+   "p": 0.001543879508972168
+  },
+  "10": {
+   "name": "",
+   "harmful_higher": 3,
+   "topic_higher": 3,
+   "mean_harmful": 0.0016795257493987074,
+   "mean_topic": 0.0024229223893905937,
+   "p": 1.0
+  },
+  "11": {
+   "name": "name conversation",
+   "harmful_higher": 1,
+   "topic_higher": 4,
+   "mean_harmful": 0.0006778661951075744,
+   "mean_topic": 0.005245406610132637,
+   "p": 0.375
+  }
+ },
+ "probe": {
+  "block2/pass1/harmful_vs_topic": {
+   "auc": 0.9965277777777778,
+   "null_mean": 0.49435763888888884,
+   "null_sd": 0.10072239045871759,
+   "n": 48,
+   "sd_above_null": 4.985685274166622
+  },
+  "block2/pass1/harmful_vs_benign": {
+   "auc": 1.0,
+   "null_mean": 0.47638888888888886,
+   "null_sd": 0.10943257964099502,
+   "n": 48,
+   "sd_above_null": 4.784782674673958
+  },
+  "block2/pass1/topic_vs_benign": {
+   "auc": 0.9270833333333334,
+   "null_mean": 0.4872395833333333,
+   "null_sd": 0.09706316819614905,
+   "n": 48,
+   "sd_above_null": 4.531520639334032
+  },
+  "block2/pass2/harmful_vs_topic": {
+   "auc": 1.0,
+   "null_mean": 0.5005902777777779,
+   "null_sd": 0.0970780242647062,
+   "n": 48,
+   "sd_above_null": 5.144415803729826
+  },
+  "block2/pass2/harmful_vs_benign": {
+   "auc": 1.0,
+   "null_mean": 0.48657986111111107,
+   "null_sd": 0.11496565399574338,
+   "n": 48,
+   "sd_above_null": 4.465856723677651
+  },
+  "block2/pass2/topic_vs_benign": {
+   "auc": 0.9444444444444444,
+   "null_mean": 0.49723958333333335,
+   "null_sd": 0.09985947368412999,
+   "n": 48,
+   "sd_above_null": 4.478341859938947
+  },
+  "block2/pass3/harmful_vs_topic": {
+   "auc": 1.0,
+   "null_mean": 0.5000347222222223,
+   "null_sd": 0.0931157752391056,
+   "n": 48,
+   "sd_above_null": 5.369286530600762
+  },
+  "block2/pass3/harmful_vs_benign": {
+   "auc": 1.0,
+   "null_mean": 0.48421875,
+   "null_sd": 0.1091040777670449,
+   "n": 48,
+   "sd_above_null": 4.727424130757767
+  },
+  "block2/pass3/topic_vs_benign": {
+   "auc": 0.9427083333333334,
+   "null_mean": 0.4896527777777777,
+   "null_sd": 0.10307586277909257,
+   "n": 48,
+   "sd_above_null": 4.39536030395907
+  },
+  "block3/pass1/harmful_vs_topic": {
+   "auc": 1.0,
+   "null_mean": 0.5052083333333333,
+   "null_sd": 0.12017701707106382,
+   "n": 48,
+   "sd_above_null": 4.117190447272322
+  },
+  "block3/pass1/harmful_vs_benign": {
+   "auc": 1.0,
+   "null_mean": 0.4864756944444444,
+   "null_sd": 0.1138548218759738,
+   "n": 48,
+   "sd_above_null": 4.510343058767913
+  },
+  "block3/pass1/topic_vs_benign": {
+   "auc": 0.9114583333333333,
+   "null_mean": 0.4973263888888889,
+   "null_sd": 0.10301955771969876,
+   "n": 48,
+   "sd_above_null": 4.01993518134913
+  },
+  "block3/pass2/harmful_vs_topic": {
+   "auc": 1.0,
+   "null_mean": 0.49588541666666663,
+   "null_sd": 0.12200517714385546,
+   "n": 48,
+   "sd_above_null": 4.1319114084719155
+  },
+  "block3/pass2/harmful_vs_benign": {
+   "auc": 1.0,
+   "null_mean": 0.4844270833333333,
+   "null_sd": 0.11304242065343213,
+   "n": 48,
+   "sd_above_null": 4.56088001023369
+  },
+  "block3/pass2/topic_vs_benign": {
+   "auc": 0.9618055555555556,
+   "null_mean": 0.4908506944444444,
+   "null_sd": 0.10375783631671283,
+   "n": 48,
+   "sd_above_null": 4.538981129806501
+  },
+  "block3/pass3/harmful_vs_topic": {
+   "auc": 0.998263888888889,
+   "null_mean": 0.49227430555555557,
+   "null_sd": 0.11500327481876049,
+   "n": 48,
+   "sd_above_null": 4.3997841290237005
+  },
+  "block3/pass3/harmful_vs_benign": {
+   "auc": 1.0,
+   "null_mean": 0.4729166666666667,
+   "null_sd": 0.11534704453461463,
+   "n": 48,
+   "sd_above_null": 4.569543463033076
+  },
+  "block3/pass3/topic_vs_benign": {
+   "auc": 0.920138888888889,
+   "null_mean": 0.48888888888888893,
+   "null_sd": 0.10099900063296678,
+   "n": 48,
+   "sd_above_null": 4.269844229124352
+  }
+ },
+ "replies": {
+  "harmful": {
+   "reached_answer": 24,
+   "refused": 24,
+   "mean_thinking_tokens": 84.66666666666667
+  },
+  "topic": {
+   "reached_answer": 24,
+   "refused": 0,
+   "mean_thinking_tokens": 86.08333333333333
+  },
+  "benign": {
+   "reached_answer": 23,
+   "refused": 0,
+   "mean_thinking_tokens": 94.91666666666667
+  }
+ },
+ "harmful_refused_vs_not": {
+  "refused_n": 24,
+  "mean_share_refused": 0.28904093916411194,
+  "mean_share_not_refused": null
+ }
+}

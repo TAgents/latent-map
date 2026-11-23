@@ -14,6 +14,7 @@ from pathlib import Path
 
 import mlx.core as mx
 import numpy as np
+from mlx.utils import tree_flatten
 from mlx_lm import stream_generate
 
 from latent_capture.capture import capturing
@@ -24,6 +25,8 @@ HERE = Path(__file__).parent
 BUNDLE = HERE.parent / "basemap" / "bundle_v0"
 PORT = 8765
 MAX_TOKENS_LIMIT = 800
+HEARTBEAT_SECONDS = 10  # read every weight this often while idle, to keep the model in memory; 0 turns it off
+HEARTBEAT_MAX_SECONDS = 120
 
 MODEL = TOKENIZER = LIVE = None
 
@@ -148,17 +151,36 @@ def main() -> None:
     print("loading the model (about a minute)...", flush=True)
     MODEL, TOKENIZER = load_model()
     LIVE = LiveMap.load(BUNDLE, HERE / "norms.json")
-    # Keep the model's memory wired for as long as the server runs. mlx-lm only wires it
-    # during a generation, so on a Mac under memory pressure the weights are paged out
-    # while idle and the next prompt waits many seconds for them to be read back.
-    try:
-        mx.set_wired_limit(int(mx.device_info()["max_recommended_working_set_size"]))
-    except Exception as e:  # older macOS or MLX: carry on without it
-        print(f"could not wire memory ({e}); the first word after an idle period may be slow", flush=True)
     for _ in generate_events("Hello", 0.0, 8):  # warm up so the first real prompt is not the slow one
         pass
+    params = [p for _, p in tree_flatten(MODEL.parameters())]
+
+    def touch() -> float:
+        """Read every weight once. On a Mac under memory pressure, macOS compresses and
+        swaps out the model while it sits idle, and the next prompt then waits tens of
+        seconds for its first word. (Raising MLX's wired limit does not prevent this:
+        memory is only wired while a computation is using it.)"""
+        t = time.time()
+        mx.eval(mx.stack([p.sum() for p in params]))
+        return time.time() - t
+
     print(f"ready: http://127.0.0.1:{PORT}", flush=True)
-    HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
+    server = HTTPServer(("127.0.0.1", PORT), Handler)
+    # When a pass is slow the Mac is too short of memory to hold the model, and reading it
+    # back every few seconds only makes the machine swap continuously. Back off instead.
+    interval = HEARTBEAT_SECONDS
+    server.timeout = interval or None
+    touched = time.time()
+    while True:
+        server.handle_request()  # returns after one request, or after the timeout when idle
+        if interval and time.time() - touched >= interval:
+            took = touch()
+            touched = time.time()
+            interval = min(HEARTBEAT_MAX_SECONDS, interval * 2) if took > 3 else HEARTBEAT_SECONDS
+            server.timeout = interval
+            if took > 3:
+                print(f"keep-warm pass took {took:.1f}s: this Mac is short of memory and paged the model out; "
+                      f"next pass in {interval}s. Closing other large apps is the real fix.", flush=True)
 
 
 if __name__ == "__main__":

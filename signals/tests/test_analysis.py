@@ -41,3 +41,13 @@ def test_probe_separates_real_structure_and_not_noise():
     assert good["auc"] > 0.9 and good["auc"] > good["null_mean"] + 3 * good["null_sd"]
     assert noise["auc"] < 0.75
     assert 0.3 < good["null_mean"] < 0.7
+
+
+def test_refused_reads_contracted_openings():
+    assert refused("I'm not able to help with that.") and refused("I’m unable to assist.") and refused("I am unable to do that.")
+
+
+def test_plan_code_rule_counts_what_the_plan_listed():
+    from siglib.analysis import has_code_plan_rule
+
+    assert has_code_plan_rule("then return the cup") and has_code_plan_rule("import this") and not has_code_plan_rule("A warm cup of tea.")

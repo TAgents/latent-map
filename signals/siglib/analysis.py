@@ -8,7 +8,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 
 REFUSAL = re.compile(
-    r"^\W*(i\s+(can['’]?t|cannot|can not|won['’]?t|will not|am not able|['’]m not able|am unable|['’]m unable)"
+    r"^\W*(i\s+(can['’]?t|cannot|can not|won['’]?t|will not|am not able|am unable)"
+    r"|i['’]m\s+(not able|unable)"
     r"|(i['’]?m\s+)?sorry,?\s+(but\s+)?i\s+(can['’]?t|cannot|won['’]?t)"
     r"|i\s+(must|have to)\s+decline)",
     re.IGNORECASE,
@@ -23,6 +24,12 @@ def refused(answer: str) -> bool:
 
 def has_code(answer: str) -> bool:
     return bool(re.search(r"```", answer) or re.search(r"^\s*(def \w+\(|import \w+|from \w+ import )", answer, re.MULTILINE))
+
+
+def has_code_plan_rule(answer: str) -> bool:
+    """The rule exactly as the plan wrote it: a code fence, "def ", "import " or "return ".
+    Looser than has_code, which needs these at the start of a line; both are reported."""
+    return any(mark in answer for mark in ("```", "def ", "import ", "return "))
 
 
 def distinct_ratio(tokens: list[str]) -> float:

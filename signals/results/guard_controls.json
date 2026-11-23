@@ -1,0 +1,327 @@
+{
+ "prompt_surface_counts": {
+  "without": {
+   "harmful": 8,
+   "topic": 0,
+   "benign": 1
+  },
+  "secret": {
+   "harmful": 3,
+   "topic": 0,
+   "benign": 0
+  },
+  "fake": {
+   "harmful": 3,
+   "topic": 0,
+   "benign": 0
+  },
+  "noticing/caught/detected/discreet": {
+   "harmful": 6,
+   "topic": 0,
+   "benign": 0
+  },
+  "own": {
+   "harmful": 1,
+   "topic": 6,
+   "benign": 1
+  },
+  "legitimising word": {
+   "harmful": 0,
+   "topic": 9,
+   "benign": 0
+  }
+ },
+ "prompt_words_mean": {
+  "harmful": 16.416666666666668,
+  "topic": 14.333333333333334,
+  "benign": 12.083333333333334
+ },
+ "bag_of_words_on_prompts": {
+  "auc": 0.8420138888888888,
+  "null_mean": 0.5116753472222222,
+  "null_sd": 0.1236605922611979,
+  "n": 48
+ },
+ "bag_of_words_on_thinking_text": {
+  "auc": 1.0,
+  "null_mean": 0.494921875,
+  "null_sd": 0.13331897093100892,
+  "n": 48
+ },
+ "state_at_reply_start_marker_in_area": {
+  "harmful": 21,
+  "topic": 1,
+  "benign": 0
+ },
+ "first_three_thinking_tokens": {
+  "distinct_openings": [
+   [
+    "The",
+    " user",
+    " asks"
+   ]
+  ],
+  "replies": 72
+ },
+ "first_thinking_tokens_in_area": {
+  "0": {
+   "harmful": 13,
+   "topic": 0,
+   "benign": 0
+  },
+  "1": {
+   "harmful": 7,
+   "topic": 0,
+   "benign": 0
+  },
+  "2": {
+   "harmful": 15,
+   "topic": 1,
+   "benign": 0
+  }
+ },
+ "full_stop": {
+  "harmful": {
+   "rate_in_area": 0.8686131386861314,
+   "share_of_area_tokens": 0.21212121212121213
+  },
+  "topic": {
+   "rate_in_area": 0.7077922077922078,
+   "share_of_area_tokens": 0.35973597359735976
+  },
+  "benign": {
+   "rate_in_area": 0.7554347826086957,
+   "share_of_area_tokens": 0.4088235294117647
+  }
+ },
+ "top_area_tokens": {
+  "harmful": [
+   [
+    ".",
+    119,
+    137
+   ],
+   [
+    "is",
+    26,
+    27
+   ],
+   [
+    "to",
+    22,
+    59
+   ],
+   [
+    "this",
+    18,
+    24
+   ],
+   [
+    "request",
+    16,
+    20
+   ],
+   [
+    "asks",
+    15,
+    24
+   ],
+   [
+    "need",
+    15,
+    19
+   ],
+   [
+    "refuse",
+    15,
+    16
+   ],
+   [
+    "the",
+    14,
+    30
+   ],
+   [
+    "able",
+    14,
+    14
+   ],
+   [
+    "not",
+    13,
+    15
+   ],
+   [
+    "/",
+    11,
+    43
+   ]
+  ],
+  "topic": [
+   [
+    ".",
+    109,
+    154
+   ],
+   [
+    "is",
+    18,
+    22
+   ],
+   [
+    "benign",
+    16,
+    16
+   ],
+   [
+    "no",
+    15,
+    18
+   ],
+   [
+    "this",
+    11,
+    19
+   ],
+   [
+    "need",
+    10,
+    21
+   ],
+   [
+    "content",
+    9,
+    9
+   ],
+   [
+    "harmful",
+    7,
+    7
+   ],
+   [
+    "not",
+    7,
+    20
+   ],
+   [
+    "to",
+    6,
+    37
+   ],
+   [
+    "question",
+    5,
+    6
+   ],
+   [
+    "a",
+    4,
+    29
+   ]
+  ],
+  "benign": [
+   [
+    ".",
+    139,
+    184
+   ],
+   [
+    "need",
+    26,
+    52
+   ],
+   [
+    "no",
+    18,
+    32
+   ],
+   [
+    "tools",
+    14,
+    17
+   ],
+   [
+    "only",
+    14,
+    15
+   ],
+   [
+    "is",
+    12,
+    13
+   ],
+   [
+    "benign",
+    9,
+    9
+   ],
+   [
+    "final",
+    9,
+    15
+   ],
+   [
+    "beyond",
+    9,
+    10
+   ],
+   [
+    "thinking",
+    9,
+    9
+   ],
+   [
+    "already",
+    9,
+    9
+   ],
+   [
+    "used",
+    9,
+    9
+   ]
+  ]
+ },
+ "controls_harmful_vs_topic": {
+  "all thinking tokens": {
+   "n": 24,
+   "a_higher": 23,
+   "b_higher": 1,
+   "ties": 0,
+   "p": 2.9802322387695312e-06,
+   "median_difference": 0.1478174100927182,
+   "mean_a": 0.28904093916411194,
+   "mean_b": 0.15186741110205657
+  },
+  "without full stops": {
+   "n": 24,
+   "a_higher": 23,
+   "b_higher": 1,
+   "ties": 0,
+   "p": 2.9802322387695312e-06,
+   "median_difference": 0.14643105848218446,
+   "mean_a": 0.2445335709943097,
+   "mean_b": 0.10430852272738368
+  },
+  "only words used in both groups": {
+   "n": 24,
+   "a_higher": 22,
+   "b_higher": 2,
+   "ties": 0,
+   "p": 3.5881996154785156e-05,
+   "median_difference": 0.12742099601709453,
+   "mean_a": 0.309693209144727,
+   "mean_b": 0.17655734095891176
+  },
+  "after the first 30 thinking tokens": {
+   "n": 24,
+   "a_higher": 22,
+   "b_higher": 1,
+   "ties": 1,
+   "p": 5.7220458984375e-06,
+   "median_difference": 0.11458336715488757,
+   "mean_a": 0.2664600329540457,
+   "mean_b": 0.13404014691101054
+  }
+ }
+}

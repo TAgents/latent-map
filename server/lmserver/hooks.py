@@ -5,6 +5,7 @@ tokenizer learns Inkling's reply format. Around each generation we clear the cap
 save a cache checkpoint once the prompt has been read, and hand the result to the recorder."""
 
 import copy
+from collections import deque
 import logging
 import threading
 import time
@@ -13,7 +14,6 @@ from typing import Callable
 import numpy as np
 
 from lmserver import inkling
-from lmserver.align import first_generated
 from lmserver.recorder import RequestRecord
 
 PHASES = ("thinking", "answer")
@@ -31,7 +31,12 @@ KIND_OF_MARKER = {
 
 
 class WordBuilder:
-    """Pairs generated tokens with the forward calls that read them, as they arrive."""
+    """Pairs generated tokens with the forward calls that read them, as they arrive.
+
+    The runner first reads the prompt tokens the cache did not already hold (`uncached`
+    of them, in calls of any size); every call after that read exactly one generated
+    word, in order (lmserver.align states the same rule). Records are used and let go
+    at once, so a long reply does not pile up states in memory."""
 
     def __init__(self, tokenizer, live, uncached: int):
         self._tok, self._live, self._uncached = tokenizer, live, uncached
@@ -40,7 +45,8 @@ class WordBuilder:
         self.ids: list[int] = []
         self.words: list[dict] = []
         self._kinds: list[str] = []
-        self._start: int | None = None  # index of the first record that read a generated word
+        self._used = 0  # prompt tokens accounted for so far
+        self._queue: deque = deque()  # records that read a generated word not yet added
         self._sum: np.ndarray | None = None
         self._n = np.zeros(len(PHASES), dtype=np.int64)
 
@@ -53,17 +59,20 @@ class WordBuilder:
         self.ids.append(token)
         self._kinds.append("marker" if marker else self._kind)
 
-    def update(self, records: list) -> list[dict]:
-        """Describe every token whose record has arrived. Returns the new words."""
-        if self._start is None:
-            start = first_generated([r.n_tokens for r in records], self._uncached)
-            if sum(r.n_tokens for r in records[:start]) < self._uncached:
-                return []  # the prompt is still being read
-            self._start = start
+    def held(self) -> int:
+        return len(self._queue)
+
+    def update(self, new_records: list) -> list[dict]:
+        """Take the forward calls captured since the last update. Returns the new words."""
+        for rec in new_records:
+            if self._used < self._uncached:
+                self._used += rec.n_tokens  # still the prompt
+            else:
+                self._queue.append(rec)
         new = []
-        while len(self.words) < len(self.texts) and self._start + len(self.words) < len(records):
+        while self._queue and len(self.words) < len(self.texts):
             i = len(self.words)
-            rec = records[self._start + i]
+            rec = self._queue.popleft()
             b2, b3 = np.stack(rec.block2), np.stack(rec.block3)
             word = {"i": i, "phase": self._kinds[i], **self._live.describe(b2, b3)}
             if self._kinds[i] in PHASES:
@@ -84,6 +93,7 @@ class WordBuilder:
             word = {"i": i, "phase": self._kinds[i], "cells": None}
             self.words.append(word)
             new.append(word)
+        self._queue.clear()
         return new
 
     def mean_states(self) -> np.ndarray | None:
@@ -120,6 +130,28 @@ def build_record(meta, prompt, uncached, tokens, records, tokenizer, live, timin
     builder.update(records)
     builder.finish()
     return _record(meta, prompt, uncached, builder, timing, finish)
+
+
+def pin_model(handler) -> None:
+    """One model, loaded once. A request naming another model, an adapter or a draft
+    model would make the bundled server unload Inkling or load something beside it."""
+    handler.requested_model = "default_model"
+    handler.adapter = None
+    handler.requested_draft_model = "default_model"
+
+
+def refuse_remote_images(messages) -> None:
+    """The bundled server downloads http(s) image URLs before reading a message.
+    Nothing is fetched from the internet here; images must be sent inline."""
+    for message in messages or []:
+        content = message.get("content") if isinstance(message, dict) else None
+        for part in content if isinstance(content, list) else []:
+            if not isinstance(part, dict) or part.get("type") != "image_url":
+                continue
+            url = part.get("image_url")
+            url = url.get("url") if isinstance(url, dict) else url
+            if isinstance(url, str) and url.strip().lower().startswith(("http://", "https://")):
+                raise ValueError("This server does not fetch images from the internet; send the image inline as a data: URL.")
 
 
 def busy() -> bool:
@@ -191,6 +223,11 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
         _state["busy"] = True
         _lock.acquire()
 
+        def take():
+            records = cap.records  # only this thread adds to it
+            cap.clear()
+            return records
+
         def send(words, done=False):
             try:
                 for word in words:
@@ -207,7 +244,7 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
                 builder.add_token(int(gen.token))
                 reason = gen.finish_reason or reason
                 try:
-                    send(builder.update(cap.records))
+                    send(builder.update(take()))
                 except Exception as err:
                     log.warning("describing a word failed: %s", type(err).__name__)
                 yield gen
@@ -221,13 +258,13 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
             _state["busy"] = False
             _state["last"] = (list(full), list(builder.ids))  # token ids of the last request, for the alignment test
             try:
-                send(builder.update(cap.records) + builder.finish(), done=True)
+                last_words = builder.update(take()) + builder.finish()
                 n, now = len(builder.texts), time.time()
                 if failed:
                     finish = "error"
                 elif reason is None and _state.get("stopped"):
                     finish = "cancelled"
-                elif inkling.TOOL_CALL_START in builder.texts:
+                elif reason != "length" and inkling.TOOL_CALL_START in builder.texts:
                     finish = "tool_calls"
                 else:
                     finish = reason or "stop"
@@ -239,6 +276,7 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
                 recorder.save(_record(meta, full, uncached, builder, timing, finish))
             except Exception as err:  # recording must never break a reply; no text in the log
                 log.warning("recording a request failed: %s", type(err).__name__)
+            send(last_words if "last_words" in locals() else [], done=True)  # after the save: the page fetches the record on "done"
 
     S.ModelProvider = Provider
     S.ResponseGenerator._tokenize = tokenize
@@ -273,6 +311,8 @@ def make_handler():
             return request
 
         def handle_chat_completions(self):
+            pin_model(self)
+            refuse_remote_images(self.body.get("messages"))
             # The standard field is `reasoning_effort`; the model's template reads it as a template argument.
             effort = self.body.get("reasoning_effort")
             if effort is not None and "reasoning_effort" not in (self.chat_template_kwargs or {}):
@@ -281,6 +321,7 @@ def make_handler():
             return self._meta(request, self.body.get("messages"))
 
         def handle_text_completions(self):
+            pin_model(self)
             return self._meta(super().handle_text_completions(), None)
 
     return Handler

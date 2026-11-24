@@ -204,26 +204,62 @@ def make_app_handler(ctx: Ctx, hub: LiveHub, port: int):
     return AppHandler
 
 
+def make_prompt_cache(S, cli_args):
+    """The bundled server applies its byte limit only on a path this server does not use."""
+    limit = getattr(cli_args, "prompt_cache_bytes", None)
+    return S.LRUPromptCache(cli_args.prompt_cache_size, **({"max_bytes": limit} if limit else {}))
+
+
+def open_recorder(path: Path, keep_text: bool, retention_days: float):
+    """The database and SQLite's side files, readable by this user only."""
+    from lmserver.recorder import Recorder
+
+    os.umask(0o077)
+    path = Path(path).expanduser()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    os.chmod(path.parent, 0o700)
+    for extra in ("", "-wal", "-shm"):  # files left by an earlier version
+        if os.path.exists(str(path) + extra):
+            os.chmod(str(path) + extra, 0o600)
+    return Recorder(path, keep_text=keep_text, retention_days=retention_days)
+
+
+def start_purger(recorder, stop: threading.Event, every: float = 3600) -> threading.Thread:
+    """Drop records past retention, whatever else is or is not running."""
+
+    def loop():
+        while not stop.wait(every):
+            try:
+                recorder.purge()
+            except Exception as err:
+                logging.getLogger("lmserver").warning("purge failed: %s", type(err).__name__)
+
+    thread = threading.Thread(target=loop, daemon=True)
+    thread.start()
+    return thread
+
+
 def keep_warm(recorder, stop: threading.Event) -> None:
     """While idle, read every weight now and then so macOS does not page the model out,
-    backing off when the Mac is short of memory; and drop records past retention hourly."""
+    backing off when the Mac is short of memory."""
     import mlx.core as mx
     from mlx.utils import tree_flatten
 
     from lmserver import hooks
 
-    interval, purged = HEARTBEAT_SECONDS, 0.0
+    interval = HEARTBEAT_SECONDS
     while not stop.wait(interval):
-        if time.time() - purged > 3600:
-            recorder.purge()
-            purged = time.time()
         model = hooks.model()
         if model is None or hooks.busy():
             continue
-        with hooks.model_lock():
-            t = time.time()
-            mx.eval(mx.stack([p.sum() for _, p in tree_flatten(model.parameters())]))
-            took = time.time() - t
+        try:
+            with hooks.model_lock():
+                t = time.time()
+                mx.eval(mx.stack([p.sum() for _, p in tree_flatten(model.parameters())]))
+                took = time.time() - t
+        except Exception as err:
+            logging.getLogger("lmserver").warning("keep-warm pass failed: %s", type(err).__name__)
+            continue
         interval = min(HEARTBEAT_MAX_SECONDS, interval * 2) if took > 3 else HEARTBEAT_SECONDS
         if took > 3:
             print(f"keep-warm pass took {took:.1f}s: this Mac is short of memory and paged the model out; "
@@ -249,12 +285,9 @@ def main(argv=None) -> None:
     from livemap.live import LiveMap
 
     from lmserver import hooks
-    from lmserver.recorder import Recorder
 
     db = Path(args.db).expanduser()
-    db.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    recorder = Recorder(db, keep_text=not args.no_text, retention_days=args.retention_days)
-    os.chmod(db, 0o600)
+    recorder = open_recorder(db, keep_text=not args.no_text, retention_days=args.retention_days)
     recorder.purge()
 
     bundle = ROOT / "basemap" / f"bundle_{args.map_tag}"
@@ -272,8 +305,8 @@ def main(argv=None) -> None:
     stop = threading.Event()
 
     def run(host, port, provider):
-        cache = S.LRUPromptCache(provider.cli_args.prompt_cache_size)
-        generator = S.ResponseGenerator(provider, cache)
+        generator = S.ResponseGenerator(provider, make_prompt_cache(S, provider.cli_args))
+        start_purger(recorder, stop)
         if not args.no_keep_warm:
             threading.Thread(target=keep_warm, args=(recorder, stop), daemon=True).start()
         print(f"Latent Map server: http://{host}:{port}  (API at /v1; loading the model takes about a minute)", flush=True)

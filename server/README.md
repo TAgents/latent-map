@@ -50,7 +50,7 @@ The whole task took 63 seconds and the answer was right. Things to know:
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `--port` | 8765 | |
-| `--no-text` | off | Store numbers only. Prompts, replies and tool names are never written to disk. |
+| `--no-text` | off | Store numbers only. Prompts, replies and tool names are never written to disk, and text stored by earlier runs is removed at start. |
 | `--retention-days` | 5 | Records older than this are deleted at start and every hour. |
 | `--db` | `~/.latent-map/requests.db` | Where records are kept. |
 | `--cache-bytes` | 2GB | Memory for saved prompt caches, which make follow-up turns fast. |
@@ -70,7 +70,9 @@ of the thinking and of the answer (about 110KB).
 
 Everything. The server listens on 127.0.0.1 only and refuses any other host. It runs with the
 model hub in offline mode, so nothing is checked or fetched online. It refuses requests that come
-from another web page (wrong `Origin` or `Host`). Request text is kept out of the terminal log.
+from another web page (wrong `Origin` or `Host`), ignores a request's attempt to load a different
+model, and refuses image URLs that would have to be downloaded. Request text is kept out of the
+terminal log. There is no password: any program running on this Mac can use the API and read the records.
 
 ## What the page shows, and how far to trust it
 

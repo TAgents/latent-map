@@ -34,8 +34,8 @@ class RequestRecord:
 def _text_of(message: dict) -> str:
     content = message.get("content")
     if isinstance(content, list):
-        return " ".join(p.get("text", "") for p in content if isinstance(p, dict))
-    return content or ""
+        return " ".join(str(p.get("text", "")) for p in content if isinstance(p, dict))
+    return content if isinstance(content, str) else ("" if content is None else json.dumps(content, default=str))
 
 
 def _first(messages: list, role: str) -> str:
@@ -66,6 +66,26 @@ class Recorder:
         )
         self._db.execute("CREATE INDEX IF NOT EXISTS by_session ON requests (session, time)")
         self._db.commit()
+        if not keep_text:
+            self._drop_stored_text()
+
+    def _drop_stored_text(self) -> None:
+        """Text kept by an earlier run must not outlive a switch to no-text mode."""
+        rows = self._db.execute("SELECT completion_id, settings FROM requests WHERE text_kept = 1").fetchall()
+        if not rows:
+            return
+        for cid, settings in rows:
+            kept = json.loads(settings or "{}")
+            kept.pop("tools", None)
+            self._db.execute(
+                "UPDATE requests SET messages = NULL, reply_tokens = NULL, title = ?, text_kept = 0, settings = ? "
+                "WHERE completion_id = ?",
+                (NO_TEXT_TITLE, json.dumps(kept), cid),
+            )
+        self._db.commit()
+        self._db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        self._db.execute("VACUUM")
+        self._db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
 
     def close(self) -> None:
         with self._lock:

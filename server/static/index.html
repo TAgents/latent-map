@@ -114,7 +114,7 @@ const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg";
 const el=(n,a={},t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=p=>fetch(p).then(r=>{if(!r.ok) throw new Error(r.status); return r.json()});
-let MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null, wantLive=false;
+let MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
 const W=1000,H=780,PAD=46;
 const px=c=>[PAD+c.x*(W-2*PAD), PAD+(1-c.y)*(H-2*PAD)];
 const areaName=a=>a.name?a.name:`area ${a.id} (unnamed)`;
@@ -159,7 +159,7 @@ function select(i){
    <div>Typical words there</div><div>${esc(a.words.join(", "))||"—"}</div>
    <div>Settling</div><div>${settle}; ${same===1?"same cell on all three passes":same===2?"changed cell once":"a different cell on every pass"}</div>
    <div>Last-pass movement</div><div>${t.move[1].toFixed(2)} — ${lv} (usual here: up to ${bands[1].toFixed(2)}). Measured; not known to predict anything.</div>
-   <div>Loop signal by pass</div><div>${t.loop.map(v=>`<span class="bar" style="width:${Math.max(2,v*90).toFixed(0)}px"></span>${(v*100).toFixed(0)}%`).join(" &nbsp; ")}</div>
+   <div>Loop signal by pass</div><div>${t.loop.map(v=>`<span class="bar" style="width:${Math.max(2,v*90).toFixed(0)}px"></span>${(v*100).toFixed(0)}%`).join(" &nbsp; ")} <span class="tier">measured; meaning not tested</span></div>
   </div>`;
 }
 
@@ -190,7 +190,7 @@ function summarise(r){
   $("summary").hidden=false;
   $("summary").innerHTML=`<b>This request:</b> ${r.n_tokens} words at ${r.tokens_per_s.toFixed(1)} per second after ${r.first_token_s.toFixed(1)}s; ${end}. Prompt ${r.prompt_tokens} tokens, ${r.cached_tokens} already read from an earlier request.<br>
   ${ws.length-an.length} thinking words, ${an.length} answer words. In its final area from pass 1: ${pct(ws,t=>t.settled_by===1)}. Far above usual movement on the last pass: ${ws.filter(t=>t.level==="far").length}; a little high: ${ws.filter(t=>t.level==="high").length}.
-  ${an.length?`<br>The answer mostly sits in: ${esc(top)}.`:""}`;
+  ${an.length?`<br>The answer mostly sits in: ${esc(top)}. Area names are untested hypotheses.`:""}`;
 }
 function lastUser(messages){
   const m=[...(messages||[])].reverse().find(m=>m.role==="user"||m.role==="tool"); if(!m) return "";
@@ -230,6 +230,9 @@ async function refreshSessions(){
 }
 
 // Words of whichever request is being generated arrive here as the model writes them.
+// The page shows them only for its own request, matched by the id in its own reply stream.
+let cur={id:null,words:[]};
+function follow(id){ liveId=id; clearView(); $("status").textContent="Writing…"; if(cur.id===id) cur.words.forEach(w=>{addWord(w)}); drawTrail() }
 async function listenLive(){
   for(;;){
     try{
@@ -240,28 +243,42 @@ async function listenLive(){
         while((nl=buf.indexOf("\n"))>=0){
           const e=JSON.parse(buf.slice(0,nl)); buf=buf.slice(nl+1);
           if(e.idle) continue;
-          if(e.start){ if(wantLive){liveId=e.id; wantLive=false; clearView(); $("status").textContent="Writing…"} continue }
-          if(e.id!==liveId) continue;
-          if(e.done){ const id=liveId; liveId=null; if(id) showRequest(id).then(refreshSessions).catch(()=>{}); continue }
-          addWord(e); drawTrail();
+          if(e.start){ cur={id:e.id,words:[]}; continue }
+          if(e.done||e.id!==cur.id) continue;
+          cur.words.push(e);
+          if(e.id===liveId){ addWord(e); drawTrail() }
         }
       }
     }catch(err){}
     await new Promise(r=>setTimeout(r,2000));
   }
 }
+async function showWhenStored(id){
+  for(let k=0;k<20;k++){ try{ await showRequest(id); return }catch(e){ await new Promise(r=>setTimeout(r,300)) } }
+}
 
 async function send(){
-  $("go").disabled=true; $("stop").disabled=false; $("status").textContent="Reading the prompt…"; wantLive=true;
-  ctrl=new AbortController();
+  $("go").disabled=true; $("stop").disabled=false; $("status").textContent="Waiting for the model (it serves one request at a time)…";
+  ctrl=new AbortController(); let id=null;
   try{
     const r=await fetch("/v1/chat/completions",{method:"POST",signal:ctrl.signal,headers:{"Content-Type":"application/json"},
       body:JSON.stringify({messages:[{role:"user",content:$("prompt").value}],stream:true,max_tokens:+$("max").value,reasoning_effort:$("effort").value})});
     if(!r.ok){$("status").textContent="Error: "+(await r.text()).slice(0,300);return}
-    const rd=r.body.getReader(); for(;;){const {done}=await rd.read(); if(done) break}
+    const rd=r.body.getReader(), dec=new TextDecoder(); let buf="";
+    for(;;){
+      const {done,value}=await rd.read(); if(done) break;
+      if(id) continue;
+      buf+=dec.decode(value,{stream:true});
+      const m=buf.match(/^data: (\{.*\})$/m);
+      if(m){ try{ id=JSON.parse(m[1]).id; follow(id) }catch(e){} }
+    }
     $("status").textContent="Done. Click any word.";
   }catch(err){$("status").textContent=err.name==="AbortError"?"Stopped.":"Error: "+err.message}
-  finally{$("go").disabled=false; $("stop").disabled=true; wantLive=false; setTimeout(refreshSessions,600)}
+  finally{
+    $("go").disabled=false; $("stop").disabled=true; liveId=null;
+    if(id) await showWhenStored(id);
+    refreshSessions();
+  }
 }
 $("go").onclick=send; $("stop").onclick=()=>ctrl&&ctrl.abort();
 $("api").textContent=location.origin+"/v1";

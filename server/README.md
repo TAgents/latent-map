@@ -17,6 +17,34 @@ Loading the model takes about a minute. Then:
 Only one copy of the model fits in 32GB, so stop the old prototype (`prototype/`) first.
 Requests are served one at a time; a second request waits.
 
+## Using it from opencode
+
+Tested on 2026-11-24 with opencode 1.19.6. Copy `examples/opencode.json` into the project you
+want to work in, start this server, then run `opencode` there (or
+`opencode run -m latentmap/default_model "…"`).
+
+What happened on a small read-only task ("What version is declared in pyproject.toml?"):
+
+| Step | Prompt | Already read | Wait for first word |
+| --- | --- | --- | --- |
+| 1. model calls `ls` | 14,647 tokens | 0 | 32 s |
+| 2. model calls `read` | 14,728 | 14,714 | 0.4 s |
+| 3. model answers "0.4.2" | 14,880 | 14,760 | 0.7 s |
+
+The whole task took 63 seconds and the answer was right. Things to know:
+
+- **The first step of every new task is slow.** opencode sends about 14,600 tokens of instructions
+  and tool descriptions, which the model reads at roughly 450 tokens per second. Later steps reuse
+  that work. A second, different task re-reads it.
+- **Writing is about 14 words per second**, so long edits take time.
+- opencode also asks the model for a session title (a separate small request you will see in the inspector).
+- The very first run after installing opencode sat silent for several minutes before sending
+  anything, apparently while it set itself up. The second run started at once.
+- This server keeps everything local, but opencode is a separate program with its own behaviour
+  (it reads its own config and may check for model lists or updates online). The example config
+  turns off auto-update and sharing.
+- Codex is not supported yet: it needs the "responses" API route.
+
 ## Options
 
 | Option | Default | Meaning |

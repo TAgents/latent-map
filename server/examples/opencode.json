@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
+  "share": "disabled",
+  "provider": {
+    "latentmap": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Latent Map (local)",
+      "options": { "baseURL": "http://127.0.0.1:8765/v1", "apiKey": "local" },
+      "models": { "default_model": { "name": "Inkling 2 Mini", "limit": { "context": 32000, "output": 2048 } } }
+    }
+  },
+  "model": "latentmap/default_model",
+  "small_model": "latentmap/default_model"
+}

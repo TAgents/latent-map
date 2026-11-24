@@ -1,0 +1,844 @@
+{
+ "summary": {
+  "swaps": 25,
+  "donor_answer_is_top": 0,
+  "donor_answer_is_top_in_control": 0,
+  "donor_answer_was_top_before": 0,
+  "own_answer_top_before": 18,
+  "own_answer_top_after_swap": 17,
+  "own_answer_top_after_control": 18,
+  "median_donor_rank": {
+   "none": 788.0,
+   "donor": 932.0,
+   "control": 784.0
+  },
+  "T3_met": false
+ },
+ "items": [
+  {
+   "id": "person_capital/Mahatma Gandhi",
+   "donor": {
+    "own_rank": 2,
+    "donor_rank": 1838,
+    "top": [
+     "The",
+     "Mumbai",
+     "New"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "New Delhi",
+   "donor_answer": "Moscow",
+   "none": {
+    "own_rank": 4,
+    "donor_rank": 2468,
+    "top": [
+     "The",
+     "Por",
+     "Mumbai"
+    ]
+   },
+   "control": {
+    "own_rank": 1,
+    "donor_rank": 2072,
+    "top": [
+     "The",
+     "New",
+     "Mumbai"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Leo Tolstoy",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 1654,
+    "top": [
+     "Moscow",
+     "The",
+     "Saint"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Moscow",
+   "donor_answer": "Beijing",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 1952,
+    "top": [
+     "Moscow",
+     "T",
+     "Y"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 1545,
+    "top": [
+     "Moscow",
+     "The",
+     "Y"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Confucius",
+   "donor": {
+    "own_rank": 2,
+    "donor_rank": 1758,
+    "top": [
+     "The",
+     "Lu",
+     "Beijing"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Beijing",
+   "donor_answer": "Oslo",
+   "none": {
+    "own_rank": 2,
+    "donor_rank": 1863,
+    "top": [
+     "The",
+     "Lu",
+     "Beijing"
+    ]
+   },
+   "control": {
+    "own_rank": 2,
+    "donor_rank": 1923,
+    "top": [
+     "The",
+     "Lu",
+     "Beijing"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Henrik Ibsen",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 166,
+    "top": [
+     "Oslo",
+     "S",
+     "The"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Oslo",
+   "donor_answer": "Copenhagen",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 185,
+    "top": [
+     "Oslo",
+     "The",
+     "S"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 152,
+    "top": [
+     "Oslo",
+     "The",
+     "S"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Hans Christian Andersen",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 23,
+    "top": [
+     "Copenhagen",
+     "The",
+     "Odense"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Copenhagen",
+   "donor_answer": "Helsinki",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 22,
+    "top": [
+     "Copenhagen",
+     "The",
+     "Odense"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 18,
+    "top": [
+     "Copenhagen",
+     "The",
+     "Odense"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Jean Sibelius",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 2805,
+    "top": [
+     "Helsinki",
+     "The",
+     "Helsing"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Helsinki",
+   "donor_answer": "Athens",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 3450,
+    "top": [
+     "Helsinki",
+     "The",
+     "Helsing"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 3396,
+    "top": [
+     "Helsinki",
+     "Helsing",
+     "The"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Socrates",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 959,
+    "top": [
+     "Ath",
+     "The",
+     "A"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Athens",
+   "donor_answer": "Tokyo",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 1029,
+    "top": [
+     "Ath",
+     "The",
+     "A"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 749,
+    "top": [
+     "Ath",
+     "The",
+     "A"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Akira Kurosawa",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 3982,
+    "top": [
+     "Tokyo",
+     "The",
+     "T"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Tokyo",
+   "donor_answer": "Buenos Aires",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 3996,
+    "top": [
+     "Tokyo",
+     "The",
+     "T"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 4660,
+    "top": [
+     "Tokyo",
+     "The",
+     "T"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Jorge Luis Borges",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 3839,
+    "top": [
+     "Buenos",
+     "The",
+     "Ciudad"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Buenos Aires",
+   "donor_answer": "Stockholm",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 3737,
+    "top": [
+     "Buenos",
+     "The",
+     "Ciudad"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 2460,
+    "top": [
+     "Buenos",
+     "The",
+     "La"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Alfred Nobel",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 718,
+    "top": [
+     "Stockholm",
+     "St",
+     "Saint"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Stockholm",
+   "donor_answer": "Berlin",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 719,
+    "top": [
+     "Stockholm",
+     "St",
+     "Saint"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 784,
+    "top": [
+     "Stockholm",
+     "St",
+     "Saint"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Albert Einstein",
+   "donor": {
+    "own_rank": 1,
+    "donor_rank": 72,
+    "top": [
+     "The",
+     "Berlin",
+     "Please"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Berlin",
+   "donor_answer": "Dublin",
+   "none": {
+    "own_rank": 3,
+    "donor_rank": 84,
+    "top": [
+     "The",
+     "Please",
+     "Einstein"
+    ]
+   },
+   "control": {
+    "own_rank": 3,
+    "donor_rank": 78,
+    "top": [
+     "The",
+     "Bern",
+     "Please"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Samuel Beckett",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 3918,
+    "top": [
+     "Dublin",
+     "Paris",
+     "The"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Dublin",
+   "donor_answer": "Santiago",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 4172,
+    "top": [
+     "Dublin",
+     "Paris",
+     "The"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 2786,
+    "top": [
+     "Dublin",
+     "Paris",
+     "The"
+    ]
+   }
+  },
+  {
+   "id": "person_capital/Pablo Neruda",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 240,
+    "top": [
+     "Santiago",
+     "The",
+     "Val"
+    ]
+   },
+   "control_from": "landmark_currency/Big Ben",
+   "own_answer": "Santiago",
+   "donor_answer": "New Delhi",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 191,
+    "top": [
+     "Santiago",
+     "The",
+     "Val"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 218,
+    "top": [
+     "Santiago",
+     "The",
+     "Val"
+    ]
+   }
+  },
+  {
+   "id": "landmark_currency/Big Ben",
+   "donor": {
+    "own_rank": 1,
+    "donor_rank": 1003,
+    "top": [
+     "The",
+     "Pound",
+     "British"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "pound",
+   "donor_answer": "sol",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 848,
+    "top": [
+     "Pound",
+     "The",
+     "British"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 970,
+    "top": [
+     "Pound",
+     "The",
+     "British"
+    ]
+   }
+  },
+  {
+   "id": "landmark_currency/Machu Picchu",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 276,
+    "top": [
+     "Sol",
+     "Peru",
+     "The"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "sol",
+   "donor_answer": "peso",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 219,
+    "top": [
+     "Sol",
+     "Peru",
+     "The"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 196,
+    "top": [
+     "Sol",
+     "Peru",
+     "The"
+    ]
+   }
+  },
+  {
+   "id": "landmark_currency/Chichen Itza",
+   "donor": {
+    "own_rank": 2,
+    "donor_rank": 2515,
+    "top": [
+     "Mexic",
+     "The",
+     "Peso"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "peso",
+   "donor_answer": "franc",
+   "none": {
+    "own_rank": 2,
+    "donor_rank": 2715,
+    "top": [
+     "Mexic",
+     "The",
+     "Peso"
+    ]
+   },
+   "control": {
+    "own_rank": 2,
+    "donor_rank": 2847,
+    "top": [
+     "Mexic",
+     "The",
+     "Peso"
+    ]
+   }
+  },
+  {
+   "id": "landmark_currency/the Matterhorn",
+   "donor": {
+    "own_rank": 7,
+    "donor_rank": 34,
+    "top": [
+     "Swiss",
+     "The",
+     "Switzerland"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "franc",
+   "donor_answer": "dollar",
+   "none": {
+    "own_rank": 7,
+    "donor_rank": 27,
+    "top": [
+     "Swiss",
+     "The",
+     "Switzerland"
+    ]
+   },
+   "control": {
+    "own_rank": 8,
+    "donor_rank": 34,
+    "top": [
+     "Swiss",
+     "The",
+     "Switzerland"
+    ]
+   }
+  },
+  {
+   "id": "landmark_currency/the CN Tower",
+   "donor": {
+    "own_rank": 10,
+    "donor_rank": 217,
+    "top": [
+     "Canadian",
+     "The",
+     "CAD"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "dollar",
+   "donor_answer": "pound",
+   "none": {
+    "own_rank": 9,
+    "donor_rank": 182,
+    "top": [
+     "Canadian",
+     "The",
+     "CAD"
+    ]
+   },
+   "control": {
+    "own_rank": 9,
+    "donor_rank": 171,
+    "top": [
+     "Canadian",
+     "The",
+     "CAD"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/Toyota",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 4019,
+    "top": [
+     "Tokyo",
+     "Toyota",
+     "Nagoya"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Tokyo",
+   "donor_answer": "Stockholm",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 4010,
+    "top": [
+     "Tokyo",
+     "Toyota",
+     "Nagoya"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 3362,
+    "top": [
+     "Tokyo",
+     "Toyota",
+     "The"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/IKEA",
+   "donor": {
+    "own_rank": 3,
+    "donor_rank": 111,
+    "top": [
+     "The",
+     "\u00c4",
+     "I"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Stockholm",
+   "donor_answer": "Helsinki",
+   "none": {
+    "own_rank": 2,
+    "donor_rank": 133,
+    "top": [
+     "The",
+     "I",
+     "Stockholm"
+    ]
+   },
+   "control": {
+    "own_rank": 3,
+    "donor_rank": 156,
+    "top": [
+     "The",
+     "I",
+     "Lund"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/Nokia",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 17,
+    "top": [
+     "Helsinki",
+     "Tampere",
+     "The"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Helsinki",
+   "donor_answer": "Seoul",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 13,
+    "top": [
+     "Helsinki",
+     "Tampere",
+     "The"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 17,
+    "top": [
+     "Helsinki",
+     "Tampere",
+     "The"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/Samsung",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 449,
+    "top": [
+     "Seoul",
+     "The",
+     "Su"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Seoul",
+   "donor_answer": "Paris",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 317,
+    "top": [
+     "Seoul",
+     "The",
+     "Su"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 384,
+    "top": [
+     "Seoul",
+     "The",
+     "Su"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/Renault",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 206,
+    "top": [
+     "Paris",
+     "The",
+     "Boulogne"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Paris",
+   "donor_answer": "Moscow",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 274,
+    "top": [
+     "Paris",
+     "The",
+     "Boulogne"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 311,
+    "top": [
+     "Paris",
+     "The",
+     "Boulogne"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/Aeroflot",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 932,
+    "top": [
+     "Moscow",
+     "Mo",
+     "The"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Moscow",
+   "donor_answer": "Prague",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 788,
+    "top": [
+     "Moscow",
+     "Mo",
+     "The"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 1046,
+    "top": [
+     "Moscow",
+     "Mo",
+     "The"
+    ]
+   }
+  },
+  {
+   "id": "company_capital/\u0160koda",
+   "donor": {
+    "own_rank": 0,
+    "donor_rank": 1505,
+    "top": [
+     "Prague",
+     "The",
+     "M"
+    ]
+   },
+   "control_from": "person_capital/Mahatma Gandhi",
+   "own_answer": "Prague",
+   "donor_answer": "Tokyo",
+   "none": {
+    "own_rank": 0,
+    "donor_rank": 1245,
+    "top": [
+     "Prague",
+     "M",
+     "Bratislava"
+    ]
+   },
+   "control": {
+    "own_rank": 0,
+    "donor_rank": 1844,
+    "top": [
+     "Prague",
+     "M",
+     "The"
+    ]
+   }
+  }
+ ]
+}

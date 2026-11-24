@@ -10,3 +10,4 @@ basemap/data/*.npy
 basemap/bundle_*/*.npz
 signals/results/*.npz
 signals/results/*_replies.jsonl
+signals/results/goals_blind.json

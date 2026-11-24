@@ -1,0 +1,3672 @@
+{
+ "items": 80,
+ "kept": 35,
+ "dropped": {
+  "seen in step 0": 3,
+  "two-step wrong": 19,
+  "step written out": 13,
+  "second step wrong": 10
+ },
+ "T1": {
+  "readable": 25,
+  "of": 35,
+  "share": 0.7142857142857143,
+  "needed": 0.5,
+  "met": true
+ },
+ "T2": {
+  "step_first": 9,
+  "of": 25,
+  "met": false
+ },
+ "by_family": {
+  "person_capital": {
+   "kept": 13,
+   "t1": 13
+  },
+  "landmark_currency": {
+   "kept": 6,
+   "t1": 5
+  },
+  "book_country": {
+   "kept": 8,
+   "t1": 0
+  },
+  "company_capital": {
+   "kept": 8,
+   "t1": 7
+  }
+ },
+ "median_best_rank_by_pass": {
+  "step": [
+   2.0,
+   1.0,
+   6.0
+  ],
+  "answer": [
+   6.0,
+   1.0,
+   0.0
+  ],
+  "step_in_other_items": 59.0
+ },
+ "at_the_moment_of_answering": {
+  "pass1": {
+   "answer_is_top": 0,
+   "step_in_top10": 7,
+   "of": 35
+  },
+  "pass2": {
+   "answer_is_top": 7,
+   "step_in_top10": 7,
+   "of": 35
+  },
+  "pass3": {
+   "answer_is_top": 28,
+   "step_in_top10": 12,
+   "of": 35
+  }
+ },
+ "per_item": [
+  {
+   "id": "person_capital/Marie Curie",
+   "kept": false,
+   "said": {
+    "two_step": "Warsaw",
+    "first_step": "Poland",
+    "second_step": "Warsaw"
+   },
+   "bridge_by_pass": [
+    6,
+    4,
+    57
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 4,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Marie",
+     "Capital",
+     "Paris",
+     "France"
+    ],
+    [
+     "Paris",
+     "Marie",
+     "The",
+     "Berlin",
+     "Warsaw"
+    ],
+    [
+     "Warsaw",
+     "The",
+     "Var",
+     "Krak",
+     "L"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Wolfgang Amadeus Mozart",
+   "kept": false,
+   "said": {
+    "two_step": "Salzburg",
+    "first_step": "Austria",
+    "second_step": "Vienna"
+   },
+   "bridge_by_pass": [
+    3,
+    2,
+    25
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Berlin",
+     "Wolf",
+     "Where"
+    ],
+    [
+     "Berlin",
+     "The",
+     "Vienna",
+     "Wolf",
+     "Mozart"
+    ],
+    [
+     "Salz",
+     "The",
+     "Vienna",
+     "Wolf",
+     "Sal"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Pablo Picasso",
+   "kept": false,
+   "said": {
+    "two_step": "M\u00e1laga",
+    "first_step": "Spain",
+    "second_step": "Madrid"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    11
+   ],
+   "answer_by_pass": [
+    9,
+    1,
+    4
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Pablo",
+     "Paris",
+     "Where"
+    ],
+    [
+     "Pablo",
+     "Paris",
+     "Madrid",
+     "The",
+     "Barcelona"
+    ],
+    [
+     "M",
+     "Barcelona",
+     "Malaga",
+     "The",
+     "Madrid"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Mahatma Gandhi",
+   "kept": true,
+   "said": {
+    "two_step": "The capital of the country where Mahatma Gandhi was born is New Delhi.",
+    "first_step": "India",
+    "second_step": "New Delhi"
+   },
+   "bridge_by_pass": [
+    2,
+    2,
+    18
+   ],
+   "answer_by_pass": [
+    52,
+    7,
+    1
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Mahatma",
+     "Capital",
+     "Answer",
+     "Where"
+    ],
+    [
+     "The",
+     "Mumbai",
+     "San",
+     "Kolkata",
+     "Mahatma"
+    ],
+    [
+     "The",
+     "Por",
+     "Mumbai",
+     "Ahmed",
+     "New"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Leo Tolstoy",
+   "kept": true,
+   "said": {
+    "two_step": "Moscow",
+    "first_step": "Russia",
+    "second_step": "Moscow"
+   },
+   "bridge_by_pass": [
+    9,
+    2,
+    32
+   ],
+   "answer_by_pass": [
+    34,
+    1,
+    0
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Leo",
+     "Capital",
+     "City",
+     "Where"
+    ],
+    [
+     "The",
+     "Moscow",
+     "Berlin",
+     "Leo",
+     "Saint"
+    ],
+    [
+     "Moscow",
+     "T",
+     "Y",
+     "The",
+     "Saint"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Vincent van Gogh",
+   "kept": false,
+   "said": {
+    "two_step": "The Hague",
+    "first_step": "Netherlands",
+    "second_step": "Amsterdam"
+   },
+   "bridge_by_pass": [
+    4,
+    0,
+    12
+   ],
+   "answer_by_pass": [
+    17,
+    1,
+    6
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Vincent",
+     "Paris",
+     "France"
+    ],
+    [
+     "The",
+     "Vincent",
+     "Amsterdam",
+     "Paris",
+     "Brussel"
+    ],
+    [
+     "The",
+     "Z",
+     "Vincent",
+     "Nu",
+     "'"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Leonardo da Vinci",
+   "kept": false,
+   "said": {
+    "two_step": "Vinci\nThe user asks for the capital of the country where Leonardo da Vinci was born. Leonardo",
+    "first_step": "Italy",
+    "second_step": "Rome"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    34
+   ],
+   "answer_by_pass": [
+    17,
+    7,
+    221
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "City",
+     "Leonardo",
+     "Where"
+    ],
+    [
+     "The",
+     "Leonardo",
+     "Paris",
+     "Venice",
+     "Based"
+    ],
+    [
+     "Vinci",
+     "Florence",
+     "The",
+     "An",
+     "Firenze"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Confucius",
+   "kept": true,
+   "said": {
+    "two_step": "The capital of the country where Confucius was born is Beijing.",
+    "first_step": "China",
+    "second_step": "Beijing"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    6
+   ],
+   "answer_by_pass": [
+    14,
+    2,
+    2
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Where",
+     "City",
+     "Based"
+    ],
+    [
+     "The",
+     "Based",
+     "Beijing",
+     "Paris",
+     "Shanghai"
+    ],
+    [
+     "The",
+     "Lu",
+     "Beijing",
+     "Qu",
+     "You"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Frida Kahlo",
+   "kept": false,
+   "said": {
+    "two_step": "Mexico City",
+    "first_step": "Mexico",
+    "second_step": "Mexico City"
+   },
+   "bridge_by_pass": [
+    1,
+    0,
+    0
+   ],
+   "answer_by_pass": [
+    1,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Where",
+     "Answer",
+     "City"
+    ],
+    [
+     "The",
+     "Mexico",
+     "City",
+     "San",
+     "Paris"
+    ],
+    [
+     "Mexico",
+     "The",
+     "Ciudad",
+     "City",
+     "Co"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Pel\u00e9",
+   "kept": false,
+   "said": {
+    "two_step": "Rio de Janeiro",
+    "first_step": "Brazil",
+    "second_step": "Bras\u00edlia"
+   },
+   "bridge_by_pass": [
+    3,
+    0,
+    4
+   ],
+   "answer_by_pass": [
+    417,
+    17,
+    1
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Pel",
+     "Capital",
+     "City",
+     "Paris"
+    ],
+    [
+     "The",
+     "S\u00e3o",
+     "Pel",
+     "Paris",
+     "San"
+    ],
+    [
+     "Rio",
+     "Bras\u00edlia",
+     "Brasilia",
+     "The",
+     "S\u00e3o"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Henrik Ibsen",
+   "kept": true,
+   "said": {
+    "two_step": "Oslo",
+    "first_step": "Norway",
+    "second_step": "Oslo"
+   },
+   "bridge_by_pass": [
+    3,
+    2,
+    14
+   ],
+   "answer_by_pass": [
+    6,
+    2,
+    0
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "City",
+     "Where",
+     "Berlin"
+    ],
+    [
+     "The",
+     "Berlin",
+     "Oslo",
+     "Stockholm",
+     "City"
+    ],
+    [
+     "Oslo",
+     "The",
+     "S",
+     "Ber",
+     "Kristian"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Hans Christian Andersen",
+   "kept": true,
+   "said": {
+    "two_step": "Copenhagen",
+    "first_step": "Denmark",
+    "second_step": "Copenhagen"
+   },
+   "bridge_by_pass": [
+    1,
+    0,
+    9
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Where",
+     "Berlin",
+     "City"
+    ],
+    [
+     "Copenhagen",
+     "The",
+     "Hans",
+     "Berlin",
+     "Oslo"
+    ],
+    [
+     "Copenhagen",
+     "The",
+     "Odense",
+     "Copen",
+     "See"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Jean Sibelius",
+   "kept": true,
+   "said": {
+    "two_step": "Helsinki",
+    "first_step": "Finland",
+    "second_step": "Helsinki"
+   },
+   "bridge_by_pass": [
+    3,
+    0,
+    8
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Jean",
+     "Paris",
+     "France"
+    ],
+    [
+     "The",
+     "Helsinki",
+     "Stockholm",
+     "Berlin",
+     "Paris"
+    ],
+    [
+     "Helsinki",
+     "The",
+     "Helsing",
+     "Tampere",
+     "Espoo"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Cleopatra",
+   "kept": false,
+   "said": {
+    "two_step": "Alexandria",
+    "first_step": "Egypt",
+    "second_step": "Cairo"
+   },
+   "bridge_by_pass": [
+    4,
+    1,
+    4
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "City",
+     "Paris",
+     "Where"
+    ],
+    [
+     "The",
+     "Paris",
+     "Based",
+     "City",
+     "What"
+    ],
+    [
+     "Alex",
+     "The",
+     "Cairo",
+     "It",
+     "You"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Socrates",
+   "kept": true,
+   "said": {
+    "two_step": "Athens",
+    "first_step": "Greece",
+    "second_step": "Athens"
+   },
+   "bridge_by_pass": [
+    7,
+    7,
+    48
+   ],
+   "answer_by_pass": [
+    10,
+    2,
+    0
+   ],
+   "own_best": 7,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "So",
+     "Capital",
+     "Paris",
+     "I"
+    ],
+    [
+     "So",
+     "The",
+     "Paris",
+     "I",
+     "Based"
+    ],
+    [
+     "Ath",
+     "The",
+     "A",
+     "Aten",
+     "Answer"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Akira Kurosawa",
+   "kept": true,
+   "said": {
+    "two_step": "Tokyo",
+    "first_step": "Japan",
+    "second_step": "Tokyo"
+   },
+   "bridge_by_pass": [
+    1,
+    0,
+    6
+   ],
+   "answer_by_pass": [
+    6,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "City",
+     "Where",
+     "Paris"
+    ],
+    [
+     "Tokyo",
+     "The",
+     "City",
+     "Paris",
+     "Based"
+    ],
+    [
+     "Tokyo",
+     "The",
+     "T",
+     "Kyoto",
+     "Tokio"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Jorge Luis Borges",
+   "kept": true,
+   "said": {
+    "two_step": "Buenos Aires",
+    "first_step": "Argentina",
+    "second_step": "Buenos Aires"
+   },
+   "bridge_by_pass": [
+    3,
+    1,
+    17
+   ],
+   "answer_by_pass": [
+    10,
+    1,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Where",
+     "Jorge",
+     "Answer"
+    ],
+    [
+     "The",
+     "Buenos",
+     "Jorge",
+     "San",
+     "Paris"
+    ],
+    [
+     "Buenos",
+     "The",
+     "Ciudad",
+     "This",
+     "City"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Alfred Nobel",
+   "kept": true,
+   "said": {
+    "two_step": "Stockholm",
+    "first_step": "Sweden",
+    "second_step": "Stockholm"
+   },
+   "bridge_by_pass": [
+    3,
+    2,
+    15
+   ],
+   "answer_by_pass": [
+    18,
+    0,
+    0
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "Alfred",
+     "The",
+     "Capital",
+     "City",
+     "Berlin"
+    ],
+    [
+     "The",
+     "Stockholm",
+     "Berlin",
+     "Alfred",
+     "Paris"
+    ],
+    [
+     "Stockholm",
+     "St",
+     "Saint",
+     "The",
+     "Stock"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Albert Einstein",
+   "kept": true,
+   "said": {
+    "two_step": "The capital of the country where Albert Einstein was born is Berlin.",
+    "first_step": "Germany\n</think>\n\nGermany",
+    "second_step": "Berlin"
+   },
+   "bridge_by_pass": [
+    3,
+    1,
+    43
+   ],
+   "answer_by_pass": [
+    3,
+    0,
+    3
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Albert",
+     "Berlin",
+     "Where"
+    ],
+    [
+     "Berlin",
+     "The",
+     "Paris",
+     "Albert",
+     "Einstein"
+    ],
+    [
+     "The",
+     "Please",
+     "Einstein",
+     "Berlin",
+     "Ul"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Samuel Beckett",
+   "kept": true,
+   "said": {
+    "two_step": "Dublin",
+    "first_step": "Ireland",
+    "second_step": "Dublin"
+   },
+   "bridge_by_pass": [
+    3,
+    0,
+    22
+   ],
+   "answer_by_pass": [
+    1,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Samuel",
+     "Capital",
+     "Where",
+     "Paris"
+    ],
+    [
+     "Samuel",
+     "Paris",
+     "The",
+     "Berlin",
+     "Dublin"
+    ],
+    [
+     "Dublin",
+     "Paris",
+     "The",
+     "Not",
+     "Dub"
+    ]
+   ]
+  },
+  {
+   "id": "person_capital/Pablo Neruda",
+   "kept": true,
+   "said": {
+    "two_step": "Santiago",
+    "first_step": "Chile",
+    "second_step": "Santiago"
+   },
+   "bridge_by_pass": [
+    3,
+    0,
+    10
+   ],
+   "answer_by_pass": [
+    14,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Paris",
+     "Pablo",
+     "Where"
+    ],
+    [
+     "The",
+     "Santiago",
+     "Pablo",
+     "Paris",
+     "San"
+    ],
+    [
+     "Santiago",
+     "The",
+     "Val",
+     "San",
+     "A"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Colosseum",
+   "kept": false,
+   "said": {
+    "two_step": "Euro\nThe Colosseum is located in Rome, Italy, and the currency used in Italy is",
+    "first_step": "Italy",
+    "second_step": "Euro"
+   },
+   "bridge_by_pass": [
+    6,
+    1,
+    5
+   ],
+   "answer_by_pass": [
+    6,
+    0,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Where",
+     "Answer",
+     "Based",
+     "Currency"
+    ],
+    [
+     "The",
+     "Currency",
+     "What",
+     "Answer",
+     "Based"
+    ],
+    [
+     "Euro",
+     "The",
+     "euro",
+     "EUR",
+     "Italian"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Taj Mahal",
+   "kept": false,
+   "said": {
+    "two_step": "Indian rupee",
+    "first_step": "India",
+    "second_step": "Indian rupee"
+   },
+   "bridge_by_pass": [
+    4,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    2
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Taj",
+     "Currency",
+     "Answer",
+     "Where"
+    ],
+    [
+     "The",
+     "Currency",
+     "Answer",
+     "Based",
+     "Sure"
+    ],
+    [
+     "Indian",
+     "The",
+     "Rupee",
+     "India",
+     "rupee"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Great Wall",
+   "kept": false,
+   "said": {
+    "two_step": "Yuan\nThe Great Wall is located in China, and the currency used there is the yuan.",
+    "first_step": "China",
+    "second_step": "Yuan (Renminbi)"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    8
+   ],
+   "answer_by_pass": [
+    1,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Currency",
+     "Great",
+     "Where",
+     "Answer"
+    ],
+    [
+     "The",
+     "Great",
+     "Currency",
+     "I",
+     "Answer"
+    ],
+    [
+     "Yuan",
+     "The",
+     "Chinese",
+     "Ren",
+     "yuan"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Big Ben",
+   "kept": true,
+   "said": {
+    "two_step": "Pound sterling",
+    "first_step": "United Kingdom",
+    "second_step": "Pound sterling"
+   },
+   "bridge_by_pass": [
+    13,
+    10,
+    2
+   ],
+   "answer_by_pass": [
+    1,
+    0,
+    0
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Currency",
+     "Where",
+     "Answer",
+     "Big"
+    ],
+    [
+     "The",
+     "Currency",
+     "Big",
+     "Based",
+     "Answer"
+    ],
+    [
+     "Pound",
+     "The",
+     "British",
+     "pound",
+     "Big"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Statue of Liberty",
+   "kept": false,
+   "said": {
+    "two_step": "The Statue of Liberty is located in New York City, which is in the United States.",
+    "first_step": "United States",
+    "second_step": "United States dollar"
+   },
+   "bridge_by_pass": [
+    4,
+    3,
+    0
+   ],
+   "answer_by_pass": [
+    5,
+    0,
+    4
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Currency",
+     "Answer",
+     "Where",
+     "Based"
+    ],
+    [
+     "The",
+     "Currency",
+     "Answer",
+     "I",
+     "Based"
+    ],
+    [
+     "The",
+     "U",
+     "US",
+     "United",
+     "Dollar"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Machu Picchu",
+   "kept": true,
+   "said": {
+    "two_step": "Sol",
+    "first_step": "Peru",
+    "second_step": "Sol"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    9,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "Mach",
+     "The",
+     "Currency",
+     "Where",
+     "Answer"
+    ],
+    [
+     "Mach",
+     "The",
+     "Currency",
+     "Based",
+     "Answer"
+    ],
+    [
+     "Sol",
+     "Peru",
+     "The",
+     "So",
+     "sol"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Mount Fuji",
+   "kept": false,
+   "said": {
+    "two_step": "Japanese yen",
+    "first_step": "Japan",
+    "second_step": "Japanese yen"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "Mount",
+     "The",
+     "Currency",
+     "Japan",
+     "Where"
+    ],
+    [
+     "The",
+     "Japan",
+     "Mount",
+     "Currency",
+     "Answer"
+    ],
+    [
+     "Japanese",
+     "Yen",
+     "The",
+     "yen",
+     "Japan"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Kremlin",
+   "kept": false,
+   "said": {
+    "two_step": "The Kremlin is located in Moscow, Russia. The currency used in Russia is the Russian ruble",
+    "first_step": "Russia",
+    "second_step": "The currency used in Russia is the Russian ruble."
+   },
+   "bridge_by_pass": [
+    0,
+    1,
+    7
+   ],
+   "answer_by_pass": [
+    1,
+    0,
+    1
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Currency",
+     "Answer",
+     "Where",
+     "Russia"
+    ],
+    [
+     "The",
+     "Currency",
+     "Answer",
+     "Based",
+     "Moscow"
+    ],
+    [
+     "The",
+     "Russian",
+     "ruble",
+     "Rou",
+     "R"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Petra",
+   "kept": false,
+   "said": {
+    "two_step": "Jordanian dinar",
+    "first_step": "Jordan",
+    "second_step": "Jordanian dinar"
+   },
+   "bridge_by_pass": [
+    6,
+    1,
+    0
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    4
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Where",
+     "Answer",
+     "Currency",
+     "Based"
+    ],
+    [
+     "The",
+     "Currency",
+     "Based",
+     "Answer",
+     "What"
+    ],
+    [
+     "Jordan",
+     "The",
+     "Answer",
+     "J",
+     "I"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Angkor Wat",
+   "kept": false,
+   "said": {
+    "two_step": "The currency used in the country where Angkor Wat is located is the Cambodian riel.",
+    "first_step": "Cambodia",
+    "second_step": "The currency used in Cambodia is the Cambodian riel."
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    2
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Ang",
+     "Currency",
+     "Answer",
+     "Where"
+    ],
+    [
+     "The",
+     "Ang",
+     "Currency",
+     "Answer",
+     "Based"
+    ],
+    [
+     "The",
+     "Cambodia",
+     "Cam",
+     "Khmer",
+     "R"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Table Mountain",
+   "kept": false,
+   "said": {
+    "two_step": "The currency used in the country where Table Mountain is located is the South African rand.",
+    "first_step": "South Africa",
+    "second_step": "South African rand"
+   },
+   "bridge_by_pass": [
+    1,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    17,
+    2,
+    2
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Mountain",
+     "Table",
+     "Where",
+     "Currency"
+    ],
+    [
+     "The",
+     "Table",
+     "Currency",
+     "South",
+     "Answer"
+    ],
+    [
+     "The",
+     "South",
+     "Rand",
+     "Table",
+     "Cape"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Chichen Itza",
+   "kept": true,
+   "said": {
+    "two_step": "Mexican peso",
+    "first_step": "Mexico",
+    "second_step": "Mexican peso"
+   },
+   "bridge_by_pass": [
+    1,
+    1,
+    4
+   ],
+   "answer_by_pass": [
+    0,
+    1,
+    2
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Currency",
+     "Ch",
+     "Where",
+     "Answer"
+    ],
+    [
+     "The",
+     "Currency",
+     "Ch",
+     "Mexico",
+     "Mexic"
+    ],
+    [
+     "Mexic",
+     "The",
+     "Peso",
+     "It",
+     "Mexico"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Hagia Sophia",
+   "kept": false,
+   "said": {
+    "two_step": "The Hagia Sophia is located in Istanbul, Turkey. The currency used in Turkey is the",
+    "first_step": "Turkey",
+    "second_step": "Turkish lira"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    17
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Hag",
+     "Currency",
+     "Where",
+     "Answer"
+    ],
+    [
+     "The",
+     "Currency",
+     "Hag",
+     "Based",
+     "Turkey"
+    ],
+    [
+     "The",
+     "Turk",
+     "New",
+     "Answer",
+     "Ottoman"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Burj Khalifa",
+   "kept": false,
+   "said": {
+    "two_step": "UAE dirham",
+    "first_step": "UAE",
+    "second_step": "United Arab Emirates Dirham"
+   },
+   "bridge_by_pass": [
+    4,
+    8,
+    1
+   ],
+   "answer_by_pass": [
+    0,
+    1,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Bur",
+     "Currency",
+     "Where",
+     "Answer"
+    ],
+    [
+     "The",
+     "Bur",
+     "Currency",
+     "Answer",
+     "Based"
+    ],
+    [
+     "U",
+     "The",
+     "United",
+     "A",
+     "Emir"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Matterhorn",
+   "kept": true,
+   "said": {
+    "two_step": "Swiss franc",
+    "first_step": "Switzerland",
+    "second_step": "Swiss franc"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    2
+   ],
+   "answer_by_pass": [
+    17,
+    3,
+    7
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Currency",
+     "Answer",
+     "Matter",
+     "Where"
+    ],
+    [
+     "The",
+     "Currency",
+     "Matter",
+     "Answer",
+     "Based"
+    ],
+    [
+     "Swiss",
+     "The",
+     "Switzerland",
+     "CHF",
+     "Euro"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/Christ the Redeemer",
+   "kept": false,
+   "said": {
+    "two_step": "Brazilian real",
+    "first_step": "Brazil",
+    "second_step": "Brazilian real"
+   },
+   "bridge_by_pass": [
+    9,
+    0,
+    0
+   ],
+   "answer_by_pass": [
+    116,
+    1,
+    2
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Answer",
+     "Where",
+     "Currency",
+     "Based"
+    ],
+    [
+     "The",
+     "Currency",
+     "Christ",
+     "Answer",
+     "Based"
+    ],
+    [
+     "Brazil",
+     "The",
+     "Real",
+     "Bra",
+     "Answer"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Sydney Opera House",
+   "kept": false,
+   "said": {
+    "two_step": "Australian dollar",
+    "first_step": "Australia",
+    "second_step": "Australian dollar"
+   },
+   "bridge_by_pass": [
+    7,
+    4,
+    2
+   ],
+   "answer_by_pass": [
+    4,
+    0,
+    13
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "Sydney",
+     "The",
+     "Currency",
+     "Answer",
+     "Where"
+    ],
+    [
+     "The",
+     "Sydney",
+     "Currency",
+     "Answer",
+     "What"
+    ],
+    [
+     "Australian",
+     "The",
+     "Australia",
+     "AUD",
+     "Sydney"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Eiffel Tower",
+   "kept": true,
+   "said": {
+    "two_step": "Euro",
+    "first_step": "France",
+    "second_step": "Euro"
+   },
+   "bridge_by_pass": [
+    2,
+    2,
+    6
+   ],
+   "answer_by_pass": [
+    3,
+    0,
+    0
+   ],
+   "own_best": 2,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Eiffel",
+     "Paris",
+     "Currency",
+     "France"
+    ],
+    [
+     "The",
+     "Currency",
+     "Paris",
+     "What",
+     "French"
+    ],
+    [
+     "Euro",
+     "euro",
+     "The",
+     "EUR",
+     "French"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the Pyramids of Giza",
+   "kept": false,
+   "said": {
+    "two_step": "Egyptian pound",
+    "first_step": "Egypt",
+    "second_step": "Egyptian pound"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    0
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Pyramid",
+     "Currency",
+     "Answer",
+     "Where"
+    ],
+    [
+     "The",
+     "Currency",
+     "Egypt",
+     "Answer",
+     "Pyramid"
+    ],
+    [
+     "Egypt",
+     "The",
+     "E",
+     "egypt",
+     "She"
+    ]
+   ]
+  },
+  {
+   "id": "landmark_currency/the CN Tower",
+   "kept": true,
+   "said": {
+    "two_step": "Canadian dollar",
+    "first_step": "Canada",
+    "second_step": "Canadian dollar"
+   },
+   "bridge_by_pass": [
+    6,
+    5,
+    3
+   ],
+   "answer_by_pass": [
+    14,
+    2,
+    9
+   ],
+   "own_best": 3,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "CN",
+     "Currency",
+     "Answer",
+     "Where"
+    ],
+    [
+     "The",
+     "CN",
+     "Currency",
+     "Canadian",
+     "Toronto"
+    ],
+    [
+     "Canadian",
+     "The",
+     "CAD",
+     "Canada",
+     "CN"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Don Quixote",
+   "kept": false,
+   "said": {
+    "two_step": "Spain",
+    "first_step": "Miguel de Cervantes",
+    "second_step": "Spain"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    3,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Don",
+     "In",
+     "France",
+     "Country"
+    ],
+    [
+     "The",
+     "Spain",
+     "Don",
+     "France",
+     "Mexico"
+    ],
+    [
+     "Spain",
+     "The",
+     "Miguel",
+     "\"",
+     "Kingdom"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/War and Peace",
+   "kept": true,
+   "said": {
+    "two_step": "Russia",
+    "first_step": "Leo Tolstoy",
+    "second_step": "Russia"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    13,
+    2,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "War",
+     "In",
+     "France",
+     "This"
+    ],
+    [
+     "The",
+     "War",
+     "Russia",
+     "France",
+     "Country"
+    ],
+    [
+     "Russia",
+     "The",
+     "France",
+     "Answer",
+     "Russian"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Pride and Prejudice",
+   "kept": false,
+   "said": {
+    "two_step": "England",
+    "first_step": "Jane Austen",
+    "second_step": "The user asks \"In which country was Austen born?\" Austen likely refers to Jane"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    2
+   ],
+   "answer_by_pass": [
+    7,
+    2,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "France",
+     "Country",
+     "This"
+    ],
+    [
+     "The",
+     "United",
+     "England",
+     "France",
+     "UK"
+    ],
+    [
+     "England",
+     "The",
+     "United",
+     "Great",
+     "UK"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Les Mis\u00e9rables",
+   "kept": false,
+   "said": {
+    "two_step": "France",
+    "first_step": "Victor Hugo",
+    "second_step": "Hugo is a given name, not a single person, so there isn't one country he was"
+   },
+   "bridge_by_pass": [
+    74,
+    7,
+    7
+   ],
+   "answer_by_pass": [
+    1,
+    1,
+    0
+   ],
+   "own_best": 7,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "France",
+     "Les",
+     "In",
+     "This"
+    ],
+    [
+     "The",
+     "France",
+     "Les",
+     "Based",
+     "Paris"
+    ],
+    [
+     "France",
+     "The",
+     "Les",
+     "Answer",
+     "\""
+    ]
+   ]
+  },
+  {
+   "id": "book_country/The Divine Comedy",
+   "kept": true,
+   "said": {
+    "two_step": "Italy",
+    "first_step": "Dante Alighieri",
+    "second_step": "Italy"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "answer_by_pass": [
+    11,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "France",
+     "This"
+    ],
+    [
+     "The",
+     "Italy",
+     "France",
+     "Based",
+     "Country"
+    ],
+    [
+     "Italy",
+     "The",
+     "Florence",
+     "France",
+     "It"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Faust",
+   "kept": true,
+   "said": {
+    "two_step": "Germany",
+    "first_step": "Johann Wolfgang von Goethe",
+    "second_step": "Germany"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    7,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "This",
+     "France"
+    ],
+    [
+     "The",
+     "Germany",
+     "Country",
+     "In",
+     "German"
+    ],
+    [
+     "Germany",
+     "The",
+     "Faust",
+     "Johann",
+     "Goethe"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/One Hundred Years of Solitude",
+   "kept": false,
+   "said": {
+    "two_step": "Colombia",
+    "first_step": "Gabriel Garc\u00eda M\u00e1rquez",
+    "second_step": "The user asks: \"In which country was M\u00e1rquez born? Answer with the country name only."
+   },
+   "bridge_by_pass": [
+    408,
+    59,
+    148
+   ],
+   "answer_by_pass": [
+    18,
+    5,
+    0
+   ],
+   "own_best": 59,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "One",
+     "In",
+     "Country",
+     "This"
+    ],
+    [
+     "One",
+     "The",
+     "Mexico",
+     "Gabriel",
+     "Cuba"
+    ],
+    [
+     "Colombia",
+     "The",
+     "Columbia",
+     "Col",
+     "Let"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/The Old Man and the Sea",
+   "kept": false,
+   "said": {
+    "two_step": "Cuba\nThe author of \"The Old Man and the Sea\" is Ernest Hemingway,",
+    "first_step": "Ernest Hemingway",
+    "second_step": "The user asks for the country where Hemingway was born, answer with country name only. Need"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    3,
+    6,
+    3
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "France",
+     "This"
+    ],
+    [
+     "The",
+     "Mexico",
+     "Cuba",
+     "That",
+     "Spain"
+    ],
+    [
+     "Cuba",
+     "The",
+     "Cub",
+     "United",
+     "Answer"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Crime and Punishment",
+   "kept": true,
+   "said": {
+    "two_step": "Russia\n</think>\n\nRussia",
+    "first_step": "Fyodor Dostoevsky",
+    "second_step": "Russia"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    13,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "This",
+     "France"
+    ],
+    [
+     "The",
+     "Russia",
+     "Country",
+     "In",
+     "Answer"
+    ],
+    [
+     "Russia",
+     "The",
+     "Russian",
+     "Answer",
+     "\""
+    ]
+   ]
+  },
+  {
+   "id": "book_country/The Odyssey",
+   "kept": false,
+   "said": {
+    "two_step": "Greece",
+    "first_step": "Homer",
+    "second_step": "The user asks \"In which country was Homer born?\" Ambiguous: Homer could"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    28,
+    10,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "This",
+     "Country",
+     "France"
+    ],
+    [
+     "The",
+     "Based",
+     "No",
+     "In",
+     "Unknown"
+    ],
+    [
+     "Greece",
+     "The",
+     "I",
+     "Ireland",
+     "No"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Ulysses",
+   "kept": false,
+   "said": {
+    "two_step": "Ireland",
+    "first_step": "James Joyce",
+    "second_step": "Joyce is a given name, and it doesn't have a single country of origin. However,"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    11,
+    1,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "This",
+     "Europe"
+    ],
+    [
+     "The",
+     "Ireland",
+     "In",
+     "Country",
+     "I"
+    ],
+    [
+     "Ireland",
+     "The",
+     "Ir",
+     "James",
+     "\""
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Madame Bovary",
+   "kept": true,
+   "said": {
+    "two_step": "France",
+    "first_step": "Gustave Flaubert",
+    "second_step": "France"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    2
+   ],
+   "answer_by_pass": [
+    1,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "France",
+     "In",
+     "Country",
+     "This"
+    ],
+    [
+     "France",
+     "The",
+     "Country",
+     "Based",
+     "French"
+    ],
+    [
+     "France",
+     "The",
+     "\ud83c\uddeb",
+     "French",
+     "Answer"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Things Fall Apart",
+   "kept": true,
+   "said": {
+    "two_step": "Nigeria",
+    "first_step": "Chinua Achebe",
+    "second_step": "Nigeria"
+   },
+   "bridge_by_pass": [
+    1,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    6,
+    2,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Thing",
+     "In",
+     "Country",
+     "This"
+    ],
+    [
+     "Thing",
+     "The",
+     "Nigeria",
+     "Based",
+     "That"
+    ],
+    [
+     "Nigeria",
+     "The",
+     "Niger",
+     "Nig",
+     "It"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Oliver Twist",
+   "kept": false,
+   "said": {
+    "two_step": "The author of \"Oliver Twist\" is Charles Dickens, who was born in England.",
+    "first_step": "Charles Dickens",
+    "second_step": "England"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    6,
+    6,
+    1
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "This",
+     "Oliver"
+    ],
+    [
+     "The",
+     "Oliver",
+     "Country",
+     "In",
+     "Based"
+    ],
+    [
+     "The",
+     "England",
+     "Great",
+     "United",
+     "Britain"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Moby-Dick",
+   "kept": false,
+   "said": {
+    "two_step": "The author of \"Moby-Dick\" is Herman Melville, who was born in the United States",
+    "first_step": "Herman Melville",
+    "second_step": "The user asks: \"In which country was Melville born? Answer with the country name only."
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "This",
+     "Answer"
+    ],
+    [
+     "The",
+     "Country",
+     "In",
+     "Based",
+     "United"
+    ],
+    [
+     "The",
+     "United",
+     "New",
+     "USA",
+     "U"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/The Alchemist",
+   "kept": false,
+   "said": {
+    "two_step": "The country where the author of \"The Alchemist\" was born is Morocco.",
+    "first_step": "Paulo Coelho",
+    "second_step": "The user asks: \"In which country was Coelho born? Answer with the country name only."
+   },
+   "bridge_by_pass": [
+    486,
+    165,
+    38
+   ],
+   "answer_by_pass": [
+    50,
+    44,
+    2
+   ],
+   "own_best": 38,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "Country",
+     "France",
+     "This"
+    ],
+    [
+     "The",
+     "Based",
+     "France",
+     "Spain",
+     "Mexico"
+    ],
+    [
+     "The",
+     "Egypt",
+     "Brazil",
+     "Peru",
+     "United"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Pippi Longstocking",
+   "kept": false,
+   "said": {
+    "two_step": "Sweden",
+    "first_step": "Astrid Lindgren",
+    "second_step": "The user asks \"In which country was Lindgren born?\" Ambiguous: Lindgren could"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    2
+   ],
+   "answer_by_pass": [
+    5,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "P",
+     "In",
+     "Country",
+     "France"
+    ],
+    [
+     "Sweden",
+     "The",
+     "P",
+     "France",
+     "Country"
+    ],
+    [
+     "Sweden",
+     "The",
+     "Den",
+     "Swedish",
+     "T"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Heidi",
+   "kept": true,
+   "said": {
+    "two_step": "Switzerland",
+    "first_step": "Johanna Spyri",
+    "second_step": "Spyri was born in Switzerland."
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    1
+   ],
+   "answer_by_pass": [
+    11,
+    3,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Country",
+     "In",
+     "This",
+     "Based"
+    ],
+    [
+     "The",
+     "Country",
+     "Germany",
+     "Switzerland",
+     "In"
+    ],
+    [
+     "Switzerland",
+     "The",
+     "Germany",
+     "Swiss",
+     "["
+    ]
+   ]
+  },
+  {
+   "id": "book_country/The Kite Runner",
+   "kept": false,
+   "said": {
+    "two_step": "Afghanistan",
+    "first_step": "Khaled Hosseini",
+    "second_step": "The user asks: \"In which country was Hosseini born? Answer with the country name only"
+   },
+   "bridge_by_pass": [
+    70,
+    11,
+    58
+   ],
+   "answer_by_pass": [
+    9,
+    3,
+    0
+   ],
+   "own_best": 11,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "France",
+     "Country",
+     "This"
+    ],
+    [
+     "The",
+     "Based",
+     "I",
+     "In",
+     "Answer"
+    ],
+    [
+     "Afghanistan",
+     "The",
+     "Pakistan",
+     "Answer",
+     "Af"
+    ]
+   ]
+  },
+  {
+   "id": "book_country/Peer Gynt",
+   "kept": true,
+   "said": {
+    "two_step": "Norway",
+    "first_step": "Henrik Ibsen",
+    "second_step": "Norway"
+   },
+   "bridge_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "answer_by_pass": [
+    4,
+    3,
+    0
+   ],
+   "own_best": 0,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "In",
+     "This",
+     "France",
+     "Based"
+    ],
+    [
+     "The",
+     "Norwegian",
+     "Based",
+     "Nor",
+     "Peer"
+    ],
+    [
+     "Nor",
+     "The",
+     "Norwegian",
+     "Peer",
+     "I"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Toyota",
+   "kept": true,
+   "said": {
+    "two_step": "Tokyo",
+    "first_step": "Japan",
+    "second_step": "Tokyo"
+   },
+   "bridge_by_pass": [
+    4,
+    0,
+    24
+   ],
+   "answer_by_pass": [
+    5,
+    0,
+    0
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "City",
+     "Based",
+     "Where"
+    ],
+    [
+     "The",
+     "Tokyo",
+     "Based",
+     "Answer",
+     "What"
+    ],
+    [
+     "Tokyo",
+     "Toyota",
+     "Nagoya",
+     "The",
+     "Please"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/IKEA",
+   "kept": true,
+   "said": {
+    "two_step": "The capital of the country where IKEA was founded is Stockholm.",
+    "first_step": "The country where IKEA was founded is Sweden.",
+    "second_step": "Stockholm"
+   },
+   "bridge_by_pass": [
+    1,
+    2,
+    64
+   ],
+   "answer_by_pass": [
+    7,
+    0,
+    2
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "I",
+     "City",
+     "Where"
+    ],
+    [
+     "Stockholm",
+     "The",
+     "I",
+     "Berlin",
+     "Ber"
+    ],
+    [
+     "The",
+     "I",
+     "Stockholm",
+     "\u00c4",
+     "E"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Nokia",
+   "kept": true,
+   "said": {
+    "two_step": "Helsinki",
+    "first_step": "Finland",
+    "second_step": "Helsinki"
+   },
+   "bridge_by_pass": [
+    3,
+    1,
+    3
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Where",
+     "City",
+     "Based"
+    ],
+    [
+     "The",
+     "Helsinki",
+     "Based",
+     "Berlin",
+     "Stockholm"
+    ],
+    [
+     "Helsinki",
+     "Tampere",
+     "The",
+     "Espoo",
+     "Helsing"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Samsung",
+   "kept": true,
+   "said": {
+    "two_step": "Seoul",
+    "first_step": "South Korea",
+    "second_step": "Seoul"
+   },
+   "bridge_by_pass": [
+    6,
+    1,
+    5
+   ],
+   "answer_by_pass": [
+    1,
+    0,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Samsung",
+     "Capital",
+     "City",
+     "Based"
+    ],
+    [
+     "The",
+     "Seoul",
+     "Samsung",
+     "Based",
+     "Berlin"
+    ],
+    [
+     "Seoul",
+     "The",
+     "Su",
+     "Se",
+     "Seo"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/LEGO",
+   "kept": false,
+   "said": {
+    "two_step": "Billund",
+    "first_step": "Denmark",
+    "second_step": "Copenhagen"
+   },
+   "bridge_by_pass": [
+    6,
+    1,
+    5
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    3
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "LE",
+     "The",
+     "Capital",
+     "City",
+     "Based"
+    ],
+    [
+     "LE",
+     "The",
+     "Copenhagen",
+     "Berlin",
+     "Stockholm"
+    ],
+    [
+     "Bill",
+     "LE",
+     "The",
+     "Copenhagen",
+     "Leg"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Nestl\u00e9",
+   "kept": false,
+   "said": {
+    "two_step": "Vevey",
+    "first_step": "Switzerland",
+    "second_step": "Bern"
+   },
+   "bridge_by_pass": [
+    1,
+    0,
+    66
+   ],
+   "answer_by_pass": [
+    73,
+    6,
+    2
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Nest",
+     "Based",
+     "City"
+    ],
+    [
+     "The",
+     "Nest",
+     "Paris",
+     "Based",
+     "Berlin"
+    ],
+    [
+     "Ve",
+     "La",
+     "Bern",
+     "V",
+     "Zurich"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Philips",
+   "kept": false,
+   "said": {
+    "two_step": "The Hague",
+    "first_step": "The Netherlands",
+    "second_step": "Amsterdam"
+   },
+   "bridge_by_pass": [
+    6,
+    1,
+    30
+   ],
+   "answer_by_pass": [
+    24,
+    2,
+    2
+   ],
+   "own_best": 1,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Where",
+     "Philip",
+     "City"
+    ],
+    [
+     "The",
+     "Philip",
+     "Amsterdam",
+     "Berlin",
+     "Brussel"
+    ],
+    [
+     "Eindhoven",
+     "The",
+     "Amsterdam",
+     "Utrecht",
+     "Rotterdam"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Volkswagen",
+   "kept": false,
+   "said": {
+    "two_step": "Wolfsburg",
+    "first_step": "Germany",
+    "second_step": "Berlin"
+   },
+   "bridge_by_pass": [
+    1,
+    2,
+    26
+   ],
+   "answer_by_pass": [
+    2,
+    0,
+    2
+   ],
+   "own_best": 1,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Berlin",
+     "Volks",
+     "Based"
+    ],
+    [
+     "Berlin",
+     "The",
+     "Based",
+     "Volks",
+     "Ber"
+    ],
+    [
+     "Wolf",
+     "The",
+     "Berlin",
+     "Volks",
+     "Stuttgart"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Ferrari",
+   "kept": false,
+   "said": {
+    "two_step": "Modena",
+    "first_step": "Italy",
+    "second_step": "Rome"
+   },
+   "bridge_by_pass": [
+    4,
+    2,
+    9
+   ],
+   "answer_by_pass": [
+    6,
+    3,
+    37
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Based",
+     "City",
+     "Where"
+    ],
+    [
+     "The",
+     "Milan",
+     "Paris",
+     "Based",
+     "Rome"
+    ],
+    [
+     "Mod",
+     "Mar",
+     "The",
+     "I",
+     "Turin"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Renault",
+   "kept": true,
+   "said": {
+    "two_step": "Paris",
+    "first_step": "France",
+    "second_step": "Paris"
+   },
+   "bridge_by_pass": [
+    3,
+    1,
+    23
+   ],
+   "answer_by_pass": [
+    2,
+    0,
+    0
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Paris",
+     "France",
+     "Based"
+    ],
+    [
+     "Paris",
+     "The",
+     "Based",
+     "Lisbon",
+     "Berlin"
+    ],
+    [
+     "Paris",
+     "The",
+     "Boulogne",
+     "Sure",
+     "Renault"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Zara",
+   "kept": false,
+   "said": {
+    "two_step": "A Coru\u00f1a",
+    "first_step": "Spain",
+    "second_step": "Madrid"
+   },
+   "bridge_by_pass": [
+    3,
+    1,
+    8
+   ],
+   "answer_by_pass": [
+    49,
+    1,
+    2
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Based",
+     "Where",
+     "City"
+    ],
+    [
+     "The",
+     "Madrid",
+     "Lisbon",
+     "Barcelona",
+     "Based"
+    ],
+    [
+     "A",
+     "In",
+     "Madrid",
+     "The",
+     "La"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Guinness",
+   "kept": true,
+   "said": {
+    "two_step": "Dublin",
+    "first_step": "Ireland",
+    "second_step": "Dublin"
+   },
+   "bridge_by_pass": [
+    4,
+    2,
+    6
+   ],
+   "answer_by_pass": [
+    0,
+    0,
+    0
+   ],
+   "own_best": 2,
+   "t1": false,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Based",
+     "Where",
+     "City"
+    ],
+    [
+     "The",
+     "London",
+     "Dublin",
+     "Based",
+     "Berlin"
+    ],
+    [
+     "Dublin",
+     "The",
+     "Answer",
+     "D",
+     "Dub"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Huawei",
+   "kept": false,
+   "said": {
+    "two_step": "Shenzhen",
+    "first_step": "China",
+    "second_step": "Beijing"
+   },
+   "bridge_by_pass": [
+    2,
+    0,
+    5
+   ],
+   "answer_by_pass": [
+    17,
+    1,
+    2
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "Capital",
+     "The",
+     "City",
+     "Based",
+     "Where"
+    ],
+    [
+     "The",
+     "Beijing",
+     "Shanghai",
+     "Hong",
+     "Shenzhen"
+    ],
+    [
+     "Shenzhen",
+     "The",
+     "Beijing",
+     "Sh",
+     "Chongqing"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Petrobras",
+   "kept": false,
+   "said": {
+    "two_step": "Rio de Janeiro",
+    "first_step": "Brazil",
+    "second_step": "Bras\u00edlia"
+   },
+   "bridge_by_pass": [
+    3,
+    0,
+    8
+   ],
+   "answer_by_pass": [
+    402,
+    26,
+    1
+   ],
+   "own_best": 0,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "Petro",
+     "Where",
+     "Based"
+    ],
+    [
+     "The",
+     "Petro",
+     "S\u00e3o",
+     "Paris",
+     "Based"
+    ],
+    [
+     "Rio",
+     "Bras\u00edlia",
+     "Brasilia",
+     "The",
+     "S\u00e3o"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Qantas",
+   "kept": false,
+   "said": {
+    "two_step": "Sydney",
+    "first_step": "Australia",
+    "second_step": "Canberra"
+   },
+   "bridge_by_pass": [
+    9,
+    1,
+    32
+   ],
+   "answer_by_pass": [
+    1,
+    1,
+    1
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "Q",
+     "The",
+     "Capital",
+     "Where",
+     "Based"
+    ],
+    [
+     "Q",
+     "The",
+     "Sydney",
+     "Paris",
+     "London"
+    ],
+    [
+     "Sydney",
+     "Canberra",
+     "The",
+     "Melbourne",
+     "Brisbane"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Aeroflot",
+   "kept": true,
+   "said": {
+    "two_step": "Moscow",
+    "first_step": "Russia",
+    "second_step": "Moscow"
+   },
+   "bridge_by_pass": [
+    6,
+    7,
+    11
+   ],
+   "answer_by_pass": [
+    7,
+    1,
+    0
+   ],
+   "own_best": 6,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Aer",
+     "Capital",
+     "Based",
+     "City"
+    ],
+    [
+     "The",
+     "Moscow",
+     "Aer",
+     "Berlin",
+     "Based"
+    ],
+    [
+     "Moscow",
+     "Mo",
+     "The",
+     "\u041c\u043e\u0441",
+     "Let"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/\u0160koda",
+   "kept": true,
+   "said": {
+    "two_step": "Prague",
+    "first_step": "Czech Republic",
+    "second_step": "Prague"
+   },
+   "bridge_by_pass": [
+    2,
+    3,
+    46
+   ],
+   "answer_by_pass": [
+    1,
+    1,
+    0
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "\u0160",
+     "Based",
+     "Where"
+    ],
+    [
+     "The",
+     "Prague",
+     "\u0160",
+     "Berlin",
+     "Based"
+    ],
+    [
+     "Prague",
+     "M",
+     "Bratislava",
+     "The",
+     "Pl"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Red Bull",
+   "kept": false,
+   "said": {
+    "two_step": "Salzburg",
+    "first_step": "Austria",
+    "second_step": "Vienna"
+   },
+   "bridge_by_pass": [
+    14,
+    2,
+    4
+   ],
+   "answer_by_pass": [
+    1,
+    1,
+    0
+   ],
+   "own_best": 2,
+   "t1": true,
+   "t2": false,
+   "top_last": [
+    [
+     "Red",
+     "The",
+     "Capital",
+     "City",
+     "Based"
+    ],
+    [
+     "The",
+     "Red",
+     "Berlin",
+     "Paris",
+     "Based"
+    ],
+    [
+     "Salz",
+     "Vienna",
+     "The",
+     "In",
+     "D\u00fc"
+    ]
+   ]
+  },
+  {
+   "id": "company_capital/Tata Motors",
+   "kept": false,
+   "said": {
+    "two_step": "Mumbai",
+    "first_step": "India",
+    "second_step": "New Delhi"
+   },
+   "bridge_by_pass": [
+    3,
+    1,
+    17
+   ],
+   "answer_by_pass": [
+    39,
+    5,
+    4
+   ],
+   "own_best": 1,
+   "t1": true,
+   "t2": true,
+   "top_last": [
+    [
+     "The",
+     "Capital",
+     "T",
+     "Based",
+     "City"
+    ],
+    [
+     "The",
+     "T",
+     "Based",
+     "Mumbai",
+     "Bengaluru"
+    ],
+    [
+     "Mumbai",
+     "P",
+     "Kolkata",
+     "D",
+     "The"
+    ]
+   ]
+  }
+ ]
+}

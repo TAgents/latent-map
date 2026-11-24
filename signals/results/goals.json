@@ -1,0 +1,89 @@
+{
+ "replies": 150,
+ "primary_state": "block 2, pass 3",
+ "H1": {
+  "thinking_states_goal_or_instruction": 120,
+  "of": 120,
+  "replies_with_thinking_text": 120
+ },
+ "answer_gives_it_away": {
+  "by_words": {
+   "water": 22,
+   "outdoors": 13,
+   "books": 18,
+   "sleep": 9
+  },
+  "reader_named_the_goal": {
+   "water": 22,
+   "outdoors": 10,
+   "books": 18,
+   "sleep": 11
+  },
+  "reader_said_none": {
+   "control": 28,
+   "water": 8,
+   "outdoors": 20,
+   "books": 12,
+   "sleep": 19
+  },
+  "reader_wrong_goal": 2,
+  "per_condition": 30
+ },
+ "H2": {
+  "quiet_goal_replies": 59,
+  "quiet_control_replies": 28,
+  "states": {
+   "block2/pass1": 0.5427938034188033,
+   "block2/pass2": 0.5628583916083916,
+   "block2/pass3": 0.5634931041181042,
+   "block3/pass1": 0.5957284382284382,
+   "block3/pass2": 0.6535756604506604,
+   "block3/pass3": 0.7231633644133644
+  },
+  "answer_words": 0.6287611693861694,
+  "state": 0.5634931041181042,
+  "met": false
+ },
+ "H3": {
+  "quiet_goal_replies": 59,
+  "word_in_top50_mid_pass": 59,
+  "same_in_control": 56,
+  "rate": 1.0,
+  "control_rate": 0.9491525423728814,
+  "met": false,
+  "by_goal": {
+   "water": [
+    8,
+    8
+   ],
+   "outdoors": [
+    20,
+    20
+   ],
+   "books": [
+    12,
+    12
+   ],
+   "sleep": [
+    19,
+    19
+   ]
+  }
+ },
+ "H4": {
+  "acts_on_goal": 62,
+  "does_not": 58,
+  "states": {
+   "block2/pass1": 0.57119021134594,
+   "block2/pass2": 0.5697997775305896,
+   "block2/pass3": 0.5745272525027808,
+   "block3/pass1": 0.44605116796440497,
+   "block3/pass2": 0.7221913236929922,
+   "block3/pass3": 0.557285873192436
+  },
+  "prompt_words": 0.5809232480533927,
+  "state": 0.5745272525027808,
+  "valid": true,
+  "met": false
+ }
+}

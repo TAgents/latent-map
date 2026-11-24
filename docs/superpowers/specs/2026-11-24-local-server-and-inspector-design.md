@@ -64,7 +64,25 @@ A is the recommendation if the feasibility step passes; B is the fallback, with 
 
 If 1 fails, fall back to approach B. If 3 fails, the first version is chat-only and tools become their own piece of work.
 
-## Design
+### Step 0 results (2026-11-24, spike in `server/step0/`)
+
+Approach A is confirmed. The spike wraps the bundled server from outside; no file of the model runner is edited.
+
+| Check | Result |
+| --- | --- |
+| 1. Capture under the bundled server | **Pass.** States recorded for every reply at about 17 words per second. Compared with a plain pass over the same text, the captured state matched its own word best in 176 of 177, 150 of 150, 61 of 61 and similar. |
+| 1b. Alignment under the prompt cache | **Pass, with a new rule.** "Skip the first one-token call" is wrong when the cache leaves one token to read. The rule that holds: forward calls first use up the uncached prompt tokens; each call after that read one generated word. Checked with 1 and 14 uncached tokens. |
+| 2. Two requests at once | **Pass.** With batching switched off they are served one after the other, each correct and aligned. The second waits. |
+| 3. Tool calls | **Pass after a small adapter.** Out of the box the server knows neither this model's thinking markers nor its tool-call format, and both leak into the reply. A 25-line reply-format description plus a 3-line parser fixes it: thinking arrives in the reasoning field, the answer is clean, and tool calls come back in the standard form, streamed and not. A tool result sent back in the standard form is read correctly. |
+| 4. A real coding tool | **Not done.** Codex is the only suitable tool installed, and it no longer speaks the chat API; it needs the newer "responses" route, which the bundled server lacks. |
+
+Found on the way, all now part of the design:
+
+- **The prompt cache never hit.** This model's cache cannot be shortened, and the server only stores the cache as it stands after the reply, which a later prompt never extends (the thinking is not sent back). Saving a copy at the moment the prompt has been read fixes continuing conversations: a 7,283-token follow-up read 14 new tokens and took 6.5 s against 21 s. A new conversation with the same long system prompt still re-reads it (about 500 tokens per second); a second saved copy at the end of the system prompt would fix that.
+- **Saved caches are large** (about 0.4GB per 7,000 tokens), so the cache gets a size limit (2GB in the spike).
+- **The server contacts huggingface.co when it loads the model**, to check for a newer version. Only the model's name is sent. Running with the offline setting stops it, and the real server will.
+- **The server allows web pages from any origin by default.** Ours will allow only its own page.
+- **The effort setting** reaches the model only when sent as a template argument; the standard `reasoning_effort` field needs mapping to it.
 
 ### Server
 

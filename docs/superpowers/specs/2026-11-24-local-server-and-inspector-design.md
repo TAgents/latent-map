@@ -1,6 +1,6 @@
 # Local model server with an inspector — design
 
-Status: proposed 2026-11-24, not yet approved. Nothing is built.
+Status: approved by the user on 2026-11-24, with the decisions recorded at the end. Step 0 feasibility comes first; nothing else is built yet.
 
 ## Why
 
@@ -83,7 +83,7 @@ For each request, written when the reply ends:
 - per generated word: phase (thinking or answer), map cell on each pass for block 2, last-pass movement, loop signal. A few bytes per word;
 - per request: the reply's mean state for block 2 and block 3 on each pass, **at full size** (about 55KB). The hidden-goal test could not be re-analysed because only reduced states were kept; this fixes that for the future.
 
-Stored in a single local database file. **Retention is a setting** (default 30 days) with "keep text" able to be switched off, in which case only the numbers are stored and the inspector says the text was not kept. A "forget this session" action deletes its rows.
+Stored in a single local database file. **Retention is a setting** (default 5 days) with "keep text" able to be switched off, in which case only the numbers are stored and the inspector says the text was not kept. A "forget this session" action deletes its rows.
 
 ### Readout on demand
 
@@ -136,8 +136,8 @@ Each step ends with something usable, and step 2 already lets a chat app or codi
 - How the client label is derived.
 - The exact context limit, once measured.
 
-## Decisions for you
+## Decisions (user, 2026-11-24)
 
-- Approve this direction, or change it.
-- Default retention (30 days proposed) and whether text is kept by default.
-- Whether tool calling is required for the first version or can follow.
+- Direction approved.
+- Default retention is 5 days ("no need to keep that long, 5 days is enough"). Text is kept by default within that window; the text-off setting stays.
+- Tool calling "would be nice": wanted in the first version if step 0 shows it works or needs only a small parser. If it needs substantial work, chat ships first and tools follow as build step 6.

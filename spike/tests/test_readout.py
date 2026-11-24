@@ -30,3 +30,5 @@ def test_block2_matches_capture_and_replacing_a_state_with_itself_changes_nothin
     np.testing.assert_array_equal(same["top"][2, :, 0], base["top"][2, :, 0])
     other = pass_readouts(model, ids, topk=5, replace={"passes": (0, 1, 2), "position": len(ids) - 1, "state": base["pass_end"][2, 0]})
     assert (other["top"][2, -1] != base["top"][2, -1]).any()
+    per_pass = pass_readouts(model, ids, topk=5, replace={"passes": (0, 1, 2), "position": 3, "state": base["pass_end"][:, 3]})
+    np.testing.assert_array_equal(per_pass["top"][2, :, 0], base["top"][2, :, 0])   # each pass's own state back in: no change

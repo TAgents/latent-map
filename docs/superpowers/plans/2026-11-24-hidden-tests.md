@@ -31,3 +31,14 @@ Four questions were tried by hand: thinking can be skipped by starting the reply
 ## After the runs
 
 Analysis, then an independent review of code, criteria and write-up, then the report to the user. Results are described as hidden knowledge and hidden goals, never as scheming or intent.
+
+## T3, fixed on 2026-11-24 after T1 was met (25 of 35) and before the swap was run
+
+- **Items:** the kept items that met T1.
+- **Donor:** for each, the next such item in the same family (wrapping round) whose step and answer both differ.
+- **Swap:** at the receiver's subject-end position, after each of the three passes, the pass's final state is replaced by the donor's state from the donor's subject-end position on the same pass, rescaled to the receiver's size (`pass_readouts(..., replace=...)`).
+- **Outcome:** the readout at the last prompt token after the last pass.
+- **T3 is met** if the donor's answer is the top word in at least a third of the swaps.
+- **Control:** the same swap using a state from an item of a different family. The designated donor's answer should not become the top word.
+- **Reported:** how often the receiver's own answer stops being the top word; the donor answer's rank before and after.
+- **Known weakness:** the swap changes one position's state at the hand-over between passes. The model also carries each pass's block states forward separately, and those are left untouched, so a failure here is weak evidence.

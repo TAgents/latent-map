@@ -16,7 +16,7 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
       "top":  (passes, tokens, topk) most likely next-token ids per pass and position
       "rank": (passes, tokens, len(track)) rank of each tracked token id, 0 = most likely
 
-    replace: {"passes": (k, ...), "position": p, "state": (hidden,) array}. Before each listed pass's state
+    replace: {"passes": (k, ...), "position": p, "state": (hidden,) or (passes, hidden) array}. Before each listed pass's state
     is handed on (to the next pass, or to the last block), the hidden state at position p
     is overwritten with this vector, rescaled to that position's own size. Used to test
     whether a state is what the model actually uses."""
@@ -50,7 +50,8 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
         if replace is not None and loop_pass in replace["passes"]:
             h = hidden_states.astype(mx.float32)
             p = replace["position"]
-            new = mx.array(np.asarray(replace["state"], dtype=np.float32))
+            state = np.asarray(replace["state"], dtype=np.float32)
+            new = mx.array(state[loop_pass] if state.ndim == 2 else state)   # one state for all passes, or one per pass
             size = mx.sqrt(mx.mean(mx.square(h[0, p])))
             new = new / mx.sqrt(mx.mean(mx.square(new))) * size
             mask = mx.array((np.arange(h.shape[1]) == p).astype(np.float32))[None, :, None]

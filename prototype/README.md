@@ -31,3 +31,5 @@ It listens on 127.0.0.1 only. One generation at a time, one turn per run, no his
 - The first one-token forward call is treated as the prompt's last token. That holds
   for the pinned mlx-lm commit and would need rechecking on another version.
 - The server shows map v1 by default (`MAP_TAG=v0 ./run.sh` for the old one). `norms_<tag>.json` comes from `build_norms.py <tag>` and must be rebuilt if that map changes.
+
+Superseded by `server/` (same page, plus the standard API and a record of every request). Only one of the two can run at a time.

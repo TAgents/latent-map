@@ -9,7 +9,7 @@ from lmserver.hooks import build_record
 
 ROOT = Path(__file__).resolve().parents[2]
 HIDDEN = 2304
-TEXT = {1: "<|message_model|>", 2: "<|content_thinking|>", 3: "Hmm", 4: "<|end_message|>", 5: "<|content_text|>", 6: "Hi", 7: "."}
+TEXT = {8: "read_file", 9: "<|content_invoke_tool_json|>", 10: "{}", 1: "<|message_model|>", 2: "<|content_thinking|>", 3: "Hmm", 4: "<|end_message|>", 5: "<|content_text|>", 6: "Hi", 7: "."}
 
 
 class Tok:
@@ -74,3 +74,9 @@ def test_mean_states_exclude_markers_and_are_nan_for_an_empty_phase(live):
 def test_cancelled_finish_is_carried(live):
     rec, _ = build(live, [4, 1], 4, [6], finish="cancelled")
     assert rec.finish == "cancelled" and rec.completion_id == "chatcmpl-x" and rec.client == "pytest"
+
+
+def test_tool_call_words_are_not_counted_as_thinking_or_answer(live):
+    rec, _ = build(live, [4] + [1] * 8, 4, [1, 2, 3, 4, 1, 8, 9, 10])
+    assert [w["phase"] for w in rec.words] == ["marker", "marker", "thinking", "marker", "marker", "header", "marker", "tool"]
+    assert np.isnan(rec.mean_states[1]).all() and not np.isnan(rec.mean_states[0]).any()

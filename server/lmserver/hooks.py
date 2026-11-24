@@ -22,14 +22,20 @@ _state: dict = {"installed": False, "busy": False, "model": None}
 _lock = threading.Lock()  # held while the model generates, so nothing else computes with it
 
 
+KIND_OF_MARKER = {
+    "<|content_thinking|>": "thinking",
+    "<|content_text|>": "answer",
+    inkling.TOOL_CALL_START: "tool",
+    "<|message_model|>": "header",  # what follows, up to the next marker, is a tool's name
+}
+
+
 class WordBuilder:
     """Pairs generated tokens with the forward calls that read them, as they arrive."""
 
     def __init__(self, tokenizer, live, uncached: int):
-        from livemap.live import PhaseTracker
-
         self._tok, self._live, self._uncached = tokenizer, live, uncached
-        self._phases = PhaseTracker()
+        self._kind = "header"
         self.texts: list[str] = []
         self.ids: list[int] = []
         self.words: list[dict] = []
@@ -40,10 +46,12 @@ class WordBuilder:
 
     def add_token(self, token: int) -> None:
         text = self._tok.decode([token])
-        phase, marker = self._phases.step(text)
+        marker = text.startswith("<|") and text.endswith("|>")
+        if marker:
+            self._kind = KIND_OF_MARKER.get(text, "header")
         self.texts.append(text)
         self.ids.append(token)
-        self._kinds.append("marker" if marker else phase)
+        self._kinds.append("marker" if marker else self._kind)
 
     def update(self, records: list) -> list[dict]:
         """Describe every token whose record has arrived. Returns the new words."""

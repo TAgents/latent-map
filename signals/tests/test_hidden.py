@@ -69,3 +69,20 @@ def test_leave_question_out_auc():
     x = r.normal(size=(120, 8)); x[:, 0] += y * 3.0
     assert leave_question_out_auc(x, y, qids) > 0.9
     assert leave_question_out_auc(r.normal(size=(120, 8)), y, qids) < 0.7
+
+
+def test_word_ids_never_track_a_bare_space():
+    from siglib.prompting import word_ids
+
+    class Tok:  # " Vienna" splits into a space token and the word; "Rome" is one token either way
+        table = {"Vienna": [7], " Vienna": [220, 7], "vienna": [8], " vienna": [220, 8], "Rome": [3], " Rome": [4], "rome": [5], " rome": [6]}
+
+        def encode(self, text, add_special_tokens=False):
+            return self.table[text]
+
+        def decode(self, ids):
+            return {220: " ", 7: "Vienna", 8: "vienna", 3: "Rome", 4: " Rome", 5: "rome", 6: " rome"}[ids[0]]
+
+    assert word_ids(Tok(), "Vienna") == [7]                # not the space token 220
+    assert word_ids(Tok(), "vienna") == [7, 8]             # the given form and its capitalised form
+    assert word_ids(Tok(), "Rome") == [3, 4]

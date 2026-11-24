@@ -17,7 +17,7 @@ OUT = Path(__file__).parent / "results"
 
 def main() -> None:
     rows = {r["id"]: r for r in (json.loads(line) for line in (OUT / "hops_replies.jsonl").open())}
-    verdict = {p["id"]: p for p in json.loads((OUT / "hops.json").read_text())["per_item"]}
+    verdict = {p["id"]: p for p in json.loads((OUT / "hops.json").read_text())["as_planned"]["per_item"]}
     arr = np.load(OUT / "hops_states.npz")
     use = [rows[i] for i, p in verdict.items() if p["kept"] and p["t1"]]
     by_family = {}

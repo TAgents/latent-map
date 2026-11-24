@@ -21,9 +21,12 @@ def best(rank, track, ids, start):
     return rank[:, start:, cols].min(axis=(1, 2))
 
 
-def main() -> None:
+def analyse(drop: set) -> dict:
+    """drop: token ids to ignore when ranking a word (empty for the analysis as planned)."""
     rows = [json.loads(line) for line in (OUT / "hops_replies.jsonl").open()]
     arr = np.load(OUT / "hops_states.npz")
+    for r in rows:
+        r["word_ids"] = {w: [t for t in ids if t not in drop] or ids for w, ids in r["word_ids"].items()}
     for r in rows:
         s = r["said"]
         r["ok_first"], r["ok_second"], r["ok_two"] = matches(s["first_step"], r["bridge"]), matches(s["second_step"], r["answer"]), matches(s["two_step"], r["answer"])
@@ -64,8 +67,46 @@ def main() -> None:
                              "step_in_top10": sum(r["bridge_last"][k] < 10 for r in kept), "of": len(kept)} for k in range(3)},
         "per_item": [{k: r[k] for k in ("id", "kept", "said", "bridge_by_pass", "answer_by_pass", "own_best", "t1", "t2", "top_last")} for r in rows],
     }
+    # Where the step's word is most readable: the token at the position of its best rank.
+    tok = _tokenizer()
+    where = Counter()
+    for r in t1:
+        rank = arr[f"{r['id']}/rank"][:, r["subject_end"]:, [r["track"].index(t) for t in r["word_ids"][r["bridge"]]]].min(axis=2)
+        pos = int(np.unravel_index(rank.argmin(), rank.shape)[1]) + r["subject_end"]
+        ids = tok.encode(_head(tok, r["two_step"]))
+        where["subject's last token" if pos == r["subject_end"] else "last prompt token" if pos == len(ids) - 1 else tok.decode([ids[pos]]).strip() or "space"] += 1
+    out["best_rank_position_among_t1"] = dict(where.most_common())
+    out["t1_using_one_pass_only"] = [sum(step_readable(int(r["bridge_by_pass"][k]), r["others_best"]) for r in t1) for k in range(3)]
+    return out
+
+
+def _tokenizer():
+    from transformers import AutoTokenizer
+
+    return AutoTokenizer.from_pretrained("thinkingmachines/Inkling-2-Mini")
+
+
+def _head(tok, question):
+    from siglib.prompting import head
+
+    return head(tok, question)
+
+
+def main() -> None:
+    tok = _tokenizer()
+    rows = [json.loads(line) for line in (OUT / "hops_replies.jsonl").open()]
+    blank = {t for r in rows for t in r["track"] if not tok.decode([t]).strip()}
+    planned = analyse(set())
+    corrected = analyse(blank)   # post hoc: found by review after the results were seen
+    summary = ("items", "kept", "dropped", "T1", "T2", "by_family", "median_best_rank_by_pass", "at_the_moment_of_answering",
+               "best_rank_position_among_t1", "t1_using_one_pass_only")
+    out = {"as_planned": planned, "corrected_post_hoc": corrected,
+           "whitespace_token_ids_ignored_in_corrected": sorted(int(t) for t in blank),
+           "words_affected": sorted({w for r in rows for w, ids in r["word_ids"].items() if set(ids) & blank})}
     (OUT / "hops.json").write_text(json.dumps(out, indent=1))
-    print(json.dumps({k: out[k] for k in ("items", "kept", "dropped", "T1", "T2", "by_family", "median_best_rank_by_pass", "at_the_moment_of_answering")}, indent=1))
+    for name in ("as_planned", "corrected_post_hoc"):
+        print("=====", name); print(json.dumps({k: out[name][k] for k in summary}, indent=1))
+    print("ignored token ids:", out["whitespace_token_ids_ignored_in_corrected"], "| words affected:", len(out["words_affected"]))
 
 
 if __name__ == "__main__":

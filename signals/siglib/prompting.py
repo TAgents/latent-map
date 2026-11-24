@@ -10,9 +10,16 @@ def head(tokenizer, question: str, system: str | None = None, effort: float = 0.
 
 
 def word_ids(tokenizer, word: str) -> list[int]:
-    """First token id of the word with and without a leading space (capitalised and not)."""
+    """Token ids that begin the word, with and without a leading space, in the given case
+    and capitalised. Some words encode as a bare space followed by the word; the space is
+    skipped, because a bare space ranks near the top almost everywhere and says nothing."""
     forms = {word, " " + word, word.capitalize(), " " + word.capitalize()}
-    return sorted({tokenizer.encode(f, add_special_tokens=False)[0] for f in forms})
+    ids = set()
+    for f in forms:
+        first = next((t for t in tokenizer.encode(f, add_special_tokens=False) if tokenizer.decode([t]).strip()), None)
+        if first is not None:
+            ids.add(first)
+    return sorted(ids)
 
 
 def split_reply(raw: str) -> tuple[str, str]:

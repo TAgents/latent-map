@@ -13,7 +13,6 @@ def test_last_pass_readout_is_the_models_own_prediction(loaded):
     np.testing.assert_array_equal(out["top"][2, :, 0], real.argmax(-1))          # same top word at every position
     want = (real > real[:, [5]]).sum(-1)                                          # rank 0 = most likely
     assert np.abs(out["rank"][2, :, 0] - want).max() <= 2                         # ties in low precision aside
-    assert (out["top"][0, -1] != out["top"][2, -1]).any() or True                 # earlier passes may differ; shape only
 
 
 def test_block2_matches_capture_and_replacing_a_state_with_itself_changes_nothing(loaded):

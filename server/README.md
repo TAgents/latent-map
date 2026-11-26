@@ -148,8 +148,18 @@ this Mac it matched 2, both harmless ("No need to mention hidden details" about 
 It reads only the thinking: with thinking off it finds nothing, and a goal that leaves no trace
 in the text is not something this tool can show.
 
-Not in this version: conversation history in the chat box, and the "responses" API route that
-Codex needs.
+## The chat box
+
+The chat box holds a conversation: each message is sent with the earlier turns, without the
+model's thinking. Click one of the model's turns to open that request in the inspector. A turn
+that produced no answer text (stopped, or the word limit ran out during thinking) is not added.
+The conversation lives in the page only, so reloading the page starts a new one; nothing is put
+in browser storage, and forgetting the session under Sessions also clears it from the chat box.
+All turns of one conversation appear as one session. Two conversations that start with exactly
+the same first message are also listed as one session.
+
+Not in this version: continuing an old conversation after a reload, and the "responses" API
+route that Codex needs.
 
 ## Tests
 

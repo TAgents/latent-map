@@ -36,6 +36,12 @@ button.ghost{background:transparent;color:var(--soft);border:1px solid var(--lin
 .req{margin-left:10px;font-size:12.5px;color:var(--soft)}
 .req.on{color:var(--ink);font-weight:600}
 #asked{font-size:13.5px;color:var(--soft);border-left:3px solid var(--line);padding-left:10px;margin:4px 0 10px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:120px;overflow:auto}
+#convo{max-height:260px;overflow:auto;margin-bottom:8px;font-size:13.5px}
+#convo div{white-space:pre-wrap;overflow-wrap:anywhere;padding:4px 8px;margin:3px 0;border-radius:6px}
+#convo .q{border-left:3px solid var(--line)}
+#convo .a{cursor:pointer;border-left:3px solid var(--think)}
+#convo .a.on{background:rgba(127,127,127,.14)}
+#convo small{display:block;color:var(--soft);font-size:11.5px}
 #thinking,#answer,#tool{white-space:pre-wrap;overflow-wrap:anywhere}
 #thinking{color:var(--think);font-size:13.5px;border-left:3px solid var(--line);padding-left:10px;margin:6px 0 12px;max-height:200px;overflow:auto}
 #tool{font:13px/1.5 ui-monospace,Menlo,monospace;margin:6px 0 10px}
@@ -117,16 +123,17 @@ svg{width:100%;height:auto;display:block}
     </div>
     <div class="note">Underline colour = the area a word ends in. Grey background = it moved more than usual on the last pass. Measured; not known to predict anything. Click a word to see its three passes.</div>
     <div class="note">
+      <div id="convo" hidden></div>
       <textarea id="prompt" placeholder="Ask the model">Explain in three sentences why the sky is blue.</textarea>
       <div class="row">
         <label>Thinking <select id="effort">
           <option value="none">none</option><option value="low" selected>low</option>
           <option value="medium">medium</option><option value="high">high (model default)</option></select></label>
         <label>Max words <input id="max" type="number" value="400" min="20" max="4000" step="20" style="width:78px"></label>
-        <button id="go">Send</button><button id="stop" class="ghost" disabled>Stop</button>
+        <button id="go" title="Ctrl or ⌘ + Enter">Send</button><button id="stop" class="ghost" disabled>Stop</button><button id="newchat" class="ghost" hidden>New conversation</button>
       </div>
       <div id="status">Loading the map…</div>
-      <div>Each message here starts a new conversation; earlier turns are not sent yet.</div>
+      <div>Earlier turns of this conversation are sent with each message, without the model's thinking. The conversation is held in this page only, so reloading the page starts a new one; its requests stay under Sessions.</div>
     </div>
   </section>
 
@@ -262,6 +269,7 @@ function lastUser(messages){
 }
 async function showRequest(id){
   const r=await get("/api/requests/"+encodeURIComponent(id));
+  if(liveId&&id!==liveId) liveId=null;  // looking at another request: stop adding the live reply's words to this view
   shown=id; clearView();
   $("reqmeta").textContent=`${clock(r.time)} · ${who(r.client)}`;
   if(r.text_kept){const q=lastUser(r.messages); if(q){$("askhead").hidden=false; $("asked").hidden=false; $("asked").textContent=q.length>1200?q.slice(0,1200)+" …":q}}
@@ -273,6 +281,7 @@ async function showRequest(id){
   else if(!r.readout_available){ $("rogo").hidden=true; $("rostatus").textContent=r.text_kept?"Not available: this request has an image, or was recorded before readouts existed.":"Not available: the text of this request was not kept, so the model cannot re-read it." }
   document.querySelectorAll(".req").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
   document.querySelectorAll("#run tr.step").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
+  document.querySelectorAll("#convo .a").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
 }
 
 // The whole session on one page: steps in order, and thinking worth reading. Numbers and pointers, no verdicts.
@@ -368,7 +377,9 @@ async function refreshSessions(){
       reqs.forEach((q,k)=>{const e=document.createElement("div"); e.className="item req"+(q.completion_id===shown?" on":""); e.dataset.id=q.completion_id;
         e.textContent=`${k+1}. ${clock(q.time)} · ${q.tokens} words · ${q.finish}`; e.onclick=ev=>{ev.stopPropagation(); showRequest(q.completion_id)}; box.append(e)});
       const f=document.createElement("button"); f.className="ghost"; f.style.margin="4px 0 8px 10px"; f.textContent="Forget this session";
-      f.onclick=async ev=>{ev.stopPropagation(); await fetch(`/api/sessions/${s.session}/forget`,{method:"POST"}); if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()} openSession=null; closeRun(); refreshSessions()};
+      f.onclick=async ev=>{ev.stopPropagation();
+        if($("go").disabled){ f.textContent="Forget this session (after the reply finishes)"; return }
+        await fetch(`/api/sessions/${s.session}/forget`,{method:"POST"}); if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()} if(reqs.some(q=>turns.some(t=>t.id===q.completion_id))){turns=[]; drawConvo()} openSession=null; closeRun(); refreshSessions()};
       box.append(f);
     }
   }
@@ -402,32 +413,61 @@ async function showWhenStored(id){
   for(let k=0;k<20;k++){ try{ await showRequest(id); return }catch(e){ await new Promise(r=>setTimeout(r,300)) } }
 }
 
+// The conversation in the chat box: finished turns, each {q, a, id, stopped}. Held in memory only,
+// so "forget" and the text-off setting are not undone by a copy in browser storage.
+let turns=[], pending=null;
+const chatMessages=q=>[...turns.flatMap(t=>[{role:"user",content:t.q},{role:"assistant",content:t.a}]),{role:"user",content:q}];
+function drawConvo(){
+  const box=$("convo"), all=pending?[...turns,pending]:turns; box.innerHTML=""; box.hidden=!all.length; $("newchat").hidden=!turns.length;
+  all.forEach(t=>{
+    const q=document.createElement("div"); q.className="q"; q.innerHTML="<small>You</small>"; q.append(t.q); box.append(q);
+    const a=document.createElement("div"); a.className="a"+(t.id&&t.id===shown?" on":""); a.innerHTML=`<small>Model${t.stopped?" (stopped early)":""}${t.id?" · click to inspect":""}</small>`;
+    a.append(t===pending?(t.a||"…"):t.a); if(t.id){ a.dataset.id=t.id; a.onclick=()=>showRequest(t.id).catch(()=>{$("status").textContent="That request is no longer stored."}) } box.append(a);
+  });
+  box.scrollTop=box.scrollHeight;
+}
+function newChat(){ turns=[]; pending=null; drawConvo(); $("status").textContent="New conversation." }
 async function send(){
-  $("go").disabled=true; $("stop").disabled=false; $("status").textContent="Waiting for the model (it serves one request at a time)…";
-  ctrl=new AbortController(); let id=null;
+  const q=$("prompt").value.trim(); if(!q||$("go").disabled) return;
+  $("go").disabled=true; $("stop").disabled=false; $("newchat").disabled=true; $("status").textContent="Waiting for the model (it serves one request at a time)…";
+  ctrl=new AbortController(); let id=null, note="", finished=false;
+  const turn=pending={q,a:"",id:null,stopped:false}; drawConvo();
   try{
     const r=await fetch("/v1/chat/completions",{method:"POST",signal:ctrl.signal,headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({messages:[{role:"user",content:$("prompt").value}],stream:true,max_tokens:+$("max").value,reasoning_effort:$("effort").value})});
-    if(!r.ok){$("status").textContent="Error: "+(await r.text()).slice(0,300);return}
+      body:JSON.stringify({messages:chatMessages(q),stream:true,max_tokens:+$("max").value,reasoning_effort:$("effort").value})});
+    if(!r.ok){note="Error: "+(await r.text()).slice(0,300);return}
     const rd=r.body.getReader(), dec=new TextDecoder(); let buf="";
     for(;;){
       const {done,value}=await rd.read(); if(done) break;
-      if(id) continue;
-      buf+=dec.decode(value,{stream:true});
-      const m=buf.match(/^data: (\{.*\})$/m);
-      if(m){ try{ id=JSON.parse(m[1]).id; follow(id) }catch(e){} }
+      buf+=dec.decode(value,{stream:true}); let nl;
+      while((nl=buf.indexOf("\n"))>=0){
+        const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
+        if(!line.startsWith("data: {")) continue;
+        let j; try{ j=JSON.parse(line.slice(6)) }catch(e){ continue }
+        if(!id&&j.id){ id=turn.id=j.id; follow(id) }
+        const c=j.choices&&j.choices[0]; if(!c) continue;
+        if(c.delta&&typeof c.delta.content==="string") turn.a+=c.delta.content;
+        if(c.finish_reason) finished=true;
+        if(c.finish_reason==="length") turn.stopped=true;
+      }
     }
-    $("status").textContent="Done. Click any word.";
-  }catch(err){$("status").textContent=err.name==="AbortError"?"Stopped.":"Error: "+err.message}
+    if(finished) note="Done. Click any word."; else { turn.stopped=true; note="The reply ended early." }
+  }catch(err){ turn.stopped=true; note=err.name==="AbortError"?"Stopped.":"Error: "+err.message }
   finally{
-    $("go").disabled=false; $("stop").disabled=true; liveId=null;
+    $("stop").disabled=true; liveId=null; pending=null;
+    if(turn.a.trim()){ turns.push(turn); if($("prompt").value.trim()===q) $("prompt").value="" }
+    else if(id) note+=" No answer text was written, so this turn was not added to the conversation.";
+    drawConvo();
     if(id) await showWhenStored(id);
+    // Send stays off until the request is stored, so a forget cannot run between the reply and its record.
+    $("go").disabled=false; $("newchat").disabled=false; $("status").textContent=note;
     refreshSessions();
   }
 }
 $("runro").onclick=computeRun; $("runstop").onclick=()=>{runStop=true; $("runstop").disabled=true};
 $("rogo").onclick=computeReadout; $("romark").onchange=markAlt;
-$("go").onclick=send; $("stop").onclick=()=>ctrl&&ctrl.abort();
+$("go").onclick=send; $("stop").onclick=()=>ctrl&&ctrl.abort(); $("newchat").onclick=newChat;
+$("prompt").onkeydown=e=>{ if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); send() } };
 $("api").textContent=location.origin+"/v1";
 get("/api/settings").then(s=>{$("keeping").textContent=s.keep_text?`Prompts and replies are kept for ${s.retention_days} days in a file on this Mac, then deleted.`:`Text is not stored. Only numbers about each request are kept, for ${s.retention_days} days, on this Mac.`});
 get("/api/map").then(m=>{MAP=m; drawMap(); $("status").textContent="Ready."; refreshSessions(); setInterval(refreshSessions,5000); listenLive()}).catch(e=>$("status").textContent="Could not load the map: "+e.message);

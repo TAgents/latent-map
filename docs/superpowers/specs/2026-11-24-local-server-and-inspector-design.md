@@ -1,6 +1,6 @@
 # Local model server with an inspector — design
 
-Status: approved by the user on 2026-11-24, with the decisions recorded at the end. Step 0 feasibility comes first; nothing else is built yet.
+Status: approved by the user on 2026-11-24, with the decisions recorded at the end. As of 2026-11-26, build steps 1 to 4, 6 and 7 are done (see "Build order"); step 5, conversation history in the chat pane, is not. How the built server behaves is described in `server/README.md`, which is the current reference where it differs from this design.
 
 ## Why
 
@@ -147,6 +147,18 @@ The prototype's left pane, extended to hold a conversation with history, sharing
 7. Run summary for agent sessions.
 
 Each step ends with something usable, and step 2 already lets a chat app or coding tool use the model.
+
+### Progress (2026-11-26)
+
+| Step | State |
+| --- | --- |
+| 1. Feasibility | Done. Approach A confirmed. |
+| 2. Server, capture, recorder | Done. |
+| 3. Inspector | Done. |
+| 4. Readout on demand | Done, including long requests. The readout re-reads the text in the same pieces generation read it in, because the model's output depends slightly on piece size. It takes about 3.5 s per 1,000 prompt tokens, more than the "few seconds" assumed above. |
+| 5. Conversation history in the chat pane | Not built. |
+| 6. Tool calling | Done with the small adapter from step 0. Tested with opencode 1.19.6, which settles step 0 check 4. Codex still needs a "responses" route, not built. |
+| 7. Run summary | Done. The instruction-mention pattern was widened after seeing the planted-goal texts, so its 119 of 120 is a fitted figure. |
 
 ## Left to the builder
 

@@ -14,11 +14,13 @@ from typing import Callable
 import numpy as np
 
 from lmserver import inkling
+from lmserver.align import PromptPieces
 from lmserver.recorder import RequestRecord
 
 PHASES = ("thinking", "answer")
 log = logging.getLogger("lmserver")
 _state: dict = {"installed": False, "busy": False, "model": None}
+_pieces = PromptPieces()  # how each saved prompt was read; numbers only
 _lock = threading.Lock()  # held while the model generates, so nothing else computes with it
 
 
@@ -46,6 +48,7 @@ class WordBuilder:
         self.words: list[dict] = []
         self._kinds: list[str] = []
         self._used = 0  # prompt tokens accounted for so far
+        self.prompt_sizes: list[int] = []  # sizes of the calls that read the uncached prompt
         self._queue: deque = deque()  # records that read a generated word not yet added
         self._sum: np.ndarray | None = None
         self._n = np.zeros(len(PHASES), dtype=np.int64)
@@ -67,6 +70,7 @@ class WordBuilder:
         for rec in new_records:
             if self._used < self._uncached:
                 self._used += rec.n_tokens  # still the prompt
+                self.prompt_sizes.append(int(rec.n_tokens))
             else:
                 self._queue.append(rec)
         new = []
@@ -113,7 +117,7 @@ def has_images(messages) -> bool:
     )
 
 
-def _record(meta, prompt, uncached, builder, timing, finish) -> RequestRecord:
+def _record(meta, prompt, uncached, builder, timing, finish, pieces=None) -> RequestRecord:
     # A readout re-reads the tokens alone; with an image that is not what the model saw.
     rereadable = not has_images(meta.get("messages"))
     return RequestRecord(
@@ -132,6 +136,7 @@ def _record(meta, prompt, uncached, builder, timing, finish) -> RequestRecord:
         finish=finish,
         prompt_ids=list(prompt) if rereadable else None,
         reply_ids=list(builder.ids) if rereadable else None,
+        pieces=pieces if rereadable else None,
     )
 
 
@@ -234,6 +239,13 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
                 generator.prompt_cache.insert_cache(
                     generator.model_provider.model_key, full[:-1], copy.deepcopy(cache), cache_type="user"
                 )
+                # The pieces this saved cache was built in, for a later request that continues it.
+                # No word has come out yet, so the capture holds exactly the calls that read the prompt so far.
+                so_far = _pieces.of(full[:-1], total - 1, [r.n_tokens for r in cap.records])
+                if so_far is not None:
+                    _pieces.remember(full[:-1], so_far)
+                else:  # this cache now replaces any earlier one for the same tokens: an old list would be wrong
+                    _pieces.forget(full[:-1])
 
         kw["prompt_progress_callback"] = checkpoint
         started, first, reason, failed = time.time(), None, None, False
@@ -290,7 +302,7 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
                     "first_token_s": (first or now) - started,
                     "tokens_per_s": n / max(now - (first or now), 1e-6) if n > 1 else 0.0,
                 }
-                recorder.save(_record(meta, full, uncached, builder, timing, finish))
+                recorder.save(_record(meta, full, uncached, builder, timing, finish, _pieces.of(full, uncached, builder.prompt_sizes)))
             except Exception as err:  # recording must never break a reply; no text in the log
                 log.warning("recording a request failed: %s", type(err).__name__)
             send(last_words if "last_words" in locals() else [], done=True)  # after the save: the page fetches the record on "done"

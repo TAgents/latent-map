@@ -80,3 +80,13 @@ def test_tool_call_words_are_not_counted_as_thinking_or_answer(live):
     rec, _ = build(live, [4] + [1] * 8, 4, [1, 2, 3, 4, 1, 8, 9, 10])
     assert [w["phase"] for w in rec.words] == ["marker", "marker", "thinking", "marker", "marker", "header", "marker", "tool"]
     assert np.isnan(rec.mean_states[1]).all() and not np.isnan(rec.mean_states[0]).any()
+
+
+def test_the_builder_keeps_the_sizes_of_the_calls_that_read_the_prompt(live):
+    from lmserver import hooks
+
+    b = hooks.WordBuilder(Tok(), live, uncached=9)
+    b.update([cap(1, 5), cap(2, 3)])
+    b.add_token(7)
+    b.update([cap(3, 1), cap(4, 1)])
+    assert b.prompt_sizes == [5, 3, 1]

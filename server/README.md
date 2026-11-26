@@ -83,15 +83,44 @@ terminal log. There is no password: any program running on this Mac can use the 
 | Thinking and answer, separated | The model's own text. |
 | Where each word lands on the map, settling across passes | Position on a map built from 120 texts. Area names are untested hypotheses. |
 | Last-pass movement | Measured; not known to predict anything. |
-| What it would have written after each pass | Pass 3 is the model's real prediction (checked in a test with the real model on a short request at temperature 0: it matches the words written). When a client samples at a higher temperature, the word written is not always pass 3's top word. Passes 1 and 2 are a reading the model was never trained to give; they are not its reasoning. |
+| What it would have written after each pass | Pass 3 is the model's own prediction, computed again (checked in tests with the real model at temperature 0, on a short request, a 5,700-token request and a follow-up turn: it matches the tokens written). When a client samples at a higher temperature, the word written is not always pass 3's top word. Passes 1 and 2 are a reading the model was never trained to give; they are not its reasoning. |
 
-The readout is computed when you press "Compute for this request": the model re-reads the whole
-request without the cache and makes other requests wait meanwhile (under a second for a
-short request; 10 seconds for a 3,900-token request with a 1,000-word reply, where pass 3
-matched the word written for 98.9% of words). It is stored
-with the record. It needs the request's text, so it is not available under `--no-text`, and in
-this version only for requests of up to 4,096 tokens (prompt plus reply), which leaves out
-opencode's 14,600-token requests. Requests containing an image get no readout.
+The readout is computed when you press "Compute for this request": the model re-reads the
+request with a cache of its own, and other requests wait meanwhile. It is stored with the
+record. Measured on this Mac, at temperature 0:
+
+| Request | Time | Pass 3 gave the token written |
+| --- | --- | --- |
+| 130 tokens | about 1 s | all |
+| 3,900-token prompt, 120-token reply | 18 s | 120 of 120 |
+| 5,700-token prompt, 150-token reply | 25 s | 150 of 150 |
+| The follow-up turn to it (5,600 tokens from the cache) | 25 s | 150 of 150 |
+| 17,100-token prompt, 219-token reply | 63 s | 219 of 219 |
+
+Roughly 3.5 seconds per 1,000 prompt tokens plus one second per 12 reply tokens, so a long
+reply takes about as long to read out as it took to write. The limit is 32,768 tokens (prompt
+plus reply); that size has not been run through the server (a 30,000-token prompt alone took
+about 110 seconds in a trial). Extra memory was about 3.6GB for a 14,400-token prompt and has
+not been measured near the limit. A coding tool that sends a request during a readout waits
+for it and may time out; a readout cannot be cancelled once started. The saved prompt cache
+cannot be reused, because the last block needs its own memory of the whole text after pass 1
+and pass 2.
+
+**The model's output depends on the size of the pieces a text is read in.** Re-reading a
+5,700-token prompt in pieces of 512 tokens, where generation had used 2,048, changed pass 3's
+top token for 6 of 150 tokens; re-reading a reply 256 tokens at a time, where generation read
+one at a time, changed 5 of 120. So each request records the sizes of the pieces its prompt
+was read in (including the part an earlier turn read into the cache), and the readout re-reads
+the prompt in those pieces and the reply one token at a time. Pass 3 then reproduces what
+generation computed, which the tests check with the real model.
+
+When the pieces are not known, the prompt is re-read in the default pieces and the page says
+the readout is close to the original, not identical. That applies to requests recorded before
+this version and to a request that continued a cache whose pieces were not recorded. With a
+temperature above 0 the token written is not always pass 3's top token in any case.
+
+It needs the request's text, so it is not available under `--no-text`. Requests containing an
+image get no readout.
 
 Not in this version: conversation history in the
 chat box, a summary for agent runs, and the "responses" API route that Codex needs.

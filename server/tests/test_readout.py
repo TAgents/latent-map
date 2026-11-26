@@ -13,9 +13,9 @@ class Tok:
         return "".join(f"w{i}" for i in ids)
 
 
-def fake_run(model, ids, topk, positions, states, chunk=256):
+def fake_run(model, prompt_ids, reply_ids, topk, pieces=None):
     """Stands in for the model: at position p the passes predict p+100, p+200, p+300 first."""
-    assert states is False
+    positions = [len(prompt_ids) - 1 + i for i in range(len(reply_ids))]
     top = np.zeros((3, len(positions), topk), dtype=np.int64)
     prob = np.zeros((3, len(positions), topk), dtype=np.float32)
     for k in range(3):
@@ -34,6 +34,12 @@ def test_each_word_gets_the_prediction_made_just_before_it():
     assert out["words"][2][1][0][0] == "w205"
     assert len(out["words"][0]) == 3 and len(out["words"][0][0]) == readout.TOPK
     json.dumps(out)  # plain data only
+
+
+def test_an_agent_sized_request_is_accepted():
+    assert readout.MAX_TOKENS >= 30000
+    out = readout.compute(None, Tok(), [0] * 14600, [1, 2], run=fake_run)
+    assert len(out["words"]) == 2 and out["words"][1][0][0][2] == 14700
 
 
 def test_too_long_or_empty_texts_are_refused():
@@ -97,7 +103,7 @@ def ctx(tmp_path):
     r.save(make_record(completion_id="noids", messages=[{"role": "user", "content": "x"}]))
     calls = []
 
-    def run(prompt, reply):
+    def run(prompt, reply, pieces=None):
         calls.append(1)
         return readout.compute(None, Tok(), prompt, reply, run=fake_run)
 
@@ -172,20 +178,20 @@ def test_requests_with_images_keep_no_tokens_for_a_readout():
 def test_route_reports_failures_truthfully(ctx):
     ctx.recorder.save(make_record(completion_id="fresh", prompt_ids=[1], reply_ids=[2]))
 
-    def out_of_memory(prompt, reply):
+    def out_of_memory(prompt, reply, pieces=None):
         raise RuntimeError("[metal::malloc] Attempting to allocate")
 
     ctx.readout = out_of_memory
     status, _, raw = app.route(ctx, "POST", "/api/requests/fresh/readout")
     assert status == 500 and "RuntimeError" in json.loads(raw)["error"] and "not loaded" not in json.loads(raw)["error"]
 
-    def not_loaded(prompt, reply):
+    def not_loaded(prompt, reply, pieces=None):
         raise readout.NotLoaded()
 
     ctx.readout = not_loaded
     assert app.route(ctx, "POST", "/api/requests/fresh/readout")[0] == 503
     ctx.recorder.save(make_record(completion_id="noprompt", prompt_ids=[], reply_ids=[2]))
-    ctx.readout = lambda p, r: readout.compute(None, Tok(), p, r, run=fake_run)
+    ctx.readout = lambda p, r, pieces=None: readout.compute(None, Tok(), p, r, run=fake_run)
     assert app.route(ctx, "POST", "/api/requests/noprompt/readout")[0] == 409
 
 
@@ -193,7 +199,7 @@ def test_the_same_readout_asked_twice_at_once_is_computed_once(ctx):
     import threading
     import time
 
-    def slow(prompt, reply):
+    def slow(prompt, reply, pieces=None):
         ctx.calls.append(1)
         time.sleep(0.2)
         return readout.compute(None, Tok(), prompt, reply, run=fake_run)
@@ -232,3 +238,52 @@ def test_two_servers_opening_an_old_database_at_once_do_not_crash(tmp_path):
     [t.start() for t in threads]
     [t.join() for t in threads]
     assert errors == []
+
+
+def test_the_pieces_the_prompt_was_read_in_are_kept_and_handed_to_the_readout(tmp_path):
+    r = Recorder(tmp_path / "db.sqlite")
+    r.save(make_record(prompt_ids=[5, 6, 7], reply_ids=[8, 9], pieces=[2, 1]))
+    r.save(make_record(completion_id="chatcmpl-2", prompt_ids=[5, 6, 7], reply_ids=[8, 9]))
+    assert r.pieces("chatcmpl-1") == [2, 1] and r.pieces("chatcmpl-2") is None and r.pieces("nope") is None
+    seen = {}
+
+    def run(model, prompt_ids, reply_ids, topk, pieces):
+        seen["pieces"] = pieces
+        return fake_run(model, prompt_ids, reply_ids, topk)
+
+    readout.compute(None, Tok(), [5, 6, 7], [8, 9], pieces=[2, 1], run=run)
+    assert seen["pieces"] == [2, 1]
+    readout.compute(None, Tok(), [5, 6, 7], [8, 9], run=run)
+    assert seen["pieces"] is None
+
+
+def test_the_route_reads_a_request_in_its_recorded_pieces(tmp_path):
+    seen = []
+    ctx = app.Ctx(recorder=Recorder(tmp_path / "db.sqlite"), map_payload={}, settings={}, static=tmp_path,
+                  readout=lambda p, r, pieces: seen.append(pieces) or {"k": 5, "words": [], "hits": []})
+    ctx.recorder.save(make_record(prompt_ids=[5, 6, 7], reply_ids=[8, 9], pieces=[2, 1]))
+    status, _, _ = app.route(ctx, "POST", "/api/requests/chatcmpl-1/readout")
+    assert status == 200 and seen == [[2, 1]]
+
+
+def test_the_result_says_whether_the_prompt_was_read_in_its_recorded_pieces():
+    seen = []
+
+    def run(model, prompt_ids, reply_ids, topk, pieces):
+        seen.append(pieces)
+        return fake_run(model, prompt_ids, reply_ids, topk)
+
+    assert readout.compute(None, Tok(), [5, 6, 7], [8, 9], pieces=[2, 1], run=run)["pieces_known"] is True
+    assert readout.compute(None, Tok(), [5, 6, 7], [8, 9], run=run)["pieces_known"] is False
+    for bad in ([2, 2], [3, 0], [4, -1], [2]):  # do not add up to the prompt, or not sizes at all
+        assert readout.compute(None, Tok(), [5, 6, 7], [8, 9], pieces=bad, run=run)["pieces_known"] is False
+    assert seen == [[2, 1], None, None, None, None, None]
+
+
+def test_the_record_shows_its_pieces_and_no_text_mode_drops_them(tmp_path):
+    r = Recorder(tmp_path / "db.sqlite")
+    r.save(make_record(prompt_ids=[5, 6, 7], reply_ids=[8, 9], pieces=[2, 1]))
+    assert r.get("chatcmpl-1")["pieces"] == [2, 1]
+    r.close()
+    r = Recorder(tmp_path / "db.sqlite", keep_text=False)
+    assert r.pieces("chatcmpl-1") is None and r.get("chatcmpl-1")["pieces"] is None

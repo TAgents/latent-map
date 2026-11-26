@@ -29,7 +29,7 @@ class Ctx:
     map_payload: dict
     settings: dict
     static: Path
-    readout: object = None  # (prompt_ids, reply_ids) -> dict, set once the model can be used
+    readout: object = None  # (prompt_ids, reply_ids, pieces) -> dict, set once the model can be used
     readout_lock: object = field(default_factory=threading.Lock)
 
 
@@ -110,7 +110,7 @@ def _readout(ctx: Ctx, completion_id: str):
         if ctx.readout is None:
             return _json(503, {"error": "The model is not loaded yet."})
         try:
-            result = ctx.readout(*ids)
+            result = ctx.readout(*ids, ctx.recorder.pieces(completion_id))
         except readout.TooLong as err:
             return _json(413, {"error": f"Too long for a readout in this version: {err}."})
         except readout.NotLoaded:
@@ -333,13 +333,13 @@ def main(argv=None) -> None:
     )
     hub = LiveHub()
 
-    def read_out(prompt_ids, reply_ids):
+    def read_out(prompt_ids, reply_ids, pieces=None):
         from lmserver import readout
 
         if hooks.model() is None:
             raise readout.NotLoaded()
         with hooks.model_lock():  # waits for a reply in progress; replies wait for this
-            return readout.compute(hooks.model(), hooks.tokenizer(), prompt_ids, reply_ids)
+            return readout.compute(hooks.model(), hooks.tokenizer(), prompt_ids, reply_ids, pieces)
 
     ctx.readout = read_out
     hooks.install(recorder, live, on_word=hub.publish)

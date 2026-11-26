@@ -31,6 +31,7 @@ class RequestRecord:
     finish: str  # stop, length, tool_calls, cancelled, error
     prompt_ids: list[int] | None = None  # exact tokens, needed to re-run the text for a readout
     reply_ids: list[int] | None = None
+    pieces: list[int] | None = None  # sizes of the pieces the prompt was read in, so a readout can read it the same way
 
 
 def _text_of(message: dict) -> str:
@@ -57,7 +58,14 @@ class Recorder:
         self.keep_text, self.retention_days = keep_text, retention_days
         self._lock = threading.Lock()
         self._db = sqlite3.connect(str(path), check_same_thread=False)
-        self._db.execute("PRAGMA journal_mode=WAL")
+        for attempt in range(100):  # changing the mode does not wait for another server opening the file: try again
+            try:
+                self._db.execute("PRAGMA journal_mode=WAL")
+                break
+            except sqlite3.OperationalError as err:
+                if "locked" not in str(err) or attempt == 99:
+                    raise
+                time.sleep(0.05)
         self._db.execute("PRAGMA secure_delete=ON")  # deleted rows are overwritten, not just unlinked
         self._db.execute(
             """CREATE TABLE IF NOT EXISTS requests (
@@ -67,14 +75,14 @@ class Recorder:
                 first_token_s REAL, tokens_per_s REAL, finish TEXT, mean_states BLOB)"""
         )
         self._db.execute("CREATE INDEX IF NOT EXISTS by_session ON requests (session, time)")
+        self._db.commit()
+        # Take the write lock before looking, so two servers starting together upgrade in turn
+        # (looking first and writing after can fail at once with "database is locked").
+        self._db.execute("BEGIN IMMEDIATE")
         have = {row[1] for row in self._db.execute("PRAGMA table_info(requests)")}
-        for column, kind in (("prompt_ids", "BLOB"), ("reply_ids", "BLOB"), ("readout", "TEXT")):
+        for column, kind in (("prompt_ids", "BLOB"), ("reply_ids", "BLOB"), ("readout", "TEXT"), ("pieces", "TEXT")):
             if column not in have:  # a database from before readouts
-                try:
-                    self._db.execute(f"ALTER TABLE requests ADD COLUMN {column} {kind}")
-                except sqlite3.OperationalError as err:  # another process added it a moment ago
-                    if "duplicate column" not in str(err):
-                        raise
+                self._db.execute(f"ALTER TABLE requests ADD COLUMN {column} {kind}")
         self._db.commit()
         if not keep_text:
             self._drop_stored_text()
@@ -89,7 +97,7 @@ class Recorder:
             kept.pop("tools", None)
             self._db.execute(
                 "UPDATE requests SET messages = NULL, reply_tokens = NULL, prompt_ids = NULL, reply_ids = NULL, "
-                "readout = NULL, title = ?, text_kept = 0, settings = ? "
+                "pieces = NULL, readout = NULL, title = ?, text_kept = 0, settings = ? "
                 "WHERE completion_id = ?",
                 (NO_TEXT_TITLE, json.dumps(kept), cid),
             )
@@ -116,16 +124,17 @@ class Recorder:
             buf = io.BytesIO()
             np.save(buf, rec.mean_states.astype(np.float32))
             blob = buf.getvalue()
-        ids = [None, None]
+        ids = [None, None, None]
         if self.keep_text and rec.prompt_ids is not None and rec.reply_ids is not None:
-            ids = [np.asarray(rec.prompt_ids, dtype=np.int32).tobytes(), np.asarray(rec.reply_ids, dtype=np.int32).tobytes()]
+            ids = [np.asarray(rec.prompt_ids, dtype=np.int32).tobytes(), np.asarray(rec.reply_ids, dtype=np.int32).tobytes(),
+                   json.dumps(rec.pieces) if rec.pieces else None]
         row = (
             rec.completion_id, session_of(rec), rec.time, rec.client, title, int(self.keep_text), messages, reply,
             json.dumps(rec.words), json.dumps(settings), rec.prompt_tokens, rec.cached_tokens, len(rec.reply_tokens),
             rec.first_token_s, rec.tokens_per_s, rec.finish, blob, *ids,
         )
         columns = ("completion_id, session, time, client, title, text_kept, messages, reply_tokens, words, settings, "
-                   "prompt_tokens, cached_tokens, n_tokens, first_token_s, tokens_per_s, finish, mean_states, prompt_ids, reply_ids")
+                   "prompt_tokens, cached_tokens, n_tokens, first_token_s, tokens_per_s, finish, mean_states, prompt_ids, reply_ids, pieces")
         with self._lock:
             self._db.execute(f"INSERT OR REPLACE INTO requests ({columns}) VALUES (" + ",".join("?" * len(row)) + ")", row)
             self._db.commit()
@@ -136,6 +145,11 @@ class Recorder:
         if row is None or row[0] is None or row[1] is None:
             return None
         return tuple(np.frombuffer(b, dtype=np.int32).tolist() for b in row)
+
+    def pieces(self, completion_id: str) -> list[int] | None:
+        with self._lock:
+            row = self._db.execute("SELECT pieces FROM requests WHERE completion_id = ?", (completion_id,)).fetchone()
+        return json.loads(row[0]) if row and row[0] else None
 
     def save_readout(self, completion_id: str, readout: dict) -> None:
         if not self.keep_text:
@@ -163,7 +177,7 @@ class Recorder:
 
     def get(self, completion_id: str) -> dict | None:
         cols = ("completion_id", "session", "time", "client", "title", "text_kept", "messages", "reply_tokens", "words",
-                "settings", "prompt_tokens", "cached_tokens", "n_tokens", "first_token_s", "tokens_per_s", "finish", "readout",
+                "settings", "prompt_tokens", "cached_tokens", "n_tokens", "first_token_s", "tokens_per_s", "finish", "readout", "pieces",
                 "prompt_ids IS NOT NULL AND reply_ids IS NOT NULL")
         with self._lock:
             row = self._db.execute(
@@ -173,7 +187,7 @@ class Recorder:
             return None
         out = dict(zip(cols[:-1] + ("readout_available",), row))
         out["text_kept"], out["readout_available"] = bool(out["text_kept"]), bool(out["readout_available"])
-        for key in ("messages", "reply_tokens", "words", "settings", "readout"):
+        for key in ("messages", "reply_tokens", "words", "settings", "readout", "pieces"):
             out[key] = json.loads(out[key]) if out[key] is not None else None
         return out
 

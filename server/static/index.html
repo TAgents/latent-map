@@ -91,7 +91,7 @@ svg{width:100%;height:auto;display:block}
     <div id="summary" class="note" hidden></div>
     <div id="readout" class="note" hidden>
       <b>What it would have written after each pass.</b> The model's last block is run on the state after pass 1, 2 and 3.
-      Pass 3 is the model's real prediction. Passes 1 and 2 are a reading the model was never trained to give: they show what the state would produce, not how the model reasons.
+      Pass 3 is the model's own prediction, computed again by re-reading the request the way it was first read. Passes 1 and 2 are a reading the model was never trained to give: they show what the state would produce, not how the model reasons.
       <div class="row"><button id="rogo" class="ghost">Compute for this request</button>
         <label id="romarkwrap" hidden><input type="checkbox" id="romark"> mark words where pass 2 and pass 3 differ</label></div>
       <div id="rostatus"></div>
@@ -124,7 +124,7 @@ const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg";
 const el=(n,a={},t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=p=>fetch(p).then(r=>{if(!r.ok) throw new Error(r.status); return r.json()});
-let RO=null, HITS=null, TEMP=0, MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
+let RO=null, HITS=null, TEMP=0, SIZE=0, PROMPT=0, REPLY=0, MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
 const W=1000,H=780,PAD=46;
 const px=c=>[PAD+c.x*(W-2*PAD), PAD+(1-c.y)*(H-2*PAD)];
 const areaName=a=>a.name?a.name:`area ${a.id} (unnamed)`;
@@ -185,8 +185,9 @@ function applyReadout(ro){
   const ws=toks.filter(t=>t&&(t.phase==="thinking"||t.phase==="answer")&&RO[t.i]), n=ws.length||1;
   const isHit=(i,k)=>HITS?HITS[i][k]:RO[i][k][0][0]===toks[i].text;
   const hit=k=>ws.filter(t=>isHit(t.i,k)).length;
+  const approx=ro.pieces_known===false?" The way this prompt was first read was not recorded, so this re-reading is close to the original, not identical; pass 3 can differ on close calls.":"";
   const sampled=TEMP>0?` This request was sampled at temperature ${TEMP}, so the word written is not always pass 3's top word.`:"";
-  $("rostatus").textContent=`Of ${ws.length} thinking and answer words, the top word matched the word written for ${Math.round(100*hit(0)/n)}% after pass 1, ${Math.round(100*hit(1)/n)}% after pass 2 and ${Math.round(100*hit(2)/n)}% after pass 3.${sampled} Click a word to see the alternatives.`;
+  $("rostatus").textContent=`Of ${ws.length} thinking and answer words, the top word matched the word written for ${Math.round(100*hit(0)/n)}% after pass 1, ${Math.round(100*hit(1)/n)}% after pass 2 and ${Math.round(100*hit(2)/n)}% after pass 3.${sampled}${approx} Click a word to see the alternatives.`;
   markAlt(); if(sel>=0) select(sel);
 }
 function markAlt(){
@@ -195,7 +196,7 @@ function markAlt(){
 }
 async function computeReadout(){
   if(!shown) return; const id=shown;
-  $("rogo").disabled=true; $("rostatus").textContent="The model is re-reading this request… (it waits for any reply in progress)";
+  const est=Math.round(PROMPT*3.5/1000+REPLY/12); $("rogo").disabled=true; $("rostatus").textContent="The model is re-reading this request"+(est>=5?`, about ${est} seconds for its ${SIZE.toLocaleString()} tokens`:"")+"… Other requests wait meanwhile, and it waits for any reply in progress.";
   try{
     const r=await fetch(`/api/requests/${encodeURIComponent(id)}/readout`,{method:"POST"}), body=await r.json();
     if(shown!==id) return;
@@ -205,7 +206,7 @@ async function computeReadout(){
   finally{ if(shown===id) $("rogo").disabled=false }
 }
 function clearView(){
-  RO=null; HITS=null; TEMP=0; $("readout").hidden=true; $("rogo").hidden=false; $("rogo").disabled=false; $("romarkwrap").hidden=true; $("romark").checked=false; $("rostatus").textContent="";
+  RO=null; HITS=null; TEMP=0; SIZE=0; $("readout").hidden=true; $("rogo").hidden=false; $("rogo").disabled=false; $("romarkwrap").hidden=true; $("romark").checked=false; $("rostatus").textContent="";
   toks=[]; sel=-1;
   ["thinking","answer","tool","asked"].forEach(i=>$(i).innerHTML="");
   ["thinkhead","thinking","toolhead","tool","anshead","summary","notext","askhead","asked"].forEach(i=>$(i).hidden=true);
@@ -247,7 +248,7 @@ async function showRequest(id){
   else $("notext").hidden=false;
   r.words.forEach(w=>addWord({...w,text:r.reply_tokens?r.reply_tokens[w.i]:null}));
   drawTrail(); summarise(r);
-  $("readout").hidden=false; TEMP=+((r.settings||{}).temperature||0);
+  $("readout").hidden=false; TEMP=+((r.settings||{}).temperature||0); PROMPT=r.prompt_tokens||0; REPLY=r.n_tokens||0; SIZE=PROMPT+REPLY;
   if(r.readout) applyReadout(r.readout);
   else if(!r.readout_available){ $("rogo").hidden=true; $("rostatus").textContent=r.text_kept?"Not available: this request has an image, or was recorded before readouts existed.":"Not available: the text of this request was not kept, so the model cannot re-read it." }
   document.querySelectorAll(".req").forEach(e=>e.classList.toggle("on",e.dataset.id===id));

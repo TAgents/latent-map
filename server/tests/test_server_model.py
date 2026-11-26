@@ -167,7 +167,7 @@ def test_readout_last_pass_is_what_the_model_wrote(server):
     assert len(words) == len(written) and out["k"] == 5
     # Greedy generation: the last pass's top word is the word that was written.
     same = sum(h[2] for h in out["hits"])
-    assert same >= 0.97 * len(written), (same, len(written))
+    assert same >= 0.99 * len(written), (same, len(written))
     assert out["hits"][0][2] and out["hits"][-1][2]  # the first and last word line up too
     assert [w[2][0][0] for w in words[:5]] == written[:5]
     # The earlier passes are a different reading, not a copy of the last one.
@@ -176,6 +176,44 @@ def test_readout_last_pass_is_what_the_model_wrote(server):
     assert record(r["id"])["readout"]["words"] == words  # stored
     assert post(f"/api/requests/{r['id']}/readout")["seconds"] == out["seconds"]  # served from the store, not recomputed
     # The server still generates correctly afterwards.
+    again = chat(messages=[{"role": "user", "content": "Say hello."}], max_tokens=80, reasoning_effort="low")
+    own, before, n = agreement(record(again["id"]))
+    assert own >= 0.85, (own, before, n)
+
+
+def test_readout_of_a_request_longer_than_one_reading_piece(server):
+    # Several thousand tokens: over the earlier 4,096 limit, several prompt pieces, and past the sliding window of 1,024.
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    notes = (root / "signals" / "REPORT_hidden.md").read_text() + (root / "server" / "README.md").read_text()
+    r = chat(messages=[{"role": "system", "content": "Notes:\n" + notes},
+                       {"role": "user", "content": "In two sentences, what did test 1 show?"}],
+             max_tokens=150, reasoning_effort="low", temperature=0)
+    rec = record(r["id"])
+    assert rec["prompt_tokens"] > 4096, rec["prompt_tokens"]
+    out = post(f"/api/requests/{r['id']}/readout")
+    assert len(out["words"]) == len(rec["reply_tokens"])
+    same = sum(h[2] for h in out["hits"])
+    assert same >= 0.99 * len(out["hits"]), (same, len(out["hits"]))
+    # A follow-up turn continues the saved cache: its prompt was read partly by the first request,
+    # and the readout has to put those pieces together.
+    first = [{"role": "system", "content": "Notes:\n" + notes}, {"role": "user", "content": "In two sentences, what did test 1 show?"}]
+    r2 = chat(messages=first + [{"role": "assistant", "content": r["choices"][0]["message"]["content"]},
+                                {"role": "user", "content": "And test 2, in two sentences?"}],
+              max_tokens=150, reasoning_effort="low", temperature=0)
+    rec2 = record(r2["id"])
+    # The piece records themselves: the first prompt read fresh, the follow-up continuing its saved cache.
+    assert sum(rec["pieces"]) == rec["prompt_tokens"] and rec["pieces"][-1] == 1 and rec["pieces"][0] == 2048, rec["pieces"]
+    assert rec2["pieces"][: len(rec["pieces"]) - 1] == rec["pieces"][:-1], (rec["pieces"], rec2["pieces"])
+    assert sum(rec2["pieces"]) == rec2["prompt_tokens"] and rec2["pieces"][-1] == 1
+    assert sum(rec2["pieces"][len(rec["pieces"]) - 1 :]) == rec2["prompt_tokens"] - rec2["cached_tokens"]
+    assert rec2["cached_tokens"] > 4096, rec2["cached_tokens"]
+    out2 = post(f"/api/requests/{r2['id']}/readout")
+    assert out["pieces_known"] is True and out2["pieces_known"] is True
+    same2 = sum(h[2] for h in out2["hits"])
+    assert same2 >= 0.99 * len(out2["hits"]), (same2, len(out2["hits"]))
+    print("READOUT HITS", same, len(out["hits"]), out["seconds"], same2, len(out2["hits"]), out2["seconds"])
     again = chat(messages=[{"role": "user", "content": "Say hello."}], max_tokens=80, reasoning_effort="low")
     own, before, n = agreement(record(again["id"]))
     assert own >= 0.85, (own, before, n)

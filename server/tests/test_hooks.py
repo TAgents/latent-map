@@ -90,3 +90,14 @@ def test_the_builder_keeps_the_sizes_of_the_calls_that_read_the_prompt(live):
     b.add_token(7)
     b.update([cap(3, 1), cap(4, 1)])
     assert b.prompt_sizes == [5, 3, 1]
+
+
+def test_the_builder_counts_the_written_tokens_the_model_read_back(live):
+    from lmserver import hooks
+
+    b = hooks.WordBuilder(Tok(), live, uncached=4)
+    b.update([cap(1, 3), cap(2, 1)])
+    for t in (7, 8, 9):
+        b.add_token(t)
+    b.update([cap(3, 1), cap(4, 1)])     # the last token was never read back (stopped at the limit)
+    assert b.fed == 2 and b.prompt_sizes == [3, 1]

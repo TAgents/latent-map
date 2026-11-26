@@ -63,6 +63,16 @@ svg{width:100%;height:auto;display:block}
 .ro code{font:13px ui-monospace,Menlo,monospace;background:var(--pick);border-radius:4px;padding:0 4px}
 .ro .p{color:var(--soft);font-size:12px;margin-right:8px}
 .tier{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:0 7px;color:var(--soft);margin-left:6px;text-transform:none;letter-spacing:0}
+#run table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:6px;table-layout:fixed}
+#run .clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#run th{font-weight:500;color:var(--soft);text-align:left;padding:2px 8px 2px 0;white-space:nowrap}
+#run td{padding:3px 8px 3px 0;vertical-align:top;border-top:1px solid var(--line);overflow-wrap:anywhere}
+#run tr.step{cursor:pointer} #run tr.step:hover td,#run tr.step.on td{background:var(--pick)}
+#run .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#run .from{color:var(--soft)} #run code{font:12px ui-monospace,Menlo,monospace}
+#run .read{margin:3px 0;padding:3px 0 3px 10px;border-left:3px solid var(--line);font-size:13px;cursor:pointer;color:var(--think)}
+#run .read:hover{background:var(--pick)}
+#run .wrap{max-height:300px;overflow:auto}
 </style>
 </head>
 <body>
@@ -78,6 +88,15 @@ svg{width:100%;height:auto;display:block}
   </section>
 
   <section class="panel">
+    <div id="run" hidden>
+      <h2>Run <span class="tier" id="runmeta"></span></h2>
+      <div id="runtotals" style="font-size:13.5px"></div>
+      <div class="wrap"><table id="runsteps"></table></div>
+      <div class="row"><button id="runro" class="ghost" hidden></button><button id="runstop" class="ghost" hidden>Stop after this step</button><span id="runrostatus" style="font-size:12.5px;color:var(--soft)"></span></div>
+      <div class="sec" id="runreadhead" hidden>To read: thinking that matches an instruction word pattern</div>
+      <div id="runread"></div>
+      <div class="note" id="runnote" style="margin-bottom:14px"></div>
+    </div>
     <h2>Request <span class="tier" id="reqmeta"></span></h2>
     <div class="sec" id="askhead" hidden>Asked</div>
     <div id="asked" hidden></div>
@@ -202,6 +221,7 @@ async function computeReadout(){
     if(shown!==id) return;
     if(!r.ok){ $("rostatus").textContent=body.error||("Error "+r.status); return }
     applyReadout(body);
+    if(RUN&&openSession&&RUN.steps.some(x=>x.id===id)) loadRun(openSession);  // the run table shows this step's readout too
   }catch(e){ if(shown===id) $("rostatus").textContent="Error: "+e.message }
   finally{ if(shown===id) $("rogo").disabled=false }
 }
@@ -252,6 +272,84 @@ async function showRequest(id){
   if(r.readout) applyReadout(r.readout);
   else if(!r.readout_available){ $("rogo").hidden=true; $("rostatus").textContent=r.text_kept?"Not available: this request has an image, or was recorded before readouts existed.":"Not available: the text of this request was not kept, so the model cannot re-read it." }
   document.querySelectorAll(".req").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
+  document.querySelectorAll("#run tr.step").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
+}
+
+// The whole session on one page: steps in order, and thinking worth reading. Numbers and pointers, no verdicts.
+let RUN=null, runBusy=false, runStop=false, runSession=null, runSeq=0, runFailed=null;
+const dur=s=>{s=Math.round(s); return s>=60?`${Math.floor(s/60)} min ${s%60} s`:`${s} s`};
+const roCost=s=>s.prompt_tokens*3.5/1000+s.n_tokens/12;
+async function loadRun(session){
+  const seq=++runSeq;
+  let d; try{d=await get(`/api/sessions/${session}/summary`)}catch(e){ if(openSession===session&&seq===runSeq){ runFailed=session; $("run").hidden=true } return }
+  if(openSession!==session||seq!==runSeq) return;  // an older answer must not replace a newer one
+  RUN=d; RUN.session=session; drawRun();
+}
+function closeRun(){ RUN=null; $("run").hidden=true }
+async function openStep(id,i){
+  await showRequest(id);
+  if(i!=null&&toks[i]&&toks[i].el){ select(i); toks[i].el.scrollIntoView({block:"center"}) }
+  else $("reqmeta").scrollIntoView({block:"start"});
+}
+function drawRun(){
+  const t=RUN.totals, steps=RUN.steps; if(!t){closeRun();return}
+  $("run").hidden=false;
+  $("runmeta").textContent=`${t.steps} step${t.steps>1?"s":""}`;
+  const said=t.thinking+t.answer, share=said?Math.round(100*t.thinking/said):0, cached=t.prompt_tokens?Math.round(100*t.cached_tokens/t.prompt_tokens):0;
+  $("runtotals").innerHTML=`${t.steps} request${t.steps>1?"s":""} over ${dur(t.span_seconds)}; the model worked for ${dur(t.seconds)} of it. `+
+    `${t.tool_calls} ended in a tool call. ${t.tokens.toLocaleString()} words written; of the thinking and answer words, ${share}% were thinking. `+
+    `${t.prompt_tokens.toLocaleString()} prompt tokens sent in all, ${cached}% already read from an earlier step.`;
+  const pct=(h,n)=>n?Math.round(100*h/n):"–";
+  let anySampled=false, anyApprox=false;
+  const rows=steps.map((s,k)=>{
+    const from=s.asked?`<span class="from">${esc(s.asked.role)}:</span> ${esc(s.asked.text)}`:'<span class="from">text not kept</span>';
+    const odd={length:" (stopped at the word limit)",cancelled:" (cancelled)",error:" (error)"}[s.finish]||"";
+    const more=s.more_tools.length?` and ${s.more_tools.length} more (${esc(s.more_tools.join(", "))})`:"";
+    const did=s.damaged?"stored record could not be read":(s.tool?`calls <code>${esc(s.tool)}</code>${more} <code>${esc(s.tool_args||"")}</code>`:s.finish==="tool_calls"?"calls a tool":s.answer?"answers":"no answer")+odd;
+    const mark=(s.temperature>0?"†":"")+(s.pieces_known===false?"‡":""); if(s.readout==="stored"){ if(s.temperature>0) anySampled=true; if(s.pieces_known===false) anyApprox=true }
+    const ro=s.readout==="stored"?(s.counted?`${pct(s.hits[0],s.counted)} / ${pct(s.hits[1],s.counted)} / ${pct(s.hits[2],s.counted)}%${mark}`:"done"):s.readout==="available"?"not computed":"not available";
+    return `<tr class="step${s.id===shown?" on":""}" data-id="${esc(s.id)}"><td class="num">${k+1}</td><td class="clip" title="${esc(s.asked?s.asked.text:"")}">${from}</td><td class="clip" title="${esc((s.tool||"")+" "+(s.tool_args||""))}">${did}</td>`+
+      `<td class="num">${s.thinking} / ${s.answer}</td><td class="num">${dur(s.seconds)}</td><td class="num">${s.prompt_tokens.toLocaleString()}</td><td class="num">${ro}</td></tr>`}).join("");
+  $("runsteps").innerHTML=`<colgroup><col style="width:26px"><col style="width:30%"><col><col style="width:62px"><col style="width:46px"><col style="width:54px"><col style="width:104px"></colgroup>`+
+    `<tr><th>#</th><th>In reply to</th><th>What it did</th><th class="num" title="Thinking words / answer words">Think / ans</th><th class="num">Time</th><th class="num" title="Prompt tokens">Prompt</th><th class="num" title="How often the top word after pass 1, 2 and 3 was the word written">Readout 1 / 2 / 3</th></tr>`+rows;
+  $("runsteps").querySelectorAll("tr.step").forEach(tr=>tr.onclick=()=>openStep(tr.dataset.id));
+  const todo=steps.filter(s=>s.readout==="available"), est=todo.reduce((a,s)=>a+roCost(s),0);
+  const mine=runBusy&&runSession===RUN.session;
+  $("runstop").hidden=!mine;
+  if(!mine){
+    $("runro").hidden=!todo.length; $("runro").disabled=runBusy; $("runro").title=runBusy?"Another session's readouts are being computed":"";
+    $("runro").textContent=`Compute the readout for ${todo.length===steps.length?"all":"the remaining"} ${todo.length} step${todo.length>1?"s":""} (about ${dur(Math.max(est,1))})`;
+    if(!todo.length&&!$("runrostatus").dataset.keep) $("runrostatus").textContent="";
+  }
+  const box=$("runread"); box.innerHTML="";
+  if(!t.text_kept){ $("runreadhead").hidden=true; $("runnote").textContent="Text was not kept for this session, so there is no thinking to point to." ; return }
+  $("runreadhead").hidden=false;
+  const marks=(anySampled?" † This step was sampled at a temperature above 0, so the word written is not always pass 3's top word.":"")+(anyApprox?" ‡ The way this step's prompt was first read was not recorded, so the re-reading is close to the original, not identical.":"");
+  let n=0;
+  steps.forEach((s,k)=>(s.mentions||[]).forEach(m=>{ n++; const d=document.createElement("div"); d.className="read";
+    d.innerHTML=`<span class="from" style="color:var(--soft)">step ${k+1}</span> ${esc(m.text)}`; d.onclick=()=>openStep(s.id,m.i); box.append(d) }));
+  if(!n) box.innerHTML='<div style="font-size:13px;color:var(--soft)">None found in this run.</div>';
+  $("runnote").innerHTML=`In the table, "Readout 1 / 2 / 3" is how often the top word after each pass was the word written; pass 3 is the model's own prediction computed again, so at temperature 0 it should be at or near 100%.${marks}<br>These are sentences in the model's own thinking that match a word pattern ("instruction", "system prompt", "no need to mention" and similar), `+
+    `in ${t.with_mentions} of the ${t.with_thinking} step${t.with_thinking===1?"":"s"} that have thinking. They are for you to read; a match is not a finding, and the pattern also matches harmless phrases. `+
+    `A tool's own system prompt is full of instructions, so the model referring to them is normal. `+
+    `How far to trust the pattern: in a test where an instruction was planted and the model told to keep quiet about it, it matched 119 of 120 thinking texts, `+
+    `but it was adjusted after seeing those texts; on 20 ordinary steps with thinking it matched 2. `+
+    `It reads only the thinking, so it finds nothing when thinking is off, and a goal that leaves no trace in the text is not something this tool can show.`;
+}
+async function computeRun(){
+  if(runBusy||!RUN) return; const session=openSession, todo=RUN.steps.filter(s=>s.readout==="available");
+  runBusy=true; runSession=session; runStop=false; $("runro").hidden=true; $("runstop").hidden=false; $("runstop").disabled=false; delete $("runrostatus").dataset.keep;
+  let done=0, failed=0, why="";
+  for(const s of todo){
+    if(runStop||openSession!==session) break;
+    $("runrostatus").textContent=`Step ${RUN.steps.findIndex(x=>x.id===s.id)+1}: the model is re-reading it, about ${dur(Math.max(roCost(s),1))}. Other requests wait meanwhile. ${done} of ${todo.length} done.`;
+    try{ const r=await fetch(`/api/requests/${encodeURIComponent(s.id)}/readout`,{method:"POST"}); if(r.ok) done++; else { failed++; try{ why=(await r.json()).error||why }catch(e){} } }catch(e){ failed++; why=why||e.message }
+    if(openSession===session) await loadRun(session);
+  }
+  runBusy=false; runSession=null; $("runstop").hidden=true;
+  if(openSession!==session){ if(RUN) drawRun(); return }
+  if(openSession===session){ $("runrostatus").dataset.keep="1"; $("runrostatus").textContent=`Readouts computed for ${done} of ${todo.length} steps`+(failed?`; ${failed} failed: ${why||"unknown error"}`:"")+(runStop?"; stopped.":"."); await loadRun(session);
+    if(shown&&RUN&&RUN.steps.some(x=>x.id===shown)&&!RO){ const keep=sel; await showRequest(shown); if(keep>=0&&toks[keep]) select(keep) } }
 }
 
 async function refreshSessions(){
@@ -262,14 +360,15 @@ async function refreshSessions(){
   for(const s of list){
     const d=document.createElement("div"); d.className="item"+(s.session===openSession?" on":"");
     d.innerHTML=`${esc(s.title||"(no user message)")}<small>${clock(s.last_time)} · ${s.requests} request${s.requests>1?"s":""} · ${esc(who(s.client))}</small>`;
-    d.onclick=()=>{openSession=s.session===openSession?null:s.session; refreshSessions()};
+    d.onclick=()=>{openSession=s.session===openSession?null:s.session; runFailed=null; delete $("runrostatus").dataset.keep; $("runrostatus").textContent=""; if(!openSession) closeRun(); refreshSessions()};
     box.append(d);
     if(s.session===openSession){
       const reqs=await get("/api/sessions/"+s.session);
+      if(runFailed!==s.session&&(!RUN||!RUN.totals||RUN.session!==s.session||RUN.steps.length!==reqs.length)) loadRun(s.session);
       reqs.forEach((q,k)=>{const e=document.createElement("div"); e.className="item req"+(q.completion_id===shown?" on":""); e.dataset.id=q.completion_id;
         e.textContent=`${k+1}. ${clock(q.time)} · ${q.tokens} words · ${q.finish}`; e.onclick=ev=>{ev.stopPropagation(); showRequest(q.completion_id)}; box.append(e)});
       const f=document.createElement("button"); f.className="ghost"; f.style.margin="4px 0 8px 10px"; f.textContent="Forget this session";
-      f.onclick=async ev=>{ev.stopPropagation(); await fetch(`/api/sessions/${s.session}/forget`,{method:"POST"}); if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()} openSession=null; refreshSessions()};
+      f.onclick=async ev=>{ev.stopPropagation(); await fetch(`/api/sessions/${s.session}/forget`,{method:"POST"}); if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()} openSession=null; closeRun(); refreshSessions()};
       box.append(f);
     }
   }
@@ -326,6 +425,7 @@ async function send(){
     refreshSessions();
   }
 }
+$("runro").onclick=computeRun; $("runstop").onclick=()=>{runStop=true; $("runstop").disabled=true};
 $("rogo").onclick=computeReadout; $("romark").onchange=markAlt;
 $("go").onclick=send; $("stop").onclick=()=>ctrl&&ctrl.abort();
 $("api").textContent=location.origin+"/v1";

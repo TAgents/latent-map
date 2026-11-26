@@ -114,6 +114,10 @@ was read in (including the part an earlier turn read into the cache), and the re
 the prompt in those pieces and the reply one token at a time. Pass 3 then reproduces what
 generation computed, which the tests check with the real model.
 
+A follow-up can continue either of two saved caches: the one kept when the prompt had been
+read (chat apps, which do not send the thinking back) or the one kept after the reply (agents,
+which send the reply back exactly, tool calls included). Both are tracked.
+
 When the pieces are not known, the prompt is re-read in the default pieces and the page says
 the readout is close to the original, not identical. That applies to requests recorded before
 this version and to a request that continued a cache whose pieces were not recorded. With a
@@ -122,8 +126,30 @@ temperature above 0 the token written is not always pass 3's top token in any ca
 It needs the request's text, so it is not available under `--no-text`. Requests containing an
 image get no readout.
 
-Not in this version: conversation history in the
-chat box, a summary for agent runs, and the "responses" API route that Codex needs.
+### The run view
+
+Opening a session shows the whole run above the request: every step in order with what it
+replied to, the tool it called, thinking and answer words, time and prompt size, and one button
+that computes the readout for every step in turn (you can stop between steps). It gives numbers
+and pointers, and no score or verdict.
+
+Tried on 2026-11-26 with an opencode run of four steps (read a file, run it, fix it, report):
+the four readouts took 44 to 68 seconds each, about four minutes in all, and pass 3 gave the
+token written for every token of every step (77, 79, 133 and 56). Each step re-reads its whole
+prompt, about 14,600 tokens of which are opencode's own instructions, so a run of 20 steps would
+take around 20 minutes; sharing that work between steps is not built.
+
+"To read" lists sentences in the model's own thinking that match a word pattern ("instruction",
+"system prompt", "no need to mention" and similar); clicking one opens the step at that word.
+How far to trust it: on the 120 thinking texts of the planted-instruction test
+(`signals/REPORT_hidden.md`) the pattern matches 119, but it was widened after seeing those
+texts, so that figure is fitted, not a test result. On 20 ordinary steps with thinking stored on
+this Mac it matched 2, both harmless ("No need to mention hidden details" about a summary).
+It reads only the thinking: with thinking off it finds nothing, and a goal that leaves no trace
+in the text is not something this tool can show.
+
+Not in this version: conversation history in the chat box, and the "responses" API route that
+Codex needs.
 
 ## Tests
 

@@ -214,6 +214,20 @@ def test_readout_of_a_request_longer_than_one_reading_piece(server):
     same2 = sum(h[2] for h in out2["hits"])
     assert same2 >= 0.99 * len(out2["hits"]), (same2, len(out2["hits"]))
     print("READOUT HITS", same, len(out["hits"]), out["seconds"], same2, len(out2["hits"]), out2["seconds"])
+    # A client that sends the reply back exactly, thinking included (agents do), continues from the cache
+    # saved after the reply: prompt pieces, then one piece per token written.
+    said = r["choices"][0]["message"]
+    back = {"role": "assistant", "content": said["content"], "reasoning_content": said.get("reasoning_content") or said.get("reasoning")}
+    r3 = chat(messages=first + [back, {"role": "user", "content": "And test 2, in one sentence?"}],
+              max_tokens=60, reasoning_effort="low", temperature=0)
+    rec3 = record(r3["id"])
+    print("AFTER-REPLY", rec["prompt_tokens"], rec["n_tokens"], rec3["cached_tokens"], rec3["pieces"][:4], rec3["pieces"].count(1))
+    assert rec3["cached_tokens"] > rec["prompt_tokens"], (rec3["cached_tokens"], rec["prompt_tokens"])
+    assert rec3["pieces"] is not None and sum(rec3["pieces"]) == rec3["prompt_tokens"]
+    assert rec3["pieces"][: len(rec["pieces"])] == rec["pieces"] and rec3["pieces"].count(1) >= rec3["cached_tokens"] - rec["prompt_tokens"]
+    out3 = post(f"/api/requests/{r3['id']}/readout")
+    same3 = sum(h[2] for h in out3["hits"])
+    assert out3["pieces_known"] is True and same3 >= 0.99 * len(out3["hits"]), (same3, len(out3["hits"]))
     again = chat(messages=[{"role": "user", "content": "Say hello."}], max_tokens=80, reasoning_effort="low")
     own, before, n = agreement(record(again["id"]))
     assert own >= 0.85, (own, before, n)

@@ -49,6 +49,7 @@ class WordBuilder:
         self._kinds: list[str] = []
         self._used = 0  # prompt tokens accounted for so far
         self.prompt_sizes: list[int] = []  # sizes of the calls that read the uncached prompt
+        self.fed = 0  # written tokens the model has read back, one call each
         self._queue: deque = deque()  # records that read a generated word not yet added
         self._sum: np.ndarray | None = None
         self._n = np.zeros(len(PHASES), dtype=np.int64)
@@ -72,6 +73,7 @@ class WordBuilder:
                 self._used += rec.n_tokens  # still the prompt
                 self.prompt_sizes.append(int(rec.n_tokens))
             else:
+                self.fed += 1
                 self._queue.append(rec)
         new = []
         while self._queue and len(self.words) < len(self.texts):
@@ -302,7 +304,16 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
                     "first_token_s": (first or now) - started,
                     "tokens_per_s": n / max(now - (first or now), 1e-6) if n > 1 else 0.0,
                 }
-                recorder.save(_record(meta, full, uncached, builder, timing, finish, _pieces.of(full, uncached, builder.prompt_sizes)))
+                pieces = _pieces.of(full, uncached, builder.prompt_sizes)
+                # The server also saves the cache as it stands after the reply, under the prompt plus
+                # every token written. A client that sends the reply back exactly (agents do, with
+                # their tool calls) continues from that one: remember how it was read too.
+                after = list(full) + list(builder.ids)
+                if pieces is not None and not failed and builder.fed == len(builder.ids):
+                    _pieces.remember(after, pieces + [1] * builder.fed)
+                else:
+                    _pieces.forget(after)
+                recorder.save(_record(meta, full, uncached, builder, timing, finish, pieces))
             except Exception as err:  # recording must never break a reply; no text in the log
                 log.warning("recording a request failed: %s", type(err).__name__)
             send(last_words if "last_words" in locals() else [], done=True)  # after the save: the page fetches the record on "done"

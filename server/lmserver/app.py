@@ -82,6 +82,12 @@ def route(ctx: Ctx, method: str, path: str):
             return _json(200, r.sessions())
         if m := re.fullmatch(r"/api/sessions/([\w.-]+)", path):
             return _json(200, r.requests(m[1]))
+        if m := re.fullmatch(r"/api/sessions/([\w.-]+)/summary", path):
+            from lmserver import summary
+
+            found = [r.get(q["completion_id"]) for q in r.requests(m[1])]
+            found = [f for f in found if f]  # one may have been forgotten in between
+            return _json(200, summary.summarize(found)) if found else _json(404, {"error": "no such session"})
         if m := re.fullmatch(r"/api/requests/([\w.-]+)", path):
             found = r.get(m[1])
             return _json(200, found) if found else _json(404, {"error": "no such request"})

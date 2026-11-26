@@ -15,28 +15,35 @@ class TooLong(ValueError):
     pass
 
 
+class NotLoaded(RuntimeError):
+    pass
+
+
 def _run(model, ids, topk, positions, states):
     from latent_capture.readout import pass_readouts
 
-    return pass_readouts(model, ids, topk=topk, positions=positions, states=states)
+    return pass_readouts(model, ids, topk=topk, positions=positions, states=states)  # output layer in chunks of 256
 
 
 def compute(model, tokenizer, prompt_ids: list[int], reply_ids: list[int], run=_run) -> dict:
-    """{"k", "seconds", "words"}: words[i][pass] is a list of [text, probability], most
-    likely first, for the prediction made just before reply word i was written."""
+    """{"k", "seconds", "words", "hits"}: words[i][pass] is a list of [text, probability,
+    token id], most likely first, for the prediction made just before reply word i was
+    written. hits[i][pass] says whether that pass's top token is the token written
+    (compared by id: different tokens can show as the same text)."""
     if not prompt_ids:
         raise ValueError("a readout needs the prompt's tokens")
     if len(prompt_ids) + len(reply_ids) > MAX_TOKENS:
         raise TooLong(f"prompt and reply are {len(prompt_ids) + len(reply_ids)} tokens; the limit is {MAX_TOKENS}")
     started = time.time()
     if not reply_ids:
-        return {"k": TOPK, "seconds": 0.0, "words": []}
+        return {"k": TOPK, "seconds": 0.0, "words": [], "hits": []}
     # The prediction for reply word i is made at the position before it.
     positions = [len(prompt_ids) - 1 + i for i in range(len(reply_ids))]
     out = run(model, list(prompt_ids) + list(reply_ids), TOPK, positions, False)
     top, prob = out["top"], out["prob"]
     words = [
-        [[[tokenizer.decode([int(t)]), round(float(p), 4)] for t, p in zip(top[k, j], prob[k, j])] for k in range(top.shape[0])]
+        [[[tokenizer.decode([int(t)]), round(float(p), 4), int(t)] for t, p in zip(top[k, j], prob[k, j])] for k in range(top.shape[0])]
         for j in range(len(positions))
     ]
-    return {"k": TOPK, "seconds": round(time.time() - started, 2), "words": words}
+    hits = [[int(top[k, j, 0]) == int(reply_ids[j]) for k in range(top.shape[0])] for j in range(len(positions))]
+    return {"k": TOPK, "seconds": round(time.time() - started, 2), "words": words, "hits": hits}

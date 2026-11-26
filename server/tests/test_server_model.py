@@ -159,18 +159,20 @@ def post(path):
 
 def test_readout_last_pass_is_what_the_model_wrote(server):
     r = chat(messages=[{"role": "user", "content": "What is the capital of the country where Mozart was born? One short sentence."}],
-             max_tokens=200, reasoning_effort="low")
+             max_tokens=200, reasoning_effort="low", temperature=0)
     rec = record(r["id"])
     assert rec["readout_available"] and rec["readout"] is None
     out = post(f"/api/requests/{r['id']}/readout")
     words, written = out["words"], rec["reply_tokens"]
     assert len(words) == len(written) and out["k"] == 5
     # Greedy generation: the last pass's top word is the word that was written.
-    same = sum(w[2][0][0] == t for w, t in zip(words, written))
+    same = sum(h[2] for h in out["hits"])
     assert same >= 0.97 * len(written), (same, len(written))
+    assert out["hits"][0][2] and out["hits"][-1][2]  # the first and last word line up too
+    assert [w[2][0][0] for w in words[:5]] == written[:5]
     # The earlier passes are a different reading, not a copy of the last one.
     assert sum(w[0][0][0] != w[2][0][0] for w in words) > 0
-    assert all(0 <= p <= 1 for w in words for k in w for _, p in k)
+    assert all(0 <= alt[1] <= 1 for w in words for k in w for alt in k)
     assert record(r["id"])["readout"]["words"] == words  # stored
     assert post(f"/api/requests/{r['id']}/readout")["seconds"] == out["seconds"]  # served from the store, not recomputed
     # The server still generates correctly afterwards.

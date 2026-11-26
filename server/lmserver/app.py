@@ -13,7 +13,7 @@ import re
 import sys
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent.parent
@@ -30,6 +30,7 @@ class Ctx:
     settings: dict
     static: Path
     readout: object = None  # (prompt_ids, reply_ids) -> dict, set once the model can be used
+    readout_lock: object = field(default_factory=threading.Lock)
 
 
 def check_args(args) -> None:
@@ -96,24 +97,28 @@ def _readout(ctx: Ctx, completion_id: str):
     """The stored readout, or a new one computed now (the model re-reads the whole text)."""
     from lmserver import readout
 
-    found = ctx.recorder.get(completion_id)
-    if found is None:
-        return _json(404, {"error": "no such request"})
-    if found["readout"] is not None:
-        return _json(200, found["readout"])
-    ids = ctx.recorder.token_ids(completion_id)
-    if ids is None:
-        return _json(409, {"error": "This request was recorded without its text, so the model cannot re-read it."})
-    if ctx.readout is None:
-        return _json(503, {"error": "The model is not loaded yet."})
-    try:
-        result = ctx.readout(*ids)
-    except readout.TooLong as err:
-        return _json(413, {"error": f"Too long for a readout in this version: {err}."})
-    except RuntimeError:
-        return _json(503, {"error": "The model is not loaded yet."})
-    ctx.recorder.save_readout(completion_id, result)
-    return _json(200, result)
+    with ctx.readout_lock:  # the same readout asked for twice is computed once
+        found = ctx.recorder.get(completion_id)
+        if found is None:
+            return _json(404, {"error": "no such request"})
+        if found["readout"] is not None:
+            return _json(200, found["readout"])
+        ids = ctx.recorder.token_ids(completion_id)
+        if ids is None or not ids[0]:
+            return _json(409, {"error": "Not available: this request was recorded without its text or tokens, "
+                                        "or it contains an image, so the model cannot re-read it as it was."})
+        if ctx.readout is None:
+            return _json(503, {"error": "The model is not loaded yet."})
+        try:
+            result = ctx.readout(*ids)
+        except readout.TooLong as err:
+            return _json(413, {"error": f"Too long for a readout in this version: {err}."})
+        except readout.NotLoaded:
+            return _json(503, {"error": "The model is not loaded yet."})
+        except Exception as err:  # say what failed; never the text
+            return _json(500, {"error": f"The readout failed ({type(err).__name__}). If this Mac is short of memory, close other apps and try again."})
+        ctx.recorder.save_readout(completion_id, result)
+        return _json(200, result)
 
 
 class LiveHub:
@@ -332,7 +337,7 @@ def main(argv=None) -> None:
         from lmserver import readout
 
         if hooks.model() is None:
-            raise RuntimeError("model not loaded")
+            raise readout.NotLoaded()
         with hooks.model_lock():  # waits for a reply in progress; replies wait for this
             return readout.compute(hooks.model(), hooks.tokenizer(), prompt_ids, reply_ids)
 

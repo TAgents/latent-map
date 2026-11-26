@@ -59,7 +59,9 @@ The whole task took 63 seconds and the answer was right. Things to know:
 ## What is stored, and where
 
 One SQLite file, `~/.latent-map/requests.db`, readable only by you. Per request: time, the
-client's name, settings, the messages and reply (unless `--no-text`), and per generated word
+client's name, settings, the messages and reply, the exact tokens of the full prompt (which
+include the tool descriptions a client sent) and any computed readout (none of these under
+`--no-text`), and per generated word
 its map cell on each pass, last-pass movement and loop signal, plus the average full-size state
 of the thinking and of the answer (about 110KB).
 
@@ -81,13 +83,15 @@ terminal log. There is no password: any program running on this Mac can use the 
 | Thinking and answer, separated | The model's own text. |
 | Where each word lands on the map, settling across passes | Position on a map built from 120 texts. Area names are untested hypotheses. |
 | Last-pass movement | Measured; not known to predict anything. |
-| What it would have written after each pass | Pass 3 is the model's real prediction (checked: it matches the words written). Passes 1 and 2 are a reading the model was never trained to give; they are not its reasoning. |
+| What it would have written after each pass | Pass 3 is the model's real prediction (checked in a test with the real model on a short request at temperature 0: it matches the words written). When a client samples at a higher temperature, the word written is not always pass 3's top word. Passes 1 and 2 are a reading the model was never trained to give; they are not its reasoning. |
 
 The readout is computed when you press "Compute for this request": the model re-reads the whole
-request without the cache, which takes a few seconds and makes other requests wait. It is stored
+request without the cache and makes other requests wait meanwhile (under a second for a
+short request; 10 seconds for a 3,900-token request with a 1,000-word reply, where pass 3
+matched the word written for 98.9% of words). It is stored
 with the record. It needs the request's text, so it is not available under `--no-text`, and in
 this version only for requests of up to 4,096 tokens (prompt plus reply), which leaves out
-opencode's 14,600-token requests.
+opencode's 14,600-token requests. Requests containing an image get no readout.
 
 Not in this version: conversation history in the
 chat box, a summary for agent runs, and the "responses" API route that Codex needs.

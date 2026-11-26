@@ -70,7 +70,11 @@ class Recorder:
         have = {row[1] for row in self._db.execute("PRAGMA table_info(requests)")}
         for column, kind in (("prompt_ids", "BLOB"), ("reply_ids", "BLOB"), ("readout", "TEXT")):
             if column not in have:  # a database from before readouts
-                self._db.execute(f"ALTER TABLE requests ADD COLUMN {column} {kind}")
+                try:
+                    self._db.execute(f"ALTER TABLE requests ADD COLUMN {column} {kind}")
+                except sqlite3.OperationalError as err:  # another process added it a moment ago
+                    if "duplicate column" not in str(err):
+                        raise
         self._db.commit()
         if not keep_text:
             self._drop_stored_text()

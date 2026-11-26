@@ -12,7 +12,7 @@ from mlx_lm.models.inkling2.layers import unweighted_rms_norm
 
 
 def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: int = 10, replace: dict | None = None,
-                  positions: list[int] | None = None, states: bool = True) -> dict:
+                  positions: list[int] | None = None, states: bool = True, chunk: int = 256) -> dict:
     """ids: token ids of the text. Returns
       "top":  (passes, tokens, topk) most likely next-token ids per pass and position
       "rank": (passes, tokens, len(track)) rank of each tracked token id, 0 = most likely
@@ -25,7 +25,9 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
     positions: read out only these token positions ("top", "prob" and "rank" then have
     len(positions) rows); the whole text is still run. states=False leaves out the two
     state arrays, which are large for long texts.
-    "prob": (passes, tokens, topk) probability of each of the "top" ids."""
+    "prob": (passes, tokens, topk) probability of each of the "top" ids, with the
+    model's own cap on its output scores applied, so the last pass equals the real one.
+    chunk: positions sent through the output layer at a time; keeps memory small."""
     lm = model.model.language_model
     core = lm.args.loop_core
     track = list(track or [])
@@ -38,13 +40,28 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
             hidden_states, block_states = layer(hidden_states, block_states, cache=None, conv_mask=None, messages=messages)
         return hidden_states, block_states
 
-    def logits_from(hidden_states, block_states):
+    softcap = lm.args.final_logit_softcapping
+
+    def read(hidden_states, block_states):
+        """top ids, their probabilities and tracked ranks at the chosen positions."""
         hs, bs = run(lm.layers[core.stop :], hidden_states, block_states)
         normed = unweighted_rms_norm(hs.astype(mx.float32))
-        out = lm.norm(lm.final_input(bs, normed)[..., 0, :]).astype(dtype)
+        out = lm.norm(lm.final_input(bs, normed)[..., 0, :]).astype(dtype)[0]
         if positions is not None:
-            out = out[:, mx.array(positions)]
-        return model.lm_head(out).astype(mx.float32)[0, :, : lm.args.unpadded_vocab_size]
+            out = out[mx.array(positions)]
+        top, prob, rank = [], [], []
+        for start in range(0, out.shape[0], chunk):  # the output layer is tokens x vocabulary: do it in pieces
+            logits = model.lm_head(out[start : start + chunk]).astype(mx.float32)
+            logits = (mx.tanh(logits / softcap) * softcap)[:, : lm.args.unpadded_vocab_size]
+            cut = mx.argpartition(-logits, topk - 1, axis=-1)[:, :topk]
+            order = mx.argsort(-mx.take_along_axis(logits, cut, axis=-1), axis=-1)
+            best = mx.take_along_axis(cut, order, axis=-1)
+            top.append(np.array(best))
+            prob.append(np.array(mx.take_along_axis(mx.softmax(logits, axis=-1), best, axis=-1)))
+            if track:
+                rank.append(np.stack([np.array((logits > logits[:, t : t + 1]).sum(axis=-1)) for t in track], axis=-1))
+            mx.clear_cache()
+        return np.concatenate(top), np.concatenate(prob), (np.concatenate(rank) if track else None)
 
     prelude = run(lm.layers[: core.start], hidden, None)
     hidden_states, block_states = prelude
@@ -67,13 +84,11 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
         if states:
             ends.append(np.array(unweighted_rms_norm(hidden_states.astype(mx.float32))[0]))
             block2.append(np.array(block_states[-1][0].astype(mx.float32)))          # this pass's block 2 output
-        logits = logits_from(hidden_states, block_states)
-        best = mx.argsort(-logits, axis=-1)[:, :topk]
-        tops.append(np.array(best))
-        probs.append(np.array(mx.take_along_axis(mx.softmax(logits, axis=-1), best, axis=-1)))
+        top, prob, rank = read(hidden_states, block_states)
+        tops.append(top)
+        probs.append(prob)
         if track:
-            cols = [np.array((logits > logits[:, t : t + 1]).sum(axis=-1)) for t in track]   # one word at a time: small memory
-            ranks.append(np.stack(cols, axis=-1))
+            ranks.append(rank)
         mx.clear_cache()
     out = {
         "top": np.stack(tops),

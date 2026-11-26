@@ -104,7 +104,18 @@ class WordBuilder:
         return mean.astype(np.float32)
 
 
+def has_images(messages) -> bool:
+    return any(
+        isinstance(part, dict) and part.get("type") in ("image_url", "image")
+        for m in messages or []
+        if isinstance(m, dict) and isinstance(m.get("content"), list)
+        for part in m["content"]
+    )
+
+
 def _record(meta, prompt, uncached, builder, timing, finish) -> RequestRecord:
+    # A readout re-reads the tokens alone; with an image that is not what the model saw.
+    rereadable = not has_images(meta.get("messages"))
     return RequestRecord(
         completion_id=meta.get("completion_id") or f"local-{timing['time']:.3f}",
         time=timing["time"],
@@ -119,8 +130,8 @@ def _record(meta, prompt, uncached, builder, timing, finish) -> RequestRecord:
         first_token_s=timing["first_token_s"],
         tokens_per_s=timing["tokens_per_s"],
         finish=finish,
-        prompt_ids=list(prompt),
-        reply_ids=list(builder.ids),
+        prompt_ids=list(prompt) if rereadable else None,
+        reply_ids=list(builder.ids) if rereadable else None,
     )
 
 

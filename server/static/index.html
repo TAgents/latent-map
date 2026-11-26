@@ -93,7 +93,7 @@ svg{width:100%;height:auto;display:block}
       <b>What it would have written after each pass.</b> The model's last block is run on the state after pass 1, 2 and 3.
       Pass 3 is the model's real prediction. Passes 1 and 2 are a reading the model was never trained to give: they show what the state would produce, not how the model reasons.
       <div class="row"><button id="rogo" class="ghost">Compute for this request</button>
-        <label id="romarkwrap" hidden><input type="checkbox" id="romark"> mark words pass 2 would have written differently</label></div>
+        <label id="romarkwrap" hidden><input type="checkbox" id="romark"> mark words where pass 2 and pass 3 differ</label></div>
       <div id="rostatus"></div>
     </div>
     <div class="note">Underline colour = the area a word ends in. Grey background = it moved more than usual on the last pass. Measured; not known to predict anything. Click a word to see its three passes.</div>
@@ -124,7 +124,7 @@ const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg";
 const el=(n,a={},t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=p=>fetch(p).then(r=>{if(!r.ok) throw new Error(r.status); return r.json()});
-let RO=null, MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
+let RO=null, HITS=null, TEMP=0, MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
 const W=1000,H=780,PAD=46;
 const px=c=>[PAD+c.x*(W-2*PAD), PAD+(1-c.y)*(H-2*PAD)];
 const areaName=a=>a.name?a.name:`area ${a.id} (unnamed)`;
@@ -181,28 +181,31 @@ function roDetail(i){
   <div class="note" style="border:0;margin-top:4px;padding:0">Pass 3 is the model's real prediction. Passes 1 and 2 are not its reasoning.</div>`;
 }
 function applyReadout(ro){
-  RO=ro.words; $("rogo").hidden=true; $("romarkwrap").hidden=false;
-  const ws=toks.filter(t=>t&&(t.phase==="thinking"||t.phase==="answer")&&RO[t.i]&&t.text!=null), n=ws.length||1;
-  const hit=k=>ws.filter(t=>RO[t.i][k][0][0]===t.text).length;
-  $("rostatus").innerHTML=`Of ${ws.length} thinking and answer words, the top word after pass 1 was already the word written for ${Math.round(100*hit(0)/n)}%, after pass 2 for ${Math.round(100*hit(1)/n)}%, after pass 3 for ${Math.round(100*hit(2)/n)}%. Click a word to see the alternatives.`;
+  RO=ro.words; HITS=ro.hits||null; $("rogo").hidden=true; $("romarkwrap").hidden=false;
+  const ws=toks.filter(t=>t&&(t.phase==="thinking"||t.phase==="answer")&&RO[t.i]), n=ws.length||1;
+  const isHit=(i,k)=>HITS?HITS[i][k]:RO[i][k][0][0]===toks[i].text;
+  const hit=k=>ws.filter(t=>isHit(t.i,k)).length;
+  const sampled=TEMP>0?` This request was sampled at temperature ${TEMP}, so the word written is not always pass 3's top word.`:"";
+  $("rostatus").textContent=`Of ${ws.length} thinking and answer words, the top word matched the word written for ${Math.round(100*hit(0)/n)}% after pass 1, ${Math.round(100*hit(1)/n)}% after pass 2 and ${Math.round(100*hit(2)/n)}% after pass 3.${sampled} Click a word to see the alternatives.`;
   markAlt(); if(sel>=0) select(sel);
 }
 function markAlt(){
   const on=$("romark").checked;
-  toks.forEach(t=>{ if(t&&t.el) t.el.classList.toggle("alt", !!(on&&RO&&RO[t.i]&&t.text!=null&&t.phase!=="marker"&&RO[t.i][1][0][0]!==t.text)) });
+  toks.forEach(t=>{ if(t&&t.el) t.el.classList.toggle("alt", !!(on&&RO&&RO[t.i]&&t.phase!=="marker"&&(RO[t.i][1][0][2]!==undefined?RO[t.i][1][0][2]!==RO[t.i][2][0][2]:RO[t.i][1][0][0]!==RO[t.i][2][0][0]))) });
 }
 async function computeReadout(){
   if(!shown) return; const id=shown;
   $("rogo").disabled=true; $("rostatus").textContent="The model is re-reading this request… (it waits for any reply in progress)";
   try{
     const r=await fetch(`/api/requests/${encodeURIComponent(id)}/readout`,{method:"POST"}), body=await r.json();
+    if(shown!==id) return;
     if(!r.ok){ $("rostatus").textContent=body.error||("Error "+r.status); return }
-    if(shown===id) applyReadout(body);
-  }catch(e){ $("rostatus").textContent="Error: "+e.message }
-  finally{ $("rogo").disabled=false }
+    applyReadout(body);
+  }catch(e){ if(shown===id) $("rostatus").textContent="Error: "+e.message }
+  finally{ if(shown===id) $("rogo").disabled=false }
 }
 function clearView(){
-  RO=null; $("readout").hidden=true; $("rogo").hidden=false; $("romarkwrap").hidden=true; $("romark").checked=false; $("rostatus").textContent="";
+  RO=null; HITS=null; TEMP=0; $("readout").hidden=true; $("rogo").hidden=false; $("rogo").disabled=false; $("romarkwrap").hidden=true; $("romark").checked=false; $("rostatus").textContent="";
   toks=[]; sel=-1;
   ["thinking","answer","tool","asked"].forEach(i=>$(i).innerHTML="");
   ["thinkhead","thinking","toolhead","tool","anshead","summary","notext","askhead","asked"].forEach(i=>$(i).hidden=true);
@@ -244,9 +247,9 @@ async function showRequest(id){
   else $("notext").hidden=false;
   r.words.forEach(w=>addWord({...w,text:r.reply_tokens?r.reply_tokens[w.i]:null}));
   drawTrail(); summarise(r);
-  $("readout").hidden=false;
+  $("readout").hidden=false; TEMP=+((r.settings||{}).temperature||0);
   if(r.readout) applyReadout(r.readout);
-  else if(!r.readout_available){ $("rogo").hidden=true; $("rostatus").textContent=r.text_kept?"Not available: this request was recorded before readouts existed.":"Not available: the text of this request was not kept, so the model cannot re-read it." }
+  else if(!r.readout_available){ $("rogo").hidden=true; $("rostatus").textContent=r.text_kept?"Not available: this request has an image, or was recorded before readouts existed.":"Not available: the text of this request was not kept, so the model cannot re-read it." }
   document.querySelectorAll(".req").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
 }
 

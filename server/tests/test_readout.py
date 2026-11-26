@@ -13,7 +13,7 @@ class Tok:
         return "".join(f"w{i}" for i in ids)
 
 
-def fake_run(model, ids, topk, positions, states):
+def fake_run(model, ids, topk, positions, states, chunk=256):
     """Stands in for the model: at position p the passes predict p+100, p+200, p+300 first."""
     assert states is False
     top = np.zeros((3, len(positions), topk), dtype=np.int64)
@@ -29,7 +29,7 @@ def test_each_word_gets_the_prediction_made_just_before_it():
     out = readout.compute(None, Tok(), prompt_ids=[1, 2, 3, 4], reply_ids=[10, 11, 12], run=fake_run)
     assert out["k"] == readout.TOPK and len(out["words"]) == 3
     # word 0 was predicted at the last prompt position (3); word 2 at position 5
-    assert out["words"][0][0][0] == ["w103", 0.5]
+    assert out["words"][0][0][0] == ["w103", 0.5, 103]
     assert out["words"][0][2][0][0] == "w303"
     assert out["words"][2][1][0][0] == "w205"
     assert len(out["words"][0]) == 3 and len(out["words"][0][0]) == readout.TOPK
@@ -127,11 +127,6 @@ def test_route_says_why_a_readout_is_not_available(ctx):
     ctx.recorder.save(make_record(completion_id="fresh", prompt_ids=[1], reply_ids=[2]))
     assert app.route(ctx, "POST", "/api/requests/fresh/readout")[0] == 503
 
-    def not_loaded(prompt, reply):
-        raise RuntimeError("model not loaded")
-
-    ctx.readout = not_loaded
-    assert app.route(ctx, "POST", "/api/requests/fresh/readout")[0] == 503
 
 
 def test_built_records_carry_token_ids():
@@ -145,3 +140,95 @@ def test_built_records_carry_token_ids():
     live = LiveMap.load(root / "basemap" / "bundle_v1", root / "prototype" / "norms_v1.json")
     rec = build_record(th.META, [100, 101, 102, 103], 4, [5, 6], [th.cap(0, 4), th.cap(1), th.cap(2)], th.Tok(), live, th.TIMING, "stop")
     assert rec.prompt_ids == [100, 101, 102, 103] and rec.reply_ids == [5, 6]
+
+
+# --- findings of the readout review ---
+
+def test_hits_are_decided_by_token_id_not_by_text():
+    # fake_run's pass k predicts p+100*(k+1) at position p; make the reply equal pass 3's top at word 1 only
+    out = readout.compute(None, Tok(), prompt_ids=[1, 2], reply_ids=[7, 302], run=fake_run)
+    assert out["hits"] == [[False, False, False], [False, False, True]]
+    assert out["words"][1][2][0] == ["w302", 0.5, 302]  # text, probability, id
+
+
+def test_requests_with_images_keep_no_tokens_for_a_readout():
+    from lmserver.hooks import has_images
+
+    assert has_images([{"role": "user", "content": [{"type": "text", "text": "x"}, {"type": "image_url", "image_url": {"url": "data:image/png;base64,AA"}}]}])
+    assert not has_images([{"role": "user", "content": "plain"}, {"role": "user", "content": [{"type": "text", "text": "x"}]}])
+    assert not has_images(None)
+    from pathlib import Path
+    from livemap.live import LiveMap
+    from lmserver.hooks import build_record
+    import test_hooks as th
+
+    root = Path(__file__).resolve().parents[2]
+    live = LiveMap.load(root / "basemap" / "bundle_v1", root / "prototype" / "norms_v1.json")
+    meta = {**th.META, "messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {"url": "data:image/png;base64,AA"}}]}]}
+    rec = build_record(meta, [100, 101], 2, [5], [th.cap(0, 2), th.cap(1)], th.Tok(), live, th.TIMING, "stop")
+    assert rec.prompt_ids is None and rec.reply_ids is None
+
+
+def test_route_reports_failures_truthfully(ctx):
+    ctx.recorder.save(make_record(completion_id="fresh", prompt_ids=[1], reply_ids=[2]))
+
+    def out_of_memory(prompt, reply):
+        raise RuntimeError("[metal::malloc] Attempting to allocate")
+
+    ctx.readout = out_of_memory
+    status, _, raw = app.route(ctx, "POST", "/api/requests/fresh/readout")
+    assert status == 500 and "RuntimeError" in json.loads(raw)["error"] and "not loaded" not in json.loads(raw)["error"]
+
+    def not_loaded(prompt, reply):
+        raise readout.NotLoaded()
+
+    ctx.readout = not_loaded
+    assert app.route(ctx, "POST", "/api/requests/fresh/readout")[0] == 503
+    ctx.recorder.save(make_record(completion_id="noprompt", prompt_ids=[], reply_ids=[2]))
+    ctx.readout = lambda p, r: readout.compute(None, Tok(), p, r, run=fake_run)
+    assert app.route(ctx, "POST", "/api/requests/noprompt/readout")[0] == 409
+
+
+def test_the_same_readout_asked_twice_at_once_is_computed_once(ctx):
+    import threading
+    import time
+
+    def slow(prompt, reply):
+        ctx.calls.append(1)
+        time.sleep(0.2)
+        return readout.compute(None, Tok(), prompt, reply, run=fake_run)
+
+    ctx.readout = slow
+    results = []
+    threads = [threading.Thread(target=lambda: results.append(app.route(ctx, "POST", "/api/requests/chatcmpl-1/readout")[0])) for _ in range(2)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert results == [200, 200] and len(ctx.calls) == 1
+
+
+def test_two_servers_opening_an_old_database_at_once_do_not_crash(tmp_path):
+    import sqlite3
+    import threading
+
+    db = sqlite3.connect(tmp_path / "db.sqlite")
+    db.execute(
+        """CREATE TABLE requests (
+            completion_id TEXT PRIMARY KEY, session TEXT, time REAL, client TEXT, title TEXT,
+            text_kept INTEGER, messages TEXT, reply_tokens TEXT, words TEXT, settings TEXT,
+            prompt_tokens INTEGER, cached_tokens INTEGER, n_tokens INTEGER,
+            first_token_s REAL, tokens_per_s REAL, finish TEXT, mean_states BLOB)"""
+    )
+    db.commit()
+    db.close()
+    errors = []
+
+    def open_it():
+        try:
+            Recorder(tmp_path / "db.sqlite")
+        except Exception as err:
+            errors.append(err)
+
+    threads = [threading.Thread(target=open_it) for _ in range(6)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert errors == []

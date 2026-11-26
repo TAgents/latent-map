@@ -43,3 +43,19 @@ def test_reading_out_chosen_positions_matches_the_full_readout(loaded):
     np.testing.assert_array_equal(part["top"][:, :, 0], full["top"][:, [2, len(ids) - 1], 0])
     np.testing.assert_allclose(part["prob"], full["prob"][:, [2, len(ids) - 1]], atol=2e-2)
     assert (full["prob"] >= 0).all() and (full["prob"][..., 0] >= full["prob"][..., 1]).all() and (full["prob"].sum(-1) <= 1.001).all()
+
+
+def test_probabilities_are_the_models_own_and_chunking_changes_nothing(loaded):
+    model, tokenizer = loaded
+    ids = tokenizer.encode("The capital of France is Paris, and the capital of Italy is")
+    real = mx.softmax(model(mx.array([ids]))[0].astype(mx.float32), axis=-1)
+    real = np.array(real)
+    out = pass_readouts(model, ids, topk=5, states=False)
+    want = np.take_along_axis(real, out["top"][2], axis=-1)
+    np.testing.assert_allclose(out["prob"][2], want, atol=5e-3)   # includes the model's cap on its output scores
+    small = pass_readouts(model, ids, track=[5], topk=5, states=False, chunk=3)
+    big = pass_readouts(model, ids, track=[5], topk=5, states=False)
+    np.testing.assert_array_equal(small["top"][:, :, 0], big["top"][:, :, 0])
+    np.testing.assert_allclose(small["prob"], big["prob"], atol=1e-4)
+    np.testing.assert_array_equal(small["rank"], big["rank"])
+    assert (np.diff(big["prob"], axis=-1) <= 1e-6).all()            # most likely first

@@ -59,6 +59,9 @@ svg{width:100%;height:auto;display:block}
 .kv div:nth-child(odd){color:var(--soft)}
 .bar{display:inline-block;height:9px;background:var(--soft);border-radius:2px;vertical-align:middle;margin-right:5px}
 .note{font-size:12.5px;color:var(--soft);margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.t.alt{box-shadow:inset 0 2px 0 var(--soft)}
+.ro code{font:13px ui-monospace,Menlo,monospace;background:var(--pick);border-radius:4px;padding:0 4px}
+.ro .p{color:var(--soft);font-size:12px;margin-right:8px}
 .tier{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:0 7px;color:var(--soft);margin-left:6px;text-transform:none;letter-spacing:0}
 </style>
 </head>
@@ -86,6 +89,13 @@ svg{width:100%;height:auto;display:block}
     <div id="answer"></div>
     <div id="notext" class="note" hidden>Text was not kept for this request.</div>
     <div id="summary" class="note" hidden></div>
+    <div id="readout" class="note" hidden>
+      <b>What it would have written after each pass.</b> The model's last block is run on the state after pass 1, 2 and 3.
+      Pass 3 is the model's real prediction. Passes 1 and 2 are a reading the model was never trained to give: they show what the state would produce, not how the model reasons.
+      <div class="row"><button id="rogo" class="ghost">Compute for this request</button>
+        <label id="romarkwrap" hidden><input type="checkbox" id="romark"> mark words pass 2 would have written differently</label></div>
+      <div id="rostatus"></div>
+    </div>
     <div class="note">Underline colour = the area a word ends in. Grey background = it moved more than usual on the last pass. Measured; not known to predict anything. Click a word to see its three passes.</div>
     <div class="note">
       <textarea id="prompt" placeholder="Ask the model">Explain in three sentences why the sky is blue.</textarea>
@@ -114,7 +124,7 @@ const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg";
 const el=(n,a={},t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=p=>fetch(p).then(r=>{if(!r.ok) throw new Error(r.status); return r.json()});
-let MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
+let RO=null, MAP=null, toks=[], sel=-1, ctrl=null, shown=null, openSession=null, liveId=null;
 const W=1000,H=780,PAD=46;
 const px=c=>[PAD+c.x*(W-2*PAD), PAD+(1-c.y)*(H-2*PAD)];
 const areaName=a=>a.name?a.name:`area ${a.id} (unnamed)`;
@@ -160,10 +170,39 @@ function select(i){
    <div>Settling</div><div>${settle}; ${same===1?"same cell on all three passes":same===2?"changed cell once":"a different cell on every pass"}</div>
    <div>Last-pass movement</div><div>${t.move[1].toFixed(2)} — ${lv} (usual here: up to ${bands[1].toFixed(2)}). Measured; not known to predict anything.</div>
    <div>Loop signal by pass</div><div>${t.loop.map(v=>`<span class="bar" style="width:${Math.max(2,v*90).toFixed(0)}px"></span>${(v*100).toFixed(0)}%`).join(" &nbsp; ")} <span class="tier">measured; meaning not tested</span></div>
-  </div>`;
+  </div>${roDetail(i)}`;
 }
 
+const showTok=x=>esc(x).replace(/\n/g,"↵")||"∅";
+function roDetail(i){
+  if(!RO||!RO[i]) return "";
+  const t=toks[i], rows=RO[i].map((alts,k)=>`<div>After pass ${k+1}${k===2?" (real)":""}</div><div>${alts.map(([w,p])=>`<code>${showTok(w)}</code><span class="p">${Math.round(p*100)}%</span>`).join("")}</div>`).join("");
+  return `<div class="sec">What it would have written here, before “${t.text==null?"…":showTok(t.text.trim()||t.text)}”</div><div class="kv ro">${rows}</div>
+  <div class="note" style="border:0;margin-top:4px;padding:0">Pass 3 is the model's real prediction. Passes 1 and 2 are not its reasoning.</div>`;
+}
+function applyReadout(ro){
+  RO=ro.words; $("rogo").hidden=true; $("romarkwrap").hidden=false;
+  const ws=toks.filter(t=>t&&(t.phase==="thinking"||t.phase==="answer")&&RO[t.i]&&t.text!=null), n=ws.length||1;
+  const hit=k=>ws.filter(t=>RO[t.i][k][0][0]===t.text).length;
+  $("rostatus").innerHTML=`Of ${ws.length} thinking and answer words, the top word after pass 1 was already the word written for ${Math.round(100*hit(0)/n)}%, after pass 2 for ${Math.round(100*hit(1)/n)}%, after pass 3 for ${Math.round(100*hit(2)/n)}%. Click a word to see the alternatives.`;
+  markAlt(); if(sel>=0) select(sel);
+}
+function markAlt(){
+  const on=$("romark").checked;
+  toks.forEach(t=>{ if(t&&t.el) t.el.classList.toggle("alt", !!(on&&RO&&RO[t.i]&&t.text!=null&&t.phase!=="marker"&&RO[t.i][1][0][0]!==t.text)) });
+}
+async function computeReadout(){
+  if(!shown) return; const id=shown;
+  $("rogo").disabled=true; $("rostatus").textContent="The model is re-reading this request… (it waits for any reply in progress)";
+  try{
+    const r=await fetch(`/api/requests/${encodeURIComponent(id)}/readout`,{method:"POST"}), body=await r.json();
+    if(!r.ok){ $("rostatus").textContent=body.error||("Error "+r.status); return }
+    if(shown===id) applyReadout(body);
+  }catch(e){ $("rostatus").textContent="Error: "+e.message }
+  finally{ $("rogo").disabled=false }
+}
 function clearView(){
+  RO=null; $("readout").hidden=true; $("rogo").hidden=false; $("romarkwrap").hidden=true; $("romark").checked=false; $("rostatus").textContent="";
   toks=[]; sel=-1;
   ["thinking","answer","tool","asked"].forEach(i=>$(i).innerHTML="");
   ["thinkhead","thinking","toolhead","tool","anshead","summary","notext","askhead","asked"].forEach(i=>$(i).hidden=true);
@@ -205,6 +244,9 @@ async function showRequest(id){
   else $("notext").hidden=false;
   r.words.forEach(w=>addWord({...w,text:r.reply_tokens?r.reply_tokens[w.i]:null}));
   drawTrail(); summarise(r);
+  $("readout").hidden=false;
+  if(r.readout) applyReadout(r.readout);
+  else if(!r.readout_available){ $("rogo").hidden=true; $("rostatus").textContent=r.text_kept?"Not available: this request was recorded before readouts existed.":"Not available: the text of this request was not kept, so the model cannot re-read it." }
   document.querySelectorAll(".req").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
 }
 
@@ -280,6 +322,7 @@ async function send(){
     refreshSessions();
   }
 }
+$("rogo").onclick=computeReadout; $("romark").onchange=markAlt;
 $("go").onclick=send; $("stop").onclick=()=>ctrl&&ctrl.abort();
 $("api").textContent=location.origin+"/v1";
 get("/api/settings").then(s=>{$("keeping").textContent=s.keep_text?`Prompts and replies are kept for ${s.retention_days} days in a file on this Mac, then deleted.`:`Text is not stored. Only numbers about each request are kept, for ${s.retention_days} days, on this Mac.`});

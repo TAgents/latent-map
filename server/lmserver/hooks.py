@@ -119,6 +119,8 @@ def _record(meta, prompt, uncached, builder, timing, finish) -> RequestRecord:
         first_token_s=timing["first_token_s"],
         tokens_per_s=timing["tokens_per_s"],
         finish=finish,
+        prompt_ids=list(prompt),
+        reply_ids=list(builder.ids),
     )
 
 
@@ -162,6 +164,10 @@ def model():
     return _state["model"]
 
 
+def tokenizer():
+    return _state.get("tokenizer")
+
+
 def model_lock() -> threading.Lock:
     return _lock
 
@@ -182,7 +188,7 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
             _state["cap"] = capturing(self.model, max_records=20000)
             _state["cap"].__enter__()
             inkling.configure(self.tokenizer)
-            _state["model"] = self.model
+            _state["model"], _state["tokenizer"] = self.model, self.tokenizer
 
     original_tokenize = S.ResponseGenerator._tokenize
 

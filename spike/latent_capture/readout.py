@@ -11,7 +11,8 @@ import numpy as np
 from mlx_lm.models.inkling2.layers import unweighted_rms_norm
 
 
-def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: int = 10, replace: dict | None = None) -> dict:
+def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: int = 10, replace: dict | None = None,
+                  positions: list[int] | None = None, states: bool = True) -> dict:
     """ids: token ids of the text. Returns
       "top":  (passes, tokens, topk) most likely next-token ids per pass and position
       "rank": (passes, tokens, len(track)) rank of each tracked token id, 0 = most likely
@@ -19,7 +20,12 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
     replace: {"passes": (k, ...), "position": p, "state": (hidden,) or (passes, hidden) array}. Before each listed pass's state
     is handed on (to the next pass, or to the last block), the hidden state at position p
     is overwritten with this vector, rescaled to that position's own size. Used to test
-    whether a state is what the model actually uses."""
+    whether a state is what the model actually uses.
+
+    positions: read out only these token positions ("top", "prob" and "rank" then have
+    len(positions) rows); the whole text is still run. states=False leaves out the two
+    state arrays, which are large for long texts.
+    "prob": (passes, tokens, topk) probability of each of the "top" ids."""
     lm = model.model.language_model
     core = lm.args.loop_core
     track = list(track or [])
@@ -36,11 +42,13 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
         hs, bs = run(lm.layers[core.stop :], hidden_states, block_states)
         normed = unweighted_rms_norm(hs.astype(mx.float32))
         out = lm.norm(lm.final_input(bs, normed)[..., 0, :]).astype(dtype)
+        if positions is not None:
+            out = out[:, mx.array(positions)]
         return model.lm_head(out).astype(mx.float32)[0, :, : lm.args.unpadded_vocab_size]
 
     prelude = run(lm.layers[: core.start], hidden, None)
     hidden_states, block_states = prelude
-    tops, ranks, ends, block2 = [], [], [], []
+    tops, probs, ranks, ends, block2 = [], [], [], [], []
     for loop_pass in range(lm.args.loop_config["num_passes"]):
         bank = None
         if loop_pass > 0:
@@ -56,17 +64,23 @@ def pass_readouts(model, ids: list[int], track: list[int] | None = None, topk: i
             new = new / mx.sqrt(mx.mean(mx.square(new))) * size
             mask = mx.array((np.arange(h.shape[1]) == p).astype(np.float32))[None, :, None]
             hidden_states = (h * (1 - mask) + new[None, None, :] * mask).astype(dtype)
-        ends.append(np.array(unweighted_rms_norm(hidden_states.astype(mx.float32))[0]))
+        if states:
+            ends.append(np.array(unweighted_rms_norm(hidden_states.astype(mx.float32))[0]))
+            block2.append(np.array(block_states[-1][0].astype(mx.float32)))          # this pass's block 2 output
         logits = logits_from(hidden_states, block_states)
-        tops.append(np.array(mx.argsort(-logits, axis=-1)[:, :topk]))
-        block2.append(np.array(block_states[-1][0].astype(mx.float32)))          # this pass's block 2 output
+        best = mx.argsort(-logits, axis=-1)[:, :topk]
+        tops.append(np.array(best))
+        probs.append(np.array(mx.take_along_axis(mx.softmax(logits, axis=-1), best, axis=-1)))
         if track:
             cols = [np.array((logits > logits[:, t : t + 1]).sum(axis=-1)) for t in track]   # one word at a time: small memory
             ranks.append(np.stack(cols, axis=-1))
         mx.clear_cache()
-    return {
+    out = {
         "top": np.stack(tops),
-        "rank": np.stack(ranks) if track else np.zeros((len(tops), len(ids), 0), dtype=np.int64),
-        "pass_end": np.stack(ends),  # (passes, tokens, hidden): block 3's output after each pass, normalised
-        "block2": np.stack(block2),  # (passes, tokens, hidden): block 2's output on each pass
+        "prob": np.stack(probs),
+        "rank": np.stack(ranks) if track else np.zeros((len(tops), tops[0].shape[0], 0), dtype=np.int64),
     }
+    if states:
+        out["pass_end"] = np.stack(ends)  # (passes, tokens, hidden): block 3's output after each pass, normalised
+        out["block2"] = np.stack(block2)  # (passes, tokens, hidden): block 2's output on each pass
+    return out

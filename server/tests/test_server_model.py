@@ -150,3 +150,30 @@ def test_other_web_pages_and_hosts_are_refused(server):
         urllib.request.urlopen(req, timeout=10)
     assert e.value.code == 403
     assert isinstance(get("/api/sessions"), list) and get("/api/settings")["keep_text"] is True
+
+
+def post(path):
+    req = urllib.request.Request(BASE + path, b"", method="POST")
+    return json.loads(urllib.request.urlopen(req, timeout=300).read())
+
+
+def test_readout_last_pass_is_what_the_model_wrote(server):
+    r = chat(messages=[{"role": "user", "content": "What is the capital of the country where Mozart was born? One short sentence."}],
+             max_tokens=200, reasoning_effort="low")
+    rec = record(r["id"])
+    assert rec["readout_available"] and rec["readout"] is None
+    out = post(f"/api/requests/{r['id']}/readout")
+    words, written = out["words"], rec["reply_tokens"]
+    assert len(words) == len(written) and out["k"] == 5
+    # Greedy generation: the last pass's top word is the word that was written.
+    same = sum(w[2][0][0] == t for w, t in zip(words, written))
+    assert same >= 0.97 * len(written), (same, len(written))
+    # The earlier passes are a different reading, not a copy of the last one.
+    assert sum(w[0][0][0] != w[2][0][0] for w in words) > 0
+    assert all(0 <= p <= 1 for w in words for k in w for _, p in k)
+    assert record(r["id"])["readout"]["words"] == words  # stored
+    assert post(f"/api/requests/{r['id']}/readout")["seconds"] == out["seconds"]  # served from the store, not recomputed
+    # The server still generates correctly afterwards.
+    again = chat(messages=[{"role": "user", "content": "Say hello."}], max_tokens=80, reasoning_effort="low")
+    own, before, n = agreement(record(again["id"]))
+    assert own >= 0.85, (own, before, n)

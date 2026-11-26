@@ -81,8 +81,15 @@ terminal log. There is no password: any program running on this Mac can use the 
 | Thinking and answer, separated | The model's own text. |
 | Where each word lands on the map, settling across passes | Position on a map built from 120 texts. Area names are untested hypotheses. |
 | Last-pass movement | Measured; not known to predict anything. |
+| What it would have written after each pass | Pass 3 is the model's real prediction (checked: it matches the words written). Passes 1 and 2 are a reading the model was never trained to give; they are not its reasoning. |
 
-Not in this version: what the model would say after each pass, conversation history in the
+The readout is computed when you press "Compute for this request": the model re-reads the whole
+request without the cache, which takes a few seconds and makes other requests wait. It is stored
+with the record. It needs the request's text, so it is not available under `--no-text`, and in
+this version only for requests of up to 4,096 tokens (prompt plus reply), which leaves out
+opencode's 14,600-token requests.
+
+Not in this version: conversation history in the
 chat box, a summary for agent runs, and the "responses" API route that Codex needs.
 
 ## Tests

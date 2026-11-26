@@ -31,3 +31,15 @@ def test_block2_matches_capture_and_replacing_a_state_with_itself_changes_nothin
     assert (other["top"][2, -1] != base["top"][2, -1]).any()
     per_pass = pass_readouts(model, ids, topk=5, replace={"passes": (0, 1, 2), "position": 3, "state": base["pass_end"][:, 3]})
     np.testing.assert_array_equal(per_pass["top"][2, :, 0], base["top"][2, :, 0])   # each pass's own state back in: no change
+
+
+def test_reading_out_chosen_positions_matches_the_full_readout(loaded):
+    model, tokenizer = loaded
+    ids = tokenizer.encode("The capital of France is Paris, and the capital of Italy is")
+    full = pass_readouts(model, ids, track=[5], topk=5)
+    part = pass_readouts(model, ids, track=[5], topk=5, positions=[2, len(ids) - 1], states=False)
+    assert part["top"].shape == (3, 2, 5) and part["prob"].shape == (3, 2, 5) and part["rank"].shape == (3, 2, 1)
+    assert "pass_end" not in part and "block2" not in part
+    np.testing.assert_array_equal(part["top"][:, :, 0], full["top"][:, [2, len(ids) - 1], 0])
+    np.testing.assert_allclose(part["prob"], full["prob"][:, [2, len(ids) - 1]], atol=2e-2)
+    assert (full["prob"] >= 0).all() and (full["prob"][..., 0] >= full["prob"][..., 1]).all() and (full["prob"].sum(-1) <= 1.001).all()

@@ -29,6 +29,7 @@ class Ctx:
     map_payload: dict
     settings: dict
     static: Path
+    readout: object = None  # (prompt_ids, reply_ids) -> dict, set once the model can be used
 
 
 def check_args(args) -> None:
@@ -86,7 +87,33 @@ def route(ctx: Ctx, method: str, path: str):
     if method == "POST":
         if m := re.fullmatch(r"/api/sessions/([\w.-]+)/forget", path):
             return _json(200, {"deleted": r.forget(m[1])})
+        if m := re.fullmatch(r"/api/requests/([\w.-]+)/readout", path):
+            return _readout(ctx, m[1])
     return _json(404, {"error": "not found"})
+
+
+def _readout(ctx: Ctx, completion_id: str):
+    """The stored readout, or a new one computed now (the model re-reads the whole text)."""
+    from lmserver import readout
+
+    found = ctx.recorder.get(completion_id)
+    if found is None:
+        return _json(404, {"error": "no such request"})
+    if found["readout"] is not None:
+        return _json(200, found["readout"])
+    ids = ctx.recorder.token_ids(completion_id)
+    if ids is None:
+        return _json(409, {"error": "This request was recorded without its text, so the model cannot re-read it."})
+    if ctx.readout is None:
+        return _json(503, {"error": "The model is not loaded yet."})
+    try:
+        result = ctx.readout(*ids)
+    except readout.TooLong as err:
+        return _json(413, {"error": f"Too long for a readout in this version: {err}."})
+    except RuntimeError:
+        return _json(503, {"error": "The model is not loaded yet."})
+    ctx.recorder.save_readout(completion_id, result)
+    return _json(200, result)
 
 
 class LiveHub:
@@ -300,6 +327,16 @@ def main(argv=None) -> None:
         static=HERE / "static",
     )
     hub = LiveHub()
+
+    def read_out(prompt_ids, reply_ids):
+        from lmserver import readout
+
+        if hooks.model() is None:
+            raise RuntimeError("model not loaded")
+        with hooks.model_lock():  # waits for a reply in progress; replies wait for this
+            return readout.compute(hooks.model(), hooks.tokenizer(), prompt_ids, reply_ids)
+
+    ctx.readout = read_out
     hooks.install(recorder, live, on_word=hub.publish)
     handler = make_app_handler(ctx, hub, args.port)
     stop = threading.Event()

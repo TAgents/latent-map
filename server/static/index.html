@@ -287,7 +287,11 @@ async function showRequest(id){
 // The whole session on one page: steps in order, and thinking worth reading. Numbers and pointers, no verdicts.
 let RUN=null, runBusy=false, runStop=false, runSession=null, runSeq=0, runFailed=null;
 const dur=s=>{s=Math.round(s); return s>=60?`${Math.floor(s/60)} min ${s%60} s`:`${s} s`};
-const roCost=s=>s.prompt_tokens*3.5/1000+s.n_tokens/12;
+// A step that continued the reply before it (agents send the reply back exactly) carries on from that
+// step's readout when the two are computed one after the other: only its new prompt tokens are read.
+const carries=(s,prev)=>!!prev&&s.cached_tokens===prev.prompt_tokens+prev.n_tokens;
+const roCost=(s,prev)=>(s.prompt_tokens-(carries(s,prev)?s.cached_tokens:0))*3.5/1000+s.n_tokens/12;
+const before=(s,list)=>{const i=RUN.steps.findIndex(x=>x.id===s.id), p=i>0?RUN.steps[i-1]:null; return p&&list.some(x=>x.id===p.id)?p:null};
 async function loadRun(session){
   const seq=++runSeq;
   let d; try{d=await get(`/api/sessions/${session}/summary`)}catch(e){ if(openSession===session&&seq===runSeq){ runFailed=session; $("run").hidden=true } return }
@@ -322,7 +326,7 @@ function drawRun(){
   $("runsteps").innerHTML=`<colgroup><col style="width:26px"><col style="width:30%"><col><col style="width:62px"><col style="width:46px"><col style="width:54px"><col style="width:104px"></colgroup>`+
     `<tr><th>#</th><th>In reply to</th><th>What it did</th><th class="num" title="Thinking words / answer words">Think / ans</th><th class="num">Time</th><th class="num" title="Prompt tokens">Prompt</th><th class="num" title="How often the top word after pass 1, 2 and 3 was the word written">Readout 1 / 2 / 3</th></tr>`+rows;
   $("runsteps").querySelectorAll("tr.step").forEach(tr=>tr.onclick=()=>openStep(tr.dataset.id));
-  const todo=steps.filter(s=>s.readout==="available"), est=todo.reduce((a,s)=>a+roCost(s),0);
+  const todo=steps.filter(s=>s.readout==="available"), est=todo.reduce((a,s)=>a+roCost(s,before(s,todo)),0);
   const mine=runBusy&&runSession===RUN.session;
   $("runstop").hidden=!mine;
   if(!mine){
@@ -348,11 +352,12 @@ function drawRun(){
 async function computeRun(){
   if(runBusy||!RUN) return; const session=openSession, todo=RUN.steps.filter(s=>s.readout==="available");
   runBusy=true; runSession=session; runStop=false; $("runro").hidden=true; $("runstop").hidden=false; $("runstop").disabled=false; delete $("runrostatus").dataset.keep;
-  let done=0, failed=0, why="";
+  let done=0, failed=0, why="", last=null;
   for(const s of todo){
     if(runStop||openSession!==session) break;
-    $("runrostatus").textContent=`Step ${RUN.steps.findIndex(x=>x.id===s.id)+1}: the model is re-reading it, about ${dur(Math.max(roCost(s),1))}. Other requests wait meanwhile. ${done} of ${todo.length} done.`;
-    try{ const r=await fetch(`/api/requests/${encodeURIComponent(s.id)}/readout`,{method:"POST"}); if(r.ok) done++; else { failed++; try{ why=(await r.json()).error||why }catch(e){} } }catch(e){ failed++; why=why||e.message }
+    if(last&&(before(s,[last])||{}).id!==last.id) last=null;  // carried over only from the step right before it
+    $("runrostatus").textContent=`Step ${RUN.steps.findIndex(x=>x.id===s.id)+1}: the model is re-reading ${carries(s,last)?"what is new in it":"it"}, about ${dur(Math.max(roCost(s,last),1))}. Other requests wait meanwhile. ${done} of ${todo.length} done.`;
+    try{ const r=await fetch(`/api/requests/${encodeURIComponent(s.id)}/readout`,{method:"POST"}); if(r.ok){ done++; last=s } else { last=null; failed++; try{ why=(await r.json()).error||why }catch(e){} } }catch(e){ last=null; failed++; why=why||e.message }
     if(openSession===session) await loadRun(session);
   }
   runBusy=false; runSession=null; $("runstop").hidden=true;
@@ -379,6 +384,7 @@ async function refreshSessions(){
       const f=document.createElement("button"); f.className="ghost"; f.style.margin="4px 0 8px 10px"; f.textContent="Forget this session";
       f.onclick=async ev=>{ev.stopPropagation();
         if($("go").disabled){ f.textContent="Forget this session (after the reply finishes)"; return }
+        if(runBusy&&runSession===s.session) runStop=true;  // no further readouts of a session being forgotten
         await fetch(`/api/sessions/${s.session}/forget`,{method:"POST"}); if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()} if(reqs.some(q=>turns.some(t=>t.id===q.completion_id))){turns=[]; drawConvo()} openSession=null; closeRun(); refreshSessions()};
       box.append(f);
     }

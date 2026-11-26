@@ -13,7 +13,7 @@ class Tok:
         return "".join(f"w{i}" for i in ids)
 
 
-def fake_run(model, prompt_ids, reply_ids, topk, pieces=None):
+def fake_run(model, prompt_ids, reply_ids, topk, pieces=None, state=None):
     """Stands in for the model: at position p the passes predict p+100, p+200, p+300 first."""
     positions = [len(prompt_ids) - 1 + i for i in range(len(reply_ids))]
     top = np.zeros((3, len(positions), topk), dtype=np.int64)
@@ -247,7 +247,7 @@ def test_the_pieces_the_prompt_was_read_in_are_kept_and_handed_to_the_readout(tm
     assert r.pieces("chatcmpl-1") == [2, 1] and r.pieces("chatcmpl-2") is None and r.pieces("nope") is None
     seen = {}
 
-    def run(model, prompt_ids, reply_ids, topk, pieces):
+    def run(model, prompt_ids, reply_ids, topk, pieces, state=None):
         seen["pieces"] = pieces
         return fake_run(model, prompt_ids, reply_ids, topk)
 
@@ -269,7 +269,7 @@ def test_the_route_reads_a_request_in_its_recorded_pieces(tmp_path):
 def test_the_result_says_whether_the_prompt_was_read_in_its_recorded_pieces():
     seen = []
 
-    def run(model, prompt_ids, reply_ids, topk, pieces):
+    def run(model, prompt_ids, reply_ids, topk, pieces, state=None):
         seen.append(pieces)
         return fake_run(model, prompt_ids, reply_ids, topk)
 
@@ -287,3 +287,51 @@ def test_the_record_shows_its_pieces_and_no_text_mode_drops_them(tmp_path):
     r.close()
     r = Recorder(tmp_path / "db.sqlite", keep_text=False)
     assert r.pieces("chatcmpl-1") is None and r.get("chatcmpl-1")["pieces"] is None
+
+
+def test_a_kept_reading_is_handed_to_the_run_and_what_it_saved_is_reported():
+    class State:
+        reused = 0
+
+    seen = []
+
+    def run(model, prompt_ids, reply_ids, topk, pieces=None, state=None):
+        seen.append(state)
+        if state is not None:
+            state.reused = 7
+        return fake_run(model, prompt_ids, reply_ids, topk)
+
+    state = State()
+    out = readout.compute(None, Tok(), [1, 2, 3, 4, 5, 6, 7, 8, 9], [10, 11], run=run, state=state)
+    assert seen == [state] and out["reused_tokens"] == 7
+    assert readout.compute(None, Tok(), [1, 2, 3], [10], run=run)["reused_tokens"] == 0
+
+
+def test_the_kept_reading_is_dropped_on_request_and_when_idle():
+    made = []
+
+    def make():
+        made.append(object())
+        return made[-1]
+
+    kept = readout.Kept(make=make, idle=90)
+    first = kept.state(now=1000.0)
+    assert kept.state(now=1010.0) is first                   # the same reading for the next step
+    assert kept.drop_if_idle(now=1050.0) is False and kept.state(now=1050.0) is first
+    assert kept.drop_if_idle(now=1141.0) is True             # 91 s after it was last used
+    second = kept.state(now=1200.0)
+    assert second is not first
+    kept.drop()
+    assert kept.state(now=1201.0) is not second and len(made) == 3
+    assert kept.drop_if_idle(now=99999.0) is True and kept.drop_if_idle(now=99999.0) is False   # nothing left to drop
+
+
+def test_forgetting_a_session_drops_the_kept_reading(tmp_path):
+    r = Recorder(tmp_path / "db.sqlite")
+    r.save(make_record(prompt_ids=[5, 6, 7], reply_ids=[8, 9, 10]))
+    dropped = []
+    # Dropped while readouts are held off, so one already under way cannot keep the tokens afterwards.
+    ctx = app.Ctx(recorder=r, map_payload={}, settings={}, static=tmp_path, forget_reading=lambda: dropped.append(ctx.readout_lock.locked()))
+    session = r.sessions()[0]["session"]
+    assert app.route(ctx, "POST", f"/api/sessions/{session}/forget")[0] == 200 and dropped == [True]
+    assert not ctx.readout_lock.locked() and r.sessions() == []

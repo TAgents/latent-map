@@ -121,8 +121,40 @@ def _top_words(model, rows, topk, track=(), chunk=256):
     return np.concatenate(top), np.concatenate(prob), (np.concatenate(rank) if track else None)
 
 
+def _plan(n_head: int, pieces: list[int] | None, prefill: int) -> list[int]:
+    """The sizes the prompt without its last token is read in: the recorded pieces first,
+    then the default size, cut where the head ends."""
+    plan, start = [], 0
+    for size in list(pieces or []) + [prefill] * (n_head // prefill + 1):
+        if start >= n_head:
+            break
+        if size > 0:
+            plan.append(min(size, n_head - start))
+            start += plan[-1]
+    return plan
+
+
+class ReadState:
+    """Where a reading stands: the tokens read so far, the sizes of the pieces they were
+    read in, and the caches that hold them. Handed to reply_readouts again, the next step
+    of an agent run carries on from it when its prompt starts with exactly these tokens
+    read in exactly these pieces, which is what generation did when the step continued
+    the cache left after the earlier reply. Anything else and the reading starts again."""
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self) -> None:
+        self.ids, self.sizes, self.cache, self.own, self.reused = [], [], None, None, 0
+
+    def matches(self, head: list[int], plan: list[int]) -> bool:
+        n, m = len(self.ids), len(self.sizes)
+        return 0 < n <= len(head) and sum(self.sizes) == n and self.sizes == plan[:m] and self.ids == head[:n]
+
+
 def reply_readouts(model, prompt_ids: list[int], reply_ids: list[int], topk: int = 10,
-                   prefill: int = 2048, chunk: int = 1, pieces: list[int] | None = None) -> dict:
+                   prefill: int = 2048, chunk: int = 1, pieces: list[int] | None = None,
+                   state: ReadState | None = None) -> dict:
     """The per-pass readout for a reply, for texts too long to run in one go.
 
     Returns "top" and "prob", each (passes, len(reply_ids), topk): row i is the prediction
@@ -143,15 +175,35 @@ def reply_readouts(model, prompt_ids: list[int], reply_ids: list[int], topk: int
     read `prefill` tokens at a time, the runner's default.
     chunk: reply tokens read at a time. Generation reads one at a time, and the default of 1
     reproduces it exactly; larger is several times faster on long replies but near-ties
-    come out the other way (5 of 120 tokens at 256 on one request)."""
+    come out the other way (5 of 120 tokens at 256 on one request).
+    state: a ReadState to carry on from and leave for the next step. The part of the
+    prompt it already holds is not read again (state.reused says how many tokens), and
+    afterwards it holds this prompt and reply. Without it nothing is kept."""
     lm = model.model.language_model
     core = lm.args.loop_core
     passes = lm.args.loop_config["num_passes"]
     last = len(lm.layers) - core.stop
-    cache = model.make_cache()
-    own = [model.make_cache()[-last:] for _ in range(passes - 1)]   # the last block's memory after pass 1, pass 2
+    head = list(prompt_ids[:-1])
+    plan = _plan(len(head), pieces, prefill)
+    keep, state = state is not None, state or ReadState()
+    if state.cache is None or not state.matches(head, plan):
+        state.reset()
+        state.cache = model.make_cache()
+        state.own = [model.make_cache()[-last:] for _ in range(passes - 1)]   # the last block's memory after pass 1, pass 2
+    state.reused = len(state.ids)
+    cache, own = state.cache, state.own
 
     def step(tokens, read):
+        try:
+            rows = forward(tokens, read)
+        except BaseException:
+            state.reset()                          # the caches may hold part of a piece: never carry on from them
+            raise
+        state.ids.extend(tokens)
+        state.sizes.append(len(tokens))
+        return rows
+
+    def forward(tokens, read):
         hidden_states = lm.embed(mx.array([tokens]))
         dtype = hidden_states.dtype
         conv_mask = cache[0][1].make_mask(hidden_states.shape[1])
@@ -179,13 +231,10 @@ def reply_readouts(model, prompt_ids: list[int], reply_ids: list[int], topk: int
         mx.clear_cache()
         return rows
 
-    head, start = list(prompt_ids[:-1]), 0
-    for size in list(pieces or []) + [prefill] * (len(head) // prefill + 1):   # recorded pieces first, then the default
-        if start >= len(head):
-            break
-        if size > 0:
-            step(head[start : start + size], read=False)
-            start += size
+    start = len(state.ids)
+    for size in plan[len(state.sizes):]:
+        step(head[start : start + size], read=False)
+        start += size
     tokens = [prompt_ids[-1]] + list(reply_ids[:-1])                 # reply token i is predicted at the token before it
     tops, probs, held = [[] for _ in range(passes)], [[] for _ in range(passes)], [[] for _ in range(passes)]
 
@@ -203,4 +252,6 @@ def reply_readouts(model, prompt_ids: list[int], reply_ids: list[int], topk: int
         if sum(r.shape[0] for r in held[0]) >= 256:
             flush()
     flush()
+    if keep and reply_ids:
+        step([reply_ids[-1]], read=False)          # the next step's prompt has the whole reply behind it
     return {"top": np.stack([np.concatenate(t) for t in tops]), "prob": np.stack([np.concatenate(p) for p in probs])}

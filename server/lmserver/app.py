@@ -31,6 +31,7 @@ class Ctx:
     static: Path
     readout: object = None  # (prompt_ids, reply_ids, pieces) -> dict, set once the model can be used
     readout_lock: object = field(default_factory=threading.Lock)
+    forget_reading: object = None  # () -> None: drop the reading kept between readouts
 
 
 def check_args(args) -> None:
@@ -93,7 +94,10 @@ def route(ctx: Ctx, method: str, path: str):
             return _json(200, found) if found else _json(404, {"error": "no such request"})
     if method == "POST":
         if m := re.fullmatch(r"/api/sessions/([\w.-]+)/forget", path):
-            return _json(200, {"deleted": r.forget(m[1])})
+            with ctx.readout_lock:  # no readout runs meanwhile, so none can keep this session's tokens afterwards
+                if ctx.forget_reading is not None:
+                    ctx.forget_reading()
+                return _json(200, {"deleted": r.forget(m[1])})
         if m := re.fullmatch(r"/api/requests/([\w.-]+)/readout", path):
             return _readout(ctx, m[1])
     return _json(404, {"error": "not found"})
@@ -339,15 +343,43 @@ def main(argv=None) -> None:
     )
     hub = LiveHub()
 
-    def read_out(prompt_ids, reply_ids, pieces=None):
-        from lmserver import readout
+    from lmserver import readout
 
+    kept = readout.Kept()
+
+    def read_out(prompt_ids, reply_ids, pieces=None):
         if hooks.model() is None:
             raise readout.NotLoaded()
         with hooks.model_lock():  # waits for a reply in progress; replies wait for this
-            return readout.compute(hooks.model(), hooks.tokenizer(), prompt_ids, reply_ids, pieces)
+            try:
+                return readout.compute(hooks.model(), hooks.tokenizer(), prompt_ids, reply_ids, pieces, state=kept.state())
+            except BaseException:
+                drop_reading()  # often a memory error: give the memory back as well
+                raise
+            finally:
+                kept.touch()  # the idle time counts from the end of the readout
+
+    def drop_reading(only_if_idle=False):
+        """Free the kept reading. Called with the model held, or takes it."""
+        import mlx.core as mx
+
+        if kept.drop_if_idle() if only_if_idle else kept.drop():
+            mx.clear_cache()
+
+    def forget_reading():
+        kept.drop()  # only lets go of it; called with readouts held off, and never waits for a reply
+
+    def drop_idle_reading(stop):
+        while not stop.wait(15):
+            if hooks.model_lock().acquire(blocking=False):
+                try:
+                    drop_reading(only_if_idle=True)
+                finally:
+                    hooks.model_lock().release()
 
     ctx.readout = read_out
+    ctx.forget_reading = forget_reading
+    hooks.before_reply(drop_reading)  # a reply needs the memory, and the model is already held there
     hooks.install(recorder, live, on_word=hub.publish)
     handler = make_app_handler(ctx, hub, args.port)
     stop = threading.Event()
@@ -355,6 +387,7 @@ def main(argv=None) -> None:
     def run(host, port, provider):
         generator = S.ResponseGenerator(provider, make_prompt_cache(S, provider.cli_args))
         start_purger(recorder, stop)
+        threading.Thread(target=drop_idle_reading, args=(stop,), daemon=True).start()
         if not args.no_keep_warm:
             threading.Thread(target=keep_warm, args=(recorder, stop), daemon=True).start()
         print(f"Latent Map server: http://{host}:{port}  (API at /v1; loading the model takes about a minute)", flush=True)

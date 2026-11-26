@@ -114,3 +114,53 @@ def test_equal_scores_are_ordered_as_the_sampler_picks_them():
     ids = np.array([[9, 4, 7, 2], [5, 6, 1, 3]])
     scores = np.array([[1.0, 2.0, 2.0, 0.5], [3.0, 3.0, 3.0, 4.0]], dtype=np.float32)
     np.testing.assert_array_equal(_by_score_then_id(ids, scores), [[4, 7, 9, 2], [3, 1, 5, 6]])
+
+
+def test_the_reading_plan_and_what_can_be_carried_over():
+    from latent_capture.readout import ReadState, _plan
+
+    assert _plan(11, [4, 7, 1], 2048) == [4, 7]              # the last prompt token is where the readout starts
+    assert _plan(10, [4, 7, 1], 2048) == [4, 6]              # a piece that runs past the head is cut
+    assert _plan(5000, None, 2048) == [2048, 2048, 904]
+    assert _plan(10, [4], 3) == [4, 3, 3] and _plan(0, [1], 8) == []
+    s = ReadState()
+    assert not s.matches([1, 2], [2])                         # nothing read yet
+    s.ids, s.sizes = [1, 2, 3, 4, 5], [4, 1]
+    assert s.matches([1, 2, 3, 4, 5, 6, 7], [4, 1, 2])
+    assert s.matches([1, 2, 3, 4, 5], [4, 1])
+    assert not s.matches([1, 2, 3, 4, 5, 6, 7], [5, 2])       # same tokens, read in other pieces
+    assert not s.matches([1, 2, 9, 4, 5, 6, 7], [4, 1, 2])    # other tokens
+    assert not s.matches([1, 2, 3, 4], [4])                   # the state is already past this prompt
+    s.ids, s.sizes = [1, 2, 3, 4, 5], [4]                     # tokens and pieces out of step (an interrupted read)
+    assert not s.matches([1, 2, 3, 4, 5, 6, 7], [4, 1, 2])
+    s.reset()
+    assert s.ids == [] and s.sizes == [] and s.cache is None and s.reused == 0
+
+
+def test_a_later_step_carries_on_from_the_step_before_with_the_same_numbers(loaded):
+    from latent_capture.readout import ReadState, reply_readouts
+
+    model, tokenizer = loaded
+    ids = tokenizer.encode("The capital of France is Paris, and the capital of Italy is Rome. The capital of Spain is Madrid, "
+                           "and the capital of Austria is Vienna, where Mozart lived for many years.")
+    assert len(ids) >= 32
+    p1, r1, p2, r2 = ids[:12], ids[12:20], ids[:26], ids[26:]
+    pieces1 = [4, 7, 1]
+    pieces2 = pieces1 + [1] * len(r1) + [5, 1]               # as generation leaves them: the reply read back token by token
+    alone1 = reply_readouts(model, p1, r1, topk=5, pieces=pieces1)
+    alone2 = reply_readouts(model, p2, r2, topk=5, pieces=pieces2)
+    state = ReadState()
+    one = reply_readouts(model, p1, r1, topk=5, pieces=pieces1, state=state)
+    assert state.reused == 0 and state.ids == p1 + r1 and state.sizes == [4, 7] + [1] * (len(r1) + 1)
+    two = reply_readouts(model, p2, r2, topk=5, pieces=pieces2, state=state)
+    assert state.reused == len(p1) + len(r1)                  # only the six new prompt tokens and the reply were read
+    assert state.ids == p2 + r2
+    for got, want in ((one, alone1), (two, alone2)):         # the same reading, so the very same numbers
+        np.testing.assert_array_equal(got["top"], want["top"])
+        np.testing.assert_array_equal(got["prob"], want["prob"])
+    # A state that does not fit this request is started again, not used.
+    other = reply_readouts(model, p2, r2, topk=5, pieces=[25, 1], state=state)
+    assert state.reused == 0
+    want = reply_readouts(model, p2, r2, topk=5, pieces=[25, 1])
+    np.testing.assert_array_equal(other["top"], want["top"])
+    np.testing.assert_allclose(other["prob"], want["prob"], atol=1e-3)

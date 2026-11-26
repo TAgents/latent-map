@@ -231,3 +231,36 @@ def test_readout_of_a_request_longer_than_one_reading_piece(server):
     again = chat(messages=[{"role": "user", "content": "Say hello."}], max_tokens=80, reasoning_effort="low")
     own, before, n = agreement(record(again["id"]))
     assert own >= 0.85, (own, before, n)
+
+
+def test_the_next_step_of_a_run_carries_on_from_the_readout_before_it(server):
+    # An agent's second step sends the first reply back exactly. Its readout, asked for right after
+    # the first step's, should read only what is new and still give what the model wrote.
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    notes = (root / "signals" / "REPORT_hidden.md").read_text() + (root / "server" / "README.md").read_text()
+    first = [{"role": "system", "content": "Notes:\n" + notes}, {"role": "user", "content": "In one sentence, what was test 3?"}]
+    r = chat(messages=first, max_tokens=1200, reasoning_effort="low", temperature=0)
+    assert r["choices"][0]["finish_reason"] == "stop"
+    said = r["choices"][0]["message"]
+    back = {"role": "assistant", "content": said["content"], "reasoning_content": said.get("reasoning_content") or said.get("reasoning")}
+    r2 = chat(messages=first + [back, {"role": "user", "content": "And what did it find, in one sentence?"}],
+              max_tokens=1200, reasoning_effort="low", temperature=0)
+    rec, rec2 = record(r["id"]), record(r2["id"])
+    assert rec2["cached_tokens"] == rec["prompt_tokens"] + rec["n_tokens"], (rec2["cached_tokens"], rec["prompt_tokens"], rec["n_tokens"])
+    out = post(f"/api/requests/{r['id']}/readout")
+    out2 = post(f"/api/requests/{r2['id']}/readout")
+    print("SHARED READOUT", rec["prompt_tokens"], out["seconds"], out["reused_tokens"], "then", rec2["prompt_tokens"], out2["seconds"], out2["reused_tokens"])
+    assert out["reused_tokens"] == 0
+    assert out2["reused_tokens"] == rec["prompt_tokens"] + rec["n_tokens"], out2["reused_tokens"]
+    for o in (out, out2):
+        same = sum(h[2] for h in o["hits"])
+        assert o["pieces_known"] is True and same >= 0.99 * len(o["hits"]), (same, len(o["hits"]))
+    assert out2["seconds"] < out["seconds"]
+    # A reply in between drops the kept reading, so a readout after it starts again and is still right.
+    r3 = chat(messages=first + [back, {"role": "user", "content": "And test 2, in one sentence?"}],
+              max_tokens=1200, reasoning_effort="low", temperature=0)
+    out3 = post(f"/api/requests/{r3['id']}/readout")
+    same3 = sum(h[2] for h in out3["hits"])
+    assert out3["reused_tokens"] == 0 and same3 >= 0.99 * len(out3["hits"]), (out3["reused_tokens"], same3, len(out3["hits"]))

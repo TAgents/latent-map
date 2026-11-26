@@ -133,11 +133,23 @@ replied to, the tool it called, thinking and answer words, time and prompt size,
 that computes the readout for every step in turn (you can stop between steps). It gives numbers
 and pointers, and no score or verdict.
 
-Tried on 2026-11-26 with an opencode run of four steps (read a file, run it, fix it, report):
-the four readouts took 44 to 68 seconds each, about four minutes in all, and pass 3 gave the
-token written for every token of every step (77, 79, 133 and 56). Each step re-reads its whole
-prompt, about 14,600 tokens of which are opencode's own instructions, so a run of 20 steps would
-take around 20 minutes; sharing that work between steps is not built.
+**Steps of one run share the reading.** An agent's next step sends the earlier reply back
+exactly, so its prompt begins with the earlier prompt and reply. When the readouts of two such
+steps are computed one after the other, the second carries on from where the first ended and
+reads only what is new. It does so only when the tokens and the pieces they were read in are
+exactly those of the earlier step; otherwise it reads the whole prompt again, so the result is
+the same either way. Chat follow-ups do not send the thinking back, so they do not share.
+
+Tried on 2026-11-26 with an opencode run of four steps (a bug fix; about 14,600 of each
+prompt's tokens are opencode's own instructions). The first readout took 40 seconds and the
+next three took 3, 13 and 6 seconds, about a minute in all. Before sharing, a run like it took
+about four minutes. Pass 3 gave the token written for every token of every step (39, 31, 161
+and 77).
+
+The reading kept between steps holds the last request's tokens and a few gigabytes of cache, in
+memory only. It is dropped when a reply starts, when a session is forgotten, and after about a
+minute and a half without a readout. So computing a single step later, or after the model has answered
+something else, reads that step's whole prompt again.
 
 "To read" lists sentences in the model's own thinking that match a word pattern ("instruction",
 "system prompt", "no need to mention" and similar); clicking one opens the step at that word.

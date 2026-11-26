@@ -101,3 +101,17 @@ def test_the_builder_counts_the_written_tokens_the_model_read_back(live):
         b.add_token(t)
     b.update([cap(3, 1), cap(4, 1)])     # the last token was never read back (stopped at the limit)
     assert b.fed == 2 and b.prompt_sizes == [3, 1]
+
+
+def test_functions_registered_to_run_before_a_reply_are_run():
+    from lmserver import hooks
+
+    calls = []
+    hooks.before_reply(lambda: calls.append("a"))
+    hooks.before_reply(lambda: 1 / 0)                         # one that fails must not stop the reply or the others
+    hooks.before_reply(lambda: calls.append("b"))
+    try:
+        hooks._run_before_reply()
+        assert calls == ["a", "b"]
+    finally:
+        hooks._state["before_reply"].clear()

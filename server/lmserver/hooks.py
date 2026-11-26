@@ -5,8 +5,8 @@ tokenizer learns Inkling's reply format. Around each generation we clear the cap
 save a cache checkpoint once the prompt has been read, and hand the result to the recorder."""
 
 import copy
-from collections import deque
 import logging
+from collections import deque
 import threading
 import time
 from typing import Callable
@@ -190,6 +190,19 @@ def model_lock() -> threading.Lock:
     return _lock
 
 
+def before_reply(fn: Callable[[], None]) -> None:
+    """Run fn each time a reply is about to be generated, with the model already held."""
+    _state.setdefault("before_reply", []).append(fn)
+
+
+def _run_before_reply() -> None:
+    for fn in _state.get("before_reply", []):
+        try:
+            fn()
+        except Exception as err:  # a helper failing must not cost the user their reply
+            logging.getLogger("lmserver").warning("before-reply step failed: %s", type(err).__name__)
+
+
 def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> None:
     import mlx_lm.server as S
     from latent_capture.capture import capturing
@@ -269,6 +282,7 @@ def install(recorder, live, on_word: Callable[[dict], None] | None = None) -> No
                 log.warning("live listener failed: %s", type(err).__name__)
 
         try:
+            _run_before_reply()
             emit({"id": cid, "start": True})
             for gen in original_stream(model=model, tokenizer=tokenizer, prompt=prompt, **kw):
                 first = first or time.time()

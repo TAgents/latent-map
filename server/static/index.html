@@ -5,144 +5,232 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Latent Map</title>
 <style>
+/* Colour is kept for the data (the 12 map areas). The page itself is neutral. */
 :root{
-  --bg:#f6f5f1; --panel:#fffefb; --ink:#1c2326; --soft:#59636a; --line:#d9d6cc; --accent:#b4531a;
-  --hi-bg:#e9e7df; --far-bg:#d8d5ca; --think:#7a858c; --pick:#ece9df;
+  --bg:#e9ecef; --panel:#fbfcfd; --ink:#16212b; --soft:#586572; --line:#d3d9de; --pick:#e4e9ed;
+  --hi-bg:#e1e5e9; --far-bg:#c6ced5; --think:#4b5965; --btn:#16212b; --btn-ink:#fff;
+  --ui:"Avenir Next",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --read:Charter,"Iowan Old Style",Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){
-  :root{ --bg:#15191b; --panel:#1d2326; --ink:#e8e6df; --soft:#a2abb1; --line:#333c41; --accent:#e58a4d;
-    --hi-bg:#2b3337; --far-bg:#3a444a; --think:#8b959b; --pick:#262e32; }
+  :root{ --bg:#0e1317; --panel:#161c21; --ink:#e7ebee; --soft:#9aa7b1; --line:#2a343c; --pick:#222c34;
+    --hi-bg:#27313a; --far-bg:#3d4a55; --think:#aeb9c2; --btn:#e7ebee; --btn-ink:#10161b; }
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
-header h1{font-size:17px;margin:0;font-weight:650}
-header span{color:var(--soft);font-size:13px}
-main{display:grid;grid-template-columns:250px minmax(340px,1fr) minmax(380px,1.1fr);gap:14px;padding:14px 16px;align-items:start}
-@media (max-width:1100px){main{grid-template-columns:1fr}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
-h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);margin:0 0 8px;font-weight:600}
-textarea{width:100%;min-height:64px;resize:vertical;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--ui);display:grid;grid-template-rows:auto minmax(0,1fr)}
+header{padding:9px 18px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;background:var(--panel)}
+header h1{font-size:16px;margin:0;font-weight:700;letter-spacing:-.01em}
+header .facts{color:var(--soft);font-size:13px}
+.grow{flex:1}
+main{display:grid;grid-template-columns:236px minmax(0,1fr) minmax(380px,40%);min-height:0}
+main>*{min-width:0;min-height:0}
+.side{overflow:auto;padding:14px 8px 20px;border-right:1px solid var(--line)}
+.mid{display:flex;flex-direction:column;background:var(--panel)}
+#midscroll{flex:1;overflow:auto;padding:18px 26px 28px;min-height:0}
+.right{overflow:auto;padding:14px 20px 24px;border-left:1px solid var(--line)}
+h2{font-size:14px;margin:0 0 8px;font-weight:650;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.side h2{padding:0 8px}
+.tier{font-size:11.5px;font-weight:400;border:1px solid var(--line);border-radius:10px;padding:0 8px;color:var(--soft);white-space:nowrap}
+.sec{font-size:12.5px;font-weight:600;color:var(--soft);margin:16px 0 4px;display:flex;gap:8px;align-items:center}
+.cap{font-size:12.5px;color:var(--soft)}
+details{font-size:12.5px;color:var(--soft);margin-top:8px}
+details summary{cursor:pointer;width:fit-content;text-decoration:underline dotted;text-underline-offset:3px}
+details summary:hover{color:var(--ink)}
+details>div{margin-top:6px;max-width:68ch}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+button{font-weight:600;color:var(--btn-ink);background:var(--btn);border:0;border-radius:7px;padding:6px 18px;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+button.ghost{background:transparent;color:var(--soft);border:1px solid var(--line);font-weight:500;padding:3px 10px;font-size:12.5px}
+button.ghost:not(:disabled):hover{color:var(--ink);border-color:var(--soft)}
+select,input[type=number]{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:13px}
+label{font-size:12.5px;color:var(--soft)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
-label{font-size:13px;color:var(--soft)}
-select,input[type=number]{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
-button{font:inherit;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:8px;padding:7px 16px;cursor:pointer}
-button:disabled{opacity:.5;cursor:default}
-button.ghost{background:transparent;color:var(--soft);border:1px solid var(--line);font-weight:500;padding:4px 10px;font-size:13px}
-#status{font-size:13px;color:var(--soft);margin-top:6px;min-height:20px}
-.item{padding:6px 8px;border-radius:7px;cursor:pointer;font-size:13.5px;overflow-wrap:anywhere}
-.item:hover,.item.on{background:var(--pick)}
-.item small{display:block;color:var(--soft);font-size:12px}
-.req{margin-left:10px;font-size:12.5px;color:var(--soft)}
+code{font:12.5px var(--mono)}
+
+/* Sessions */
+.day{font-size:12px;color:var(--soft);padding:10px 8px 2px}
+.item{padding:5px 8px;border-radius:6px;cursor:pointer;border-left:3px solid transparent}
+.item:hover{background:var(--pick)}
+.item.on{background:var(--pick);border-left-color:var(--ink)}
+.item .ttl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
+.item small{display:block;color:var(--soft);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.req{margin-left:12px;font-size:12.5px;color:var(--soft)}
 .req.on{color:var(--ink);font-weight:600}
-#asked{font-size:13.5px;color:var(--soft);border-left:3px solid var(--line);padding-left:10px;margin:4px 0 10px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:120px;overflow:auto}
-#convo{max-height:260px;overflow:auto;margin-bottom:8px;font-size:13.5px}
-#convo div{white-space:pre-wrap;overflow-wrap:anywhere;padding:4px 8px;margin:3px 0;border-radius:6px}
-#convo .q{border-left:3px solid var(--line)}
-#convo .a{cursor:pointer;border-left:3px solid var(--think)}
-#convo .a.on{background:rgba(127,127,127,.14)}
-#convo small{display:block;color:var(--soft);font-size:11.5px}
-#thinking,#answer,#tool{white-space:pre-wrap;overflow-wrap:anywhere}
-#thinking{color:var(--think);font-size:13.5px;border-left:3px solid var(--line);padding-left:10px;margin:6px 0 12px;max-height:200px;overflow:auto}
-#tool{font:13px/1.5 ui-monospace,Menlo,monospace;margin:6px 0 10px}
-#answer{font-size:16px}
+
+/* Figures: a row of plain numbers with what they count */
+.figs{display:flex;flex-wrap:wrap;gap:2px 18px;font-size:13px;color:var(--soft)}
+.figs b{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+
+#empty{max-width:46ch;margin:12vh auto 0;color:var(--soft);font-size:15px}
+#empty b{display:block;color:var(--ink);font-size:19px;font-weight:650;margin-bottom:6px}
+
+/* Run */
+#run{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+#runtitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+#run table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:10px;table-layout:fixed}
+#run .clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#run th{font-weight:500;color:var(--soft);text-align:left;padding:2px 8px 4px 0;white-space:nowrap;position:sticky;top:0;background:var(--panel)}
+#run td{padding:5px 8px 5px 0;vertical-align:top;border-top:1px solid var(--line);overflow-wrap:anywhere}
+#run td:first-child,#run th:first-child{padding-left:6px}
+#run tr.step{cursor:pointer} #run tr.step:hover td,#run tr.step.on td{background:var(--pick)}
+#run tr.step.on td:first-child{box-shadow:inset 3px 0 0 var(--ink)}
+#run .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#run .from{color:var(--soft)}
+#run .read{margin:3px 0;padding:3px 0 3px 10px;border-left:3px solid var(--line);font:14px/1.5 var(--read);cursor:pointer;color:var(--think)}
+#run .read:hover{background:var(--pick)}
+#run .wrap{max-height:232px;overflow:auto}
+#runrostatus{font-size:12.5px;color:var(--soft)}
+
+/* Request: what the model wrote is set in a reading face, the page's own words are not */
+#asked,#thinking,#answer,#tool{white-space:pre-wrap;overflow-wrap:anywhere;max-width:74ch}
+#asked{font-size:13.5px;color:var(--soft);border-left:3px solid var(--line);padding-left:12px}
+#asked.long{max-height:4.6em;overflow:hidden;cursor:pointer;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+#thinking{font:15px/1.8 var(--read);color:var(--think);border-left:3px solid var(--line);padding-left:12px}
+#tool{font:13px/1.7 var(--mono)}
+#answer{font:17.5px/1.8 var(--read)}
 .t{border-bottom:3px solid transparent;border-radius:2px;cursor:pointer;padding:1px 0}
+.t:hover{background:var(--pick)}
 .t.high{background:var(--hi-bg)} .t.far{background:var(--far-bg)}
 .t.sel{outline:2px solid var(--ink);outline-offset:1px}
 .t.wait{opacity:.55}
+.t.alt{box-shadow:inset 0 2px 0 var(--soft)}
 .t.blank{display:inline-block;width:14px;height:13px;margin:0 2px 3px 0;border:1px solid var(--line);border-bottom-width:3px;vertical-align:middle}
-.sec{font-size:12px;color:var(--soft);margin-top:10px;text-transform:uppercase;letter-spacing:.04em}
+.key{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:22px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--soft)}
+.key i{display:inline-block;width:22px;height:11px;vertical-align:-1px;margin-right:5px;border-radius:2px}
+.key .u{border-bottom:3px solid #3f9b6d}
+.key .g{background:var(--far-bg)}
+#readout{margin-top:14px;padding-top:10px;border-top:1px solid var(--line)}
+#rostatus{font-size:12.5px;color:var(--soft);margin-top:6px;max-width:74ch}
+#rostatus b{color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{display:inline-block;height:8px;background:var(--soft);border-radius:2px;vertical-align:middle;margin-right:5px}
+
+/* Composer */
+.composer{border-top:1px solid var(--line);padding:10px 26px 12px;background:var(--panel)}
+textarea{display:block;width:100%;height:50px;min-height:40px;max-height:30vh;resize:vertical;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14.5px}
+#status{font-size:12.5px;color:var(--soft);flex:1 1 90px}
+#convo{max-height:132px;overflow:auto;margin-bottom:8px;font-size:13px}
+#convo .head{color:var(--soft);font-size:12px;margin-bottom:2px}
+#convo .turn{display:grid;grid-template-columns:46px minmax(0,1fr);gap:0 8px;padding:1px 6px;border-radius:5px}
+#convo .turn>span:first-child{color:var(--soft);font-size:12px;padding-top:1px}
+#convo .turn>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#convo .a{cursor:pointer} #convo .a:hover,#convo .a.on{background:var(--pick)}
+
+/* Map and the selected word */
 svg{width:100%;height:auto;display:block}
-.cell{stroke:var(--panel);stroke-width:.6}
-.lab{font-size:15px;font-weight:650;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+#map{max-height:48vh}
+.cell{stroke:var(--bg);stroke-width:.6}
+.lab{font-size:15px;font-weight:650;fill:var(--ink);paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
 .lab.un{font-weight:400;fill:var(--soft);font-size:12.5px}
 .path{fill:none;stroke:var(--ink);stroke-opacity:.28;stroke-width:1.4}
 .hop{fill:none;stroke:var(--ink);stroke-width:2.6}
 .pd{stroke:var(--ink);stroke-width:2.2;fill:var(--panel)}
 .pt{font-size:13px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
-#detail{margin-top:10px;font-size:14px;min-height:112px}
-.kv{display:grid;grid-template-columns:150px 1fr;gap:2px 10px;margin-top:6px}
+#detail{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+#detail .word{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+#detail .word .w{font:22px/1.2 var(--read);overflow-wrap:anywhere}
+.passes{border-collapse:collapse;width:100%;table-layout:fixed;margin-top:10px;font-size:13px}
+.passes th{text-align:left;font-weight:650;padding:0 8px 4px 0}
+.passes th small{font-weight:400;color:var(--soft)}
+.passes td{padding:6px 8px 6px 0;border-top:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+.passes td:first-child,.passes th:first-child{width:92px;color:var(--soft);font-weight:400}
+.passes .n{display:inline-flex;width:18px;height:18px;border:2px solid var(--ink);border-radius:50%;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-right:5px}
+.passes .alt{display:flex;justify-content:space-between;gap:6px;max-width:150px}
+.passes .alt code{background:var(--pick);border-radius:4px;padding:0 4px;white-space:pre;overflow:hidden;text-overflow:ellipsis}
+.passes .alt span{color:var(--soft);font-size:12px;font-variant-numeric:tabular-nums}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.kv{display:grid;grid-template-columns:92px 1fr;gap:4px 8px;margin-top:10px;font-size:13px}
 .kv div:nth-child(odd){color:var(--soft)}
-.bar{display:inline-block;height:9px;background:var(--soft);border-radius:2px;vertical-align:middle;margin-right:5px}
-.note{font-size:12.5px;color:var(--soft);margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
-.t.alt{box-shadow:inset 0 2px 0 var(--soft)}
-.ro code{font:13px ui-monospace,Menlo,monospace;background:var(--pick);border-radius:4px;padding:0 4px}
-.ro .p{color:var(--soft);font-size:12px;margin-right:8px}
-.tier{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:0 7px;color:var(--soft);margin-left:6px;text-transform:none;letter-spacing:0}
-#run table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:6px;table-layout:fixed}
-#run .clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#run th{font-weight:500;color:var(--soft);text-align:left;padding:2px 8px 2px 0;white-space:nowrap}
-#run td{padding:3px 8px 3px 0;vertical-align:top;border-top:1px solid var(--line);overflow-wrap:anywhere}
-#run tr.step{cursor:pointer} #run tr.step:hover td,#run tr.step.on td{background:var(--pick)}
-#run .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-#run .from{color:var(--soft)} #run code{font:12px ui-monospace,Menlo,monospace}
-#run .read{margin:3px 0;padding:3px 0 3px 10px;border-left:3px solid var(--line);font-size:13px;cursor:pointer;color:var(--think)}
-#run .read:hover{background:var(--pick)}
-#run .wrap{max-height:300px;overflow:auto}
+
+@media (max-width:1100px){
+  html,body{height:auto} body{display:block}
+  main{display:block}
+  .side{max-height:220px;border-right:0;border-bottom:1px solid var(--line)}
+  #midscroll,.right{overflow:visible} .right{border-left:0;border-top:1px solid var(--line)}
+  .composer{position:sticky;bottom:0}
+  #midscroll,.composer{padding-left:16px;padding-right:16px}
+  header .facts{display:none}
+}
 </style>
 </head>
 <body>
 <header>
   <h1>Latent Map</h1>
-  <span>Inkling 2 Mini on this Mac · API for other apps: <code id="api"></code> · nothing leaves this machine</span>
+  <span class="facts">Inkling 2 Mini, running on this Mac. Nothing leaves it.</span>
+  <span class="grow"></span>
+  <span class="cap" id="keeping"></span>
+  <button class="ghost" id="copyapi" title="Copy this address. Use it as the base URL in a chat app or coding tool, with model default_model and any text as the key.">API for other apps: <code id="api"></code></button>
 </header>
 <main>
-  <section class="panel">
+  <nav class="side" aria-label="Sessions">
     <h2>Sessions</h2>
-    <div id="sessions"><div class="note" style="border:0;margin:0;padding:0">No requests yet.</div></div>
-    <div class="note" id="keeping"></div>
-  </section>
+    <div id="sessions"><div class="cap" style="padding:0 8px">No requests yet.</div></div>
+  </nav>
 
-  <section class="panel">
-    <div id="run" hidden>
-      <h2>Run <span class="tier" id="runmeta"></span></h2>
-      <div id="runtotals" style="font-size:13.5px"></div>
-      <div class="wrap"><table id="runsteps"></table></div>
-      <div class="row"><button id="runro" class="ghost" hidden></button><button id="runstop" class="ghost" hidden>Stop after this step</button><span id="runrostatus" style="font-size:12.5px;color:var(--soft)"></span></div>
-      <div class="sec" id="runreadhead" hidden>To read: thinking that matches an instruction word pattern</div>
-      <div id="runread"></div>
-      <div class="note" id="runnote" style="margin-bottom:14px"></div>
+  <section class="mid">
+    <div id="midscroll">
+      <div id="empty"><b>Nothing open yet</b>Ask the model something below, or open a session on the left. Then click any word of the reply to see where it sat after each of the model's three passes.</div>
+
+      <div id="run" hidden>
+        <h2><span id="runtitle">Run</span><span class="tier" id="runmeta"></span><span class="grow"></span><button id="forget" class="ghost">Forget this session</button></h2>
+        <div id="runtotals" class="figs"></div>
+        <div class="wrap"><table id="runsteps"></table></div>
+        <div class="row"><button id="runro" class="ghost" hidden></button><button id="runstop" class="ghost" hidden>Stop after this step</button><span id="runrostatus"></span></div>
+        <div class="sec" id="runreadhead" hidden>Thinking to read <span class="tier">matches of a word pattern, not findings</span></div>
+        <div id="runread"></div>
+        <details id="runnotewrap"><summary>How far to trust this</summary><div id="runnote"></div></details>
+      </div>
+
+      <div id="reqwrap" hidden>
+        <h2>Request <span class="tier" id="reqmeta"></span></h2>
+        <div id="summary" hidden></div>
+        <div class="sec" id="askhead" hidden>Asked</div>
+        <div id="asked" hidden tabindex="0" title="Click or press Enter to show all of it"></div>
+        <div class="sec" id="thinkhead" hidden>Thinking <span class="tier">the model's own text</span></div>
+        <div id="thinking" hidden></div>
+        <div class="sec" id="toolhead" hidden>Tool call</div>
+        <div id="tool" hidden></div>
+        <div class="sec" id="anshead" hidden>Answer</div>
+        <div id="answer"></div>
+        <div id="notext" class="cap" hidden>Text was not kept for this request. Each box is one word.</div>
+        <div class="key" id="key" hidden><span><i class="u"></i>Underline colour: the map area a word ends in</span><span><i class="g"></i>Grey: it moved more than usual on the last pass</span><span>Measured; not known to predict anything.</span></div>
+        <div id="stats2" style="margin-top:8px"></div>
+        <div id="readout" hidden>
+          <div class="sec" style="margin-top:0;color:var(--ink)">What it would have written after each pass <span class="tier">passes 1 and 2 are not its reasoning</span></div>
+          <div class="row" style="margin-top:4px"><button id="rogo" class="ghost">Compute for this request</button>
+            <label id="romarkwrap" hidden><input type="checkbox" id="romark"> Mark words where pass 2 and pass 3 differ</label></div>
+          <div id="rostatus"></div>
+          <details><summary>What this is</summary><div>The model's last block is run on the state after pass 1, 2 and 3.
+            Pass 3 is the model's own prediction, computed again by re-reading the request the way it was first read. Passes 1 and 2 are a reading the model was never trained to give: they show what the state would produce, not how the model reasons.
+            Computing it makes the model re-read the request, and other requests wait meanwhile.</div></details>
+        </div>
+      </div>
     </div>
-    <h2>Request <span class="tier" id="reqmeta"></span></h2>
-    <div class="sec" id="askhead" hidden>Asked</div>
-    <div id="asked" hidden></div>
-    <div class="sec" id="thinkhead" hidden>Thinking (the model's own text)</div>
-    <div id="thinking" hidden></div>
-    <div class="sec" id="toolhead" hidden>Tool call</div>
-    <div id="tool" hidden></div>
-    <div class="sec" id="anshead" hidden>Answer</div>
-    <div id="answer"></div>
-    <div id="notext" class="note" hidden>Text was not kept for this request.</div>
-    <div id="summary" class="note" hidden></div>
-    <div id="readout" class="note" hidden>
-      <b>What it would have written after each pass.</b> The model's last block is run on the state after pass 1, 2 and 3.
-      Pass 3 is the model's own prediction, computed again by re-reading the request the way it was first read. Passes 1 and 2 are a reading the model was never trained to give: they show what the state would produce, not how the model reasons.
-      <div class="row"><button id="rogo" class="ghost">Compute for this request</button>
-        <label id="romarkwrap" hidden><input type="checkbox" id="romark"> mark words where pass 2 and pass 3 differ</label></div>
-      <div id="rostatus"></div>
-    </div>
-    <div class="note">Underline colour = the area a word ends in. Grey background = it moved more than usual on the last pass. Measured; not known to predict anything. Click a word to see its three passes.</div>
-    <div class="note">
+
+    <div class="composer">
       <div id="convo" hidden></div>
-      <textarea id="prompt" placeholder="Ask the model">Explain in three sentences why the sky is blue.</textarea>
+      <textarea id="prompt" placeholder="Ask the model" aria-label="Message">Explain in three sentences why the sky is blue.</textarea>
       <div class="row">
-        <label>Thinking <select id="effort">
+        <button id="go" title="Ctrl or ⌘ + Enter">Send</button><button id="stop" class="ghost" disabled>Stop</button>
+        <label>Thinking <select id="effort" style="width:92px">
           <option value="none">none</option><option value="low" selected>low</option>
           <option value="medium">medium</option><option value="high">high (model default)</option></select></label>
-        <label>Max words <input id="max" type="number" value="400" min="20" max="4000" step="20" style="width:78px"></label>
-        <button id="go" title="Ctrl or ⌘ + Enter">Send</button><button id="stop" class="ghost" disabled>Stop</button><button id="newchat" class="ghost" hidden>New conversation</button>
+        <label>Max words <input id="max" type="number" value="400" min="20" max="4000" step="20" style="width:70px"></label>
+        <span id="status">Loading the map…</span>
+        <button id="newchat" class="ghost" hidden>New conversation</button>
       </div>
-      <div id="status">Loading the map…</div>
-      <div>Earlier turns of this conversation are sent with each message, without the model's thinking. The conversation is held in this page only, so reloading the page starts a new one; its requests stay under Sessions.</div>
     </div>
   </section>
 
-  <section class="panel">
+  <aside class="right">
     <h2>Where the words land <span class="tier">area names are untested hypotheses</span></h2>
     <svg id="map" viewBox="0 0 1000 780" role="img" aria-label="Map of block 2 states, 256 cells in 12 areas"></svg>
-    <div class="note" style="border:0;margin-top:4px;padding:0">Position on a map built from 120 texts.</div>
-    <div id="detail">Send a message or pick a request, then click a word. Each dot is one of 256 cells; colour is one of 12 areas.</div>
-  </section>
+    <div class="cap">Position on a map built from 120 texts. Each dot is one of 256 cells; colour is one of 12 areas.</div>
+    <div id="detail"></div>
+  </aside>
 </main>
 <script>
 const PAL=["#3f7fb5","#d98b2b","#3f9b6d","#c2504d","#8b6fc0","#a1774f","#d67fb3","#6f7b84","#a9a43a","#3aa9b4","#5b63c9","#c96a2c"];
@@ -180,7 +268,7 @@ function select(i){
   sel=i; document.querySelectorAll(".t.sel").forEach(e=>e.classList.remove("sel"));
   const t=toks[i], g=$("hops"); g.innerHTML="";
   if(!t) return; t.el.classList.add("sel");
-  if(!t.cells){$("detail").textContent="No state was captured for this word (the model stopped before reading it back).";return}
+  if(!t.cells){$("detail").innerHTML='<div class="cap">No state was captured for this word (the model stopped before reading it back).</div>';return}
   const p=t.cells.map((c,k)=>{const q=px(MAP.cells[c]), dup=t.cells.slice(0,k).filter(x=>x===c).length; return [q[0]+dup*19,q[1]-dup*6]});
   g.append(el("path",{class:"hop",d:`M${p[0][0]} ${p[0][1]} L${p[1][0]} ${p[1][1]} L${p[2][0]} ${p[2][1]}`}));
   p.forEach((q,k)=>{g.append(el("circle",{class:"pd",cx:q[0],cy:q[1],r:11})); g.append(el("text",{class:"pt",x:q[0],y:q[1]},k+1))});
@@ -189,23 +277,26 @@ function select(i){
   const settle=t.settled_by===1?"in its final area from pass 1":t.settled_by===2?"reached its final area on pass 2":"only reached its final area on the last pass";
   const same=new Set(t.cells).size;
   const word=t.text==null?"(text not kept)":"“"+esc(t.text.trim()||t.text)+"”";
-  $("detail").innerHTML=`<b>${word}</b> · ${t.phase==="header"?"tool name":t.phase}
+  const ro=RO&&RO[i];
+  const cols=f=>[0,1,2].map(k=>`<td>${f(k)}</td>`).join("");
+  const areaAt=k=>{const x=MAP.areas.find(y=>y.id===MAP.cells[t.cells[k]].area); return x?`<span class="sw" style="background:${PAL[x.id%12]}"></span>${esc(x.name||"area "+x.id)}`:"–"};
+  $("detail").innerHTML=`<div class="word"><span class="w">${word}</span><span class="tier">${t.phase==="header"?"tool name":esc(t.phase)}</span></div>
+  <table class="passes">
+   <tr><th></th><th><span class="n">1</span>Pass 1</th><th><span class="n">2</span>Pass 2</th><th><span class="n">3</span>Pass 3</th></tr>
+   <tr><td>Map area</td>${cols(areaAt)}</tr>
+   <tr><td>Loop signal</td>${cols(k=>`<span class="bar" style="width:${Math.max(2,t.loop[k]*60).toFixed(0)}px"></span>${(t.loop[k]*100).toFixed(0)}%`)}</tr>
+   ${ro?`<tr><td>Would have written</td>${cols(k=>ro[k].slice(0,4).map(([w,p])=>`<div class="alt"><code>${showTok(w)}</code><span>${Math.round(p*100)}%</span></div>`).join(""))}</tr>`:""}
+  </table>
+  <div class="cap" style="margin-top:6px">${ro?"Pass 3 is the model's real prediction. Passes 1 and 2 are not its reasoning. ":RO?"":"“Would have written” appears here once the readout is computed for this request. "}Loop signal is measured; its meaning is not tested.</div>
   <div class="kv">
-   <div>Ends in</div><div><b style="color:${PAL[t.area%12]}">■</b> ${esc(areaName(a))}${a.name?` <span class="tier">name score ${a.score.toFixed(2)}</span>`:""}</div>
-   <div>Typical words there</div><div>${esc(a.words.join(", "))||"—"}</div>
    <div>Settling</div><div>${settle}; ${same===1?"same cell on all three passes":same===2?"changed cell once":"a different cell on every pass"}</div>
-   <div>Last-pass movement</div><div>${t.move[1].toFixed(2)} — ${lv} (usual here: up to ${bands[1].toFixed(2)}). Measured; not known to predict anything.</div>
-   <div>Loop signal by pass</div><div>${t.loop.map(v=>`<span class="bar" style="width:${Math.max(2,v*90).toFixed(0)}px"></span>${(v*100).toFixed(0)}%`).join(" &nbsp; ")} <span class="tier">measured; meaning not tested</span></div>
-  </div>${roDetail(i)}`;
+   <div>Last-pass movement</div><div>${t.move[1].toFixed(2)}, ${lv} (usual here: up to ${bands[1].toFixed(2)}). Measured; not known to predict anything.</div>
+   <div>Ends in</div><div><span class="sw" style="background:${PAL[t.area%12]}"></span>${esc(areaName(a))}${a.name?` <span class="tier">name score ${a.score.toFixed(2)}</span>`:""}</div>
+   <div>Typical words there</div><div>${esc(a.words.join(", "))||"–"}</div>
+  </div>`;
 }
-
+const DETAIL0='<div class="cap">Click a word of a reply to see its three passes here.</div>';
 const showTok=x=>esc(x).replace(/\n/g,"↵")||"∅";
-function roDetail(i){
-  if(!RO||!RO[i]) return "";
-  const t=toks[i], rows=RO[i].map((alts,k)=>`<div>After pass ${k+1}${k===2?" (real)":""}</div><div>${alts.map(([w,p])=>`<code>${showTok(w)}</code><span class="p">${Math.round(p*100)}%</span>`).join("")}</div>`).join("");
-  return `<div class="sec">What it would have written here, before “${t.text==null?"…":showTok(t.text.trim()||t.text)}”</div><div class="kv ro">${rows}</div>
-  <div class="note" style="border:0;margin-top:4px;padding:0">Pass 3 is the model's real prediction. Passes 1 and 2 are not its reasoning.</div>`;
-}
 function applyReadout(ro){
   RO=ro.words; HITS=ro.hits||null; $("rogo").hidden=true; $("romarkwrap").hidden=false;
   const ws=toks.filter(t=>t&&(t.phase==="thinking"||t.phase==="answer")&&RO[t.i]), n=ws.length||1;
@@ -213,7 +304,7 @@ function applyReadout(ro){
   const hit=k=>ws.filter(t=>isHit(t.i,k)).length;
   const approx=ro.pieces_known===false?" The way this prompt was first read was not recorded, so this re-reading is close to the original, not identical; pass 3 can differ on close calls.":"";
   const sampled=TEMP>0?` This request was sampled at temperature ${TEMP}, so the word written is not always pass 3's top word.`:"";
-  $("rostatus").textContent=`Of ${ws.length} thinking and answer words, the top word matched the word written for ${Math.round(100*hit(0)/n)}% after pass 1, ${Math.round(100*hit(1)/n)}% after pass 2 and ${Math.round(100*hit(2)/n)}% after pass 3.${sampled}${approx} Click a word to see the alternatives.`;
+  $("rostatus").innerHTML=`The top word was the word written for `+[0,1,2].map(k=>`<b>${Math.round(100*hit(k)/n)}%</b> after pass ${k+1}`).join(", ")+` (of ${ws.length} thinking and answer words).${sampled}${approx} Click a word to see the alternatives.`;
   markAlt(); if(sel>=0) select(sel);
 }
 function markAlt(){
@@ -235,10 +326,13 @@ async function computeReadout(){
 function clearView(){
   RO=null; HITS=null; TEMP=0; SIZE=0; $("readout").hidden=true; $("rogo").hidden=false; $("rogo").disabled=false; $("romarkwrap").hidden=true; $("romark").checked=false; $("rostatus").textContent="";
   toks=[]; sel=-1;
-  ["thinking","answer","tool","asked"].forEach(i=>$(i).innerHTML="");
-  ["thinkhead","thinking","toolhead","tool","anshead","summary","notext","askhead","asked"].forEach(i=>$(i).hidden=true);
-  $("reqmeta").textContent=""; if(MAP){$("hops").innerHTML=""; drawTrail()}
+  ["thinking","answer","tool","asked","stats2"].forEach(i=>$(i).innerHTML="");
+  ["thinkhead","thinking","toolhead","tool","anshead","summary","notext","askhead","asked","key"].forEach(i=>$(i).hidden=true);
+  $("reqmeta").textContent=""; $("asked").className=""; $("detail").innerHTML=DETAIL0; if(MAP){$("hops").innerHTML=""; drawTrail()}
+  frame();
 }
+// The middle shows a run, a request, both, or an invitation.
+function frame(){ const on=!!(shown||liveId); $("reqwrap").hidden=!on; $("empty").hidden=on||!$("run").hidden }
 // One word, live or stored: {i, phase, text|null, cells|null, area, move, level, settled_by, loop}
 function addWord(w){
   if(toks[w.i]||w.phase==="marker"){toks[w.i]=toks[w.i]||{...w,el:document.createElement("span")};return}
@@ -248,8 +342,9 @@ function addWord(w){
   span.onclick=()=>select(w.i);
   toks[w.i]={...w,el:span};
   const box=BOX[w.phase]||"answer", head={thinking:"thinkhead",answer:"anshead",tool:"toolhead"}[box];
-  $(head).hidden=false; $(box).hidden=false; $(box).append(span);
-  if(box==="thinking") $(box).scrollTop=$(box).scrollHeight;
+  const sc=$("midscroll"), stick=liveId&&sc.scrollHeight-sc.scrollTop-sc.clientHeight<90;
+  $(head).hidden=false; $(box).hidden=false; $("key").hidden=false; $(box).append(span);
+  if(stick) sc.scrollTop=sc.scrollHeight;
 }
 function summarise(r){
   const ws=toks.filter(t=>t&&t.cells&&(t.phase==="thinking"||t.phase==="answer")), an=ws.filter(t=>t.phase==="answer");
@@ -258,10 +353,11 @@ function summarise(r){
   const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,n])=>`${areaName(MAP.areas.find(a=>a.id==id))} (${Math.round(100*n/an.length)}%)`).join(", ");
   const end={stop:"finished",length:"stopped at the word limit",tool_calls:"ended with a tool call",cancelled:"cancelled by the client",error:"ended with an error"}[r.finish]||r.finish;
   $("summary").hidden=false;
-  $("summary").innerHTML=`<b>This request:</b> ${r.n_tokens} words at ${r.tokens_per_s.toFixed(1)} per second after ${r.first_token_s.toFixed(1)}s; ${end}. Prompt ${r.prompt_tokens} tokens, ${r.cached_tokens} already read from an earlier request.<br>
-  ${ws.length-an.length} thinking words, ${an.length} answer words. In its final area from pass 1: ${pct(ws,t=>t.settled_by===1)}. Far above usual movement on the last pass: ${ws.filter(t=>t.level==="far").length}; a little high: ${ws.filter(t=>t.level==="high").length}.
-  ${an.length?`<br>The answer mostly sits in: ${esc(top)}. Area names are untested hypotheses.`:""}`;
+  $("summary").innerHTML=`<div class="figs">${fig(r.n_tokens,"words")}${fig(r.tokens_per_s.toFixed(1),"per second")}${fig(r.first_token_s.toFixed(1)+" s","to the first word")}${fig(r.prompt_tokens.toLocaleString(),"prompt tokens"+(r.cached_tokens?`, ${r.cached_tokens.toLocaleString()} already read`:""))}<span>${esc(end)}</span></div>`;
+  $("stats2").innerHTML=`<div class="figs">${fig(ws.length-an.length,"thinking words")}${fig(an.length,"answer words")}${fig(pct(ws,t=>t.settled_by===1),"in their final area from pass 1")}${fig(ws.filter(t=>t.level==="far").length,"far above usual last-pass movement")}${fig(ws.filter(t=>t.level==="high").length,"a little high")}</div>
+  ${an.length?`<div class="cap" style="margin-top:2px">The answer mostly sits in: ${esc(top)}. Area names are untested hypotheses.</div>`:""}`;
 }
+const fig=(v,l)=>`<span><b>${v}</b> ${l}</span>`;
 function lastUser(messages){
   const m=[...(messages||[])].reverse().find(m=>m.role==="user"||m.role==="tool"); if(!m) return "";
   const c=typeof m.content==="string"?m.content:(m.content||[]).map(p=>p.text||"").join(" ");
@@ -272,7 +368,7 @@ async function showRequest(id){
   if(liveId&&id!==liveId) liveId=null;  // looking at another request: stop adding the live reply's words to this view
   shown=id; clearView();
   $("reqmeta").textContent=`${clock(r.time)} · ${who(r.client)}`;
-  if(r.text_kept){const q=lastUser(r.messages); if(q){$("askhead").hidden=false; $("asked").hidden=false; $("asked").textContent=q.length>1200?q.slice(0,1200)+" …":q}}
+  if(r.text_kept){const q=lastUser(r.messages); if(q){$("askhead").hidden=false; $("asked").hidden=false; $("asked").textContent=q.length>1200?q.slice(0,1200)+" …":q; if($("asked").scrollHeight>80) $("asked").className="long"}}
   else $("notext").hidden=false;
   r.words.forEach(w=>addWord({...w,text:r.reply_tokens?r.reply_tokens[w.i]:null}));
   drawTrail(); summarise(r);
@@ -285,7 +381,7 @@ async function showRequest(id){
 }
 
 // The whole session on one page: steps in order, and thinking worth reading. Numbers and pointers, no verdicts.
-let RUN=null, runBusy=false, runStop=false, runSession=null, runSeq=0, runFailed=null;
+let RUN=null, autoShow=null, openTitle="", runBusy=false, runStop=false, runSession=null, runSeq=0, runFailed=null;
 const dur=s=>{s=Math.round(s); return s>=60?`${Math.floor(s/60)} min ${s%60} s`:`${s} s`};
 // A step that continued the reply before it (agents send the reply back exactly) carries on from that
 // step's readout when the two are computed one after the other: only its new prompt tokens are read.
@@ -294,24 +390,27 @@ const roCost=(s,prev)=>(s.prompt_tokens-(carries(s,prev)?s.cached_tokens:0))*3.5
 const before=(s,list)=>{const i=RUN.steps.findIndex(x=>x.id===s.id), p=i>0?RUN.steps[i-1]:null; return p&&list.some(x=>x.id===p.id)?p:null};
 async function loadRun(session){
   const seq=++runSeq;
-  let d; try{d=await get(`/api/sessions/${session}/summary`)}catch(e){ if(openSession===session&&seq===runSeq){ runFailed=session; $("run").hidden=true } return }
+  let d; try{d=await get(`/api/sessions/${session}/summary`)}catch(e){ if(openSession===session&&seq===runSeq){ runFailed=session; RUN=null; $("run").hidden=true; frame(); refreshSessions() } return }
   if(openSession!==session||seq!==runSeq) return;  // an older answer must not replace a newer one
   RUN=d; RUN.session=session; drawRun();
+  // Opening a session shows its last step, unless a reply is being written or one of its steps is already open.
+  if(autoShow===session){ autoShow=null; const st=RUN.steps||[]; if(st.length&&!liveId&&!st.some(x=>x.id===shown)) showRequest(st[st.length-1].id).catch(()=>{}) }
 }
-function closeRun(){ RUN=null; $("run").hidden=true }
+function closeRun(){ RUN=null; $("run").hidden=true; frame() }
 async function openStep(id,i){
   await showRequest(id);
   if(i!=null&&toks[i]&&toks[i].el){ select(i); toks[i].el.scrollIntoView({block:"center"}) }
-  else $("reqmeta").scrollIntoView({block:"start"});
+  else $("reqwrap").scrollIntoView({block:"start"});
 }
 function drawRun(){
   const t=RUN.totals, steps=RUN.steps; if(!t){closeRun();return}
-  $("run").hidden=false;
+  $("run").hidden=false; frame();
+  $("runtitle").textContent=openTitle||"Run"; $("runtitle").title=openTitle;
   $("runmeta").textContent=`${t.steps} step${t.steps>1?"s":""}`;
+  if(armed!==RUN.session) $("forget").textContent="Forget this session";
   const said=t.thinking+t.answer, share=said?Math.round(100*t.thinking/said):0, cached=t.prompt_tokens?Math.round(100*t.cached_tokens/t.prompt_tokens):0;
-  $("runtotals").innerHTML=`${t.steps} request${t.steps>1?"s":""} over ${dur(t.span_seconds)}; the model worked for ${dur(t.seconds)} of it. `+
-    `${t.tool_calls} ended in a tool call. ${t.tokens.toLocaleString()} words written; of the thinking and answer words, ${share}% were thinking. `+
-    `${t.prompt_tokens.toLocaleString()} prompt tokens sent in all, ${cached}% already read from an earlier step.`;
+  $("runtotals").innerHTML=fig(dur(t.seconds),`of model work over ${dur(t.span_seconds)}`)+fig(t.tool_calls,`step${t.tool_calls===1?"":"s"} ended in a tool call`)+
+    fig(t.tokens.toLocaleString(),`words written`)+fig(share+"%",`of thinking and answer words were thinking`)+fig(t.prompt_tokens.toLocaleString(),`prompt tokens sent, ${cached}% already read earlier`);
   const pct=(h,n)=>n?Math.round(100*h/n):"–";
   let anySampled=false, anyApprox=false;
   const rows=steps.map((s,k)=>{
@@ -323,25 +422,25 @@ function drawRun(){
     const ro=s.readout==="stored"?(s.counted?`${pct(s.hits[0],s.counted)} / ${pct(s.hits[1],s.counted)} / ${pct(s.hits[2],s.counted)}%${mark}`:"done"):s.readout==="available"?"not computed":"not available";
     return `<tr class="step${s.id===shown?" on":""}" data-id="${esc(s.id)}"><td class="num">${k+1}</td><td class="clip" title="${esc(s.asked?s.asked.text:"")}">${from}</td><td class="clip" title="${esc((s.tool||"")+" "+(s.tool_args||""))}">${did}</td>`+
       `<td class="num">${s.thinking} / ${s.answer}</td><td class="num">${dur(s.seconds)}</td><td class="num">${s.prompt_tokens.toLocaleString()}</td><td class="num">${ro}</td></tr>`}).join("");
-  $("runsteps").innerHTML=`<colgroup><col style="width:26px"><col style="width:30%"><col><col style="width:62px"><col style="width:46px"><col style="width:54px"><col style="width:104px"></colgroup>`+
-    `<tr><th>#</th><th>In reply to</th><th>What it did</th><th class="num" title="Thinking words / answer words">Think / ans</th><th class="num">Time</th><th class="num" title="Prompt tokens">Prompt</th><th class="num" title="How often the top word after pass 1, 2 and 3 was the word written">Readout 1 / 2 / 3</th></tr>`+rows;
+  $("runsteps").innerHTML=`<colgroup><col style="width:30px"><col style="width:27%"><col><col style="width:64px"><col style="width:52px"><col style="width:58px"><col style="width:112px"></colgroup>`+
+    `<tr><th>#</th><th>In reply to</th><th>What it did</th><th class="num" title="Thinking words / answer words">Words</th><th class="num">Time</th><th class="num" title="Prompt tokens">Prompt</th><th class="num" title="How often the top word after pass 1, 2 and 3 was the word written">Readout 1 / 2 / 3</th></tr>`+rows;
   $("runsteps").querySelectorAll("tr.step").forEach(tr=>tr.onclick=()=>openStep(tr.dataset.id));
   const todo=steps.filter(s=>s.readout==="available"), est=todo.reduce((a,s)=>a+roCost(s,before(s,todo)),0);
   const mine=runBusy&&runSession===RUN.session;
   $("runstop").hidden=!mine;
   if(!mine){
     $("runro").hidden=!todo.length; $("runro").disabled=runBusy; $("runro").title=runBusy?"Another session's readouts are being computed":"";
-    $("runro").textContent=`Compute the readout for ${todo.length===steps.length?"all":"the remaining"} ${todo.length} step${todo.length>1?"s":""} (about ${dur(Math.max(est,1))})`;
+    $("runro").textContent=(steps.length===1?"Compute the readout":`Compute the readout for ${todo.length===steps.length?"all":"the remaining"} ${todo.length} step${todo.length>1?"s":""}`)+` (about ${dur(Math.max(est,1))})`;
     if(!todo.length&&!$("runrostatus").dataset.keep) $("runrostatus").textContent="";
   }
   const box=$("runread"); box.innerHTML="";
-  if(!t.text_kept){ $("runreadhead").hidden=true; $("runnote").textContent="Text was not kept for this session, so there is no thinking to point to." ; return }
-  $("runreadhead").hidden=false;
+  if(!t.text_kept){ $("runreadhead").hidden=true; $("runnotewrap").hidden=true; box.innerHTML='<div class="cap" style="margin-top:8px">Text was not kept for this session, so there is no thinking to point to.</div>'; return }
+  $("runreadhead").hidden=false; $("runnotewrap").hidden=false;
   const marks=(anySampled?" † This step was sampled at a temperature above 0, so the word written is not always pass 3's top word.":"")+(anyApprox?" ‡ The way this step's prompt was first read was not recorded, so the re-reading is close to the original, not identical.":"");
   let n=0;
   steps.forEach((s,k)=>(s.mentions||[]).forEach(m=>{ n++; const d=document.createElement("div"); d.className="read";
-    d.innerHTML=`<span class="from" style="color:var(--soft)">step ${k+1}</span> ${esc(m.text)}`; d.onclick=()=>openStep(s.id,m.i); box.append(d) }));
-  if(!n) box.innerHTML='<div style="font-size:13px;color:var(--soft)">None found in this run.</div>';
+    d.innerHTML=`<span class="from" style="font:12px var(--ui)">step ${k+1}</span> ${esc(m.text)}`; d.onclick=()=>openStep(s.id,m.i); box.append(d) }));
+  if(!n) box.innerHTML='<div class="cap">None found in this run.</div>';
   $("runnote").innerHTML=`In the table, "Readout 1 / 2 / 3" is how often the top word after each pass was the word written; pass 3 is the model's own prediction computed again, so at temperature 0 it should be at or near 100%.${marks}<br>These are sentences in the model's own thinking that match a word pattern ("instruction", "system prompt", "no need to mention" and similar), `+
     `in ${t.with_mentions} of the ${t.with_thinking} step${t.with_thinking===1?"":"s"} that have thinking. They are for you to read; a match is not a finding, and the pattern also matches harmless phrases. `+
     `A tool's own system prompt is full of instructions, so the model referring to them is normal. `+
@@ -366,30 +465,52 @@ async function computeRun(){
     if(shown&&RUN&&RUN.steps.some(x=>x.id===shown)&&!RO){ const keep=sel; await showRequest(shown); if(keep>=0&&toks[keep]) select(keep) } }
 }
 
+const dayOf=t=>{const d=new Date(t*1000), n=new Date(), y=new Date(n-864e5); return d.toDateString()===n.toDateString()?"Today":d.toDateString()===y.toDateString()?"Yesterday":d.toLocaleDateString([],{weekday:"short",day:"numeric",month:"short"})};
 async function refreshSessions(){
   let list; try{list=await get("/api/sessions")}catch(e){return}
-  const box=$("sessions");
-  if(!list.length){box.innerHTML='<div class="note" style="border:0;margin:0;padding:0">No requests yet.</div>';return}
-  box.innerHTML="";
+  const box=$("sessions"), out=document.createDocumentFragment();
+  if(!list.length){box.innerHTML='<div class="cap" style="padding:0 8px">No requests yet.</div>';return}
+  let day="";
   for(const s of list){
-    const d=document.createElement("div"); d.className="item"+(s.session===openSession?" on":"");
-    d.innerHTML=`${esc(s.title||"(no user message)")}<small>${clock(s.last_time)} · ${s.requests} request${s.requests>1?"s":""} · ${esc(who(s.client))}</small>`;
-    d.onclick=()=>{openSession=s.session===openSession?null:s.session; runFailed=null; delete $("runrostatus").dataset.keep; $("runrostatus").textContent=""; if(!openSession) closeRun(); refreshSessions()};
-    box.append(d);
+    const dn=dayOf(s.last_time); if(dn!==day){ day=dn; const h=document.createElement("div"); h.className="day"; h.textContent=dn; out.append(h) }
+    const title=(s.title||"(no user message)").trim().split("\n")[0];
+    const d=document.createElement("div"); d.className="item"+(s.session===openSession?" on":""); d.title=title;
+    d.innerHTML=`<div class="ttl">${esc(title)}</div><small>${clock(s.last_time)} · ${s.requests} request${s.requests>1?"s":""} · ${esc(who(s.client))}</small>`;
+    d.onclick=()=>{openSession=s.session===openSession?null:s.session; autoShow=openSession; openTitle=title; runFailed=null; armed=null; delete $("runrostatus").dataset.keep; $("runrostatus").textContent=""; closeRun(); refreshSessions()};
+    out.append(d);
     if(s.session===openSession){
-      const reqs=await get("/api/sessions/"+s.session);
-      if(runFailed!==s.session&&(!RUN||!RUN.totals||RUN.session!==s.session||RUN.steps.length!==reqs.length)) loadRun(s.session);
-      reqs.forEach((q,k)=>{const e=document.createElement("div"); e.className="item req"+(q.completion_id===shown?" on":""); e.dataset.id=q.completion_id;
-        e.textContent=`${k+1}. ${clock(q.time)} · ${q.tokens} words · ${q.finish}`; e.onclick=ev=>{ev.stopPropagation(); showRequest(q.completion_id)}; box.append(e)});
-      const f=document.createElement("button"); f.className="ghost"; f.style.margin="4px 0 8px 10px"; f.textContent="Forget this session";
-      f.onclick=async ev=>{ev.stopPropagation();
-        if($("go").disabled){ f.textContent="Forget this session (after the reply finishes)"; return }
-        if(runBusy&&runSession===s.session) runStop=true;  // no further readouts of a session being forgotten
-        await fetch(`/api/sessions/${s.session}/forget`,{method:"POST"}); if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()} if(reqs.some(q=>turns.some(t=>t.id===q.completion_id))){turns=[]; drawConvo()} openSession=null; closeRun(); refreshSessions()};
-      box.append(f);
+      openTitle=title;
+      if(runFailed!==s.session&&(!RUN||!RUN.totals||RUN.session!==s.session||RUN.steps.length!==s.requests)) loadRun(s.session);
+      if(runFailed===s.session){  // the run view could not be loaded: list the requests here instead
+        let reqs=[]; try{ reqs=await get("/api/sessions/"+s.session) }catch(e){}
+        reqs.forEach((q,k)=>{const e=document.createElement("div"); e.className="item req"+(q.completion_id===shown?" on":""); e.dataset.id=q.completion_id;
+          e.textContent=`${k+1}. ${clock(q.time)} · ${q.tokens} words`; e.onclick=ev=>{ev.stopPropagation(); showRequest(q.completion_id)}; out.append(e)});
+        const f=document.createElement("button"); f.className="ghost"; f.style.margin="4px 0 8px 12px"; f.textContent=armed===s.session?ARM:"Forget this session";
+        f.onclick=ev=>{ev.stopPropagation(); forgetOpen(f)}; out.append(f);
+      }
     }
   }
+  box.replaceChildren(out);
 }
+// Forgetting deletes the session's records for good, so it takes a second click.
+let armed=null;
+async function forgetOpen(btn){
+  const session=openSession; if(!session) return;
+  const say=t=>{ btn.textContent=t; armed=null };
+  if(RUN&&RUN.session!==session) return;  // the run on screen is not the open session yet
+  if($("go").disabled) return say("Forget this session (after the reply finishes)");
+  if(armed!==session){ armed=session; btn.textContent=ARM;
+    setTimeout(()=>{ if(armed===session){ armed=null; $("forget").textContent="Forget this session"; refreshSessions() } },5000); return }
+  armed=null; btn.textContent="Forget this session";
+  let reqs; try{ reqs=await get("/api/sessions/"+session) }catch(e){ return say("Could not list this session, so nothing was forgotten. Try again") }
+  if($("go").disabled) return say("Forget this session (after the reply finishes)");
+  if(runBusy&&runSession===session) runStop=true;  // no further readouts of a session being forgotten
+  await fetch(`/api/sessions/${session}/forget`,{method:"POST"});
+  if(reqs.some(q=>q.completion_id===shown)){shown=null; clearView()}
+  if(reqs.some(q=>turns.some(t=>t.id===q.completion_id))){turns=[]; drawConvo()}
+  if(openSession===session){ openSession=null; closeRun() } refreshSessions();
+}
+const ARM="Delete its records for good? Click again";
 
 // Words of whichever request is being generated arrive here as the model writes them.
 // The page shows them only for its own request, matched by the id in its own reply stream.
@@ -425,10 +546,12 @@ let turns=[], pending=null;
 const chatMessages=q=>[...turns.flatMap(t=>[{role:"user",content:t.q},{role:"assistant",content:t.a}]),{role:"user",content:q}];
 function drawConvo(){
   const box=$("convo"), all=pending?[...turns,pending]:turns; box.innerHTML=""; box.hidden=!all.length; $("newchat").hidden=!turns.length;
+  if(all.length){ const h=document.createElement("div"); h.className="head"; h.textContent="This conversation, sent along with each message without the thinking. Kept in this page only."; h.title="Reloading the page starts a new conversation. Its requests stay under Sessions."; box.append(h) }
+  const line=(cls,whoIs,text)=>{ const d=document.createElement("div"), l=document.createElement("span"), x=document.createElement("span"); d.className="turn "+cls; l.textContent=whoIs; x.textContent=text.trim().replace(/\s+/g," "); d.append(l,x); box.append(d); return d };
   all.forEach(t=>{
-    const q=document.createElement("div"); q.className="q"; q.innerHTML="<small>You</small>"; q.append(t.q); box.append(q);
-    const a=document.createElement("div"); a.className="a"+(t.id&&t.id===shown?" on":""); a.innerHTML=`<small>Model${t.stopped?" (stopped early)":""}${t.id?" · click to inspect":""}</small>`;
-    a.append(t===pending?(t.a||"…"):t.a); if(t.id){ a.dataset.id=t.id; a.onclick=()=>showRequest(t.id).catch(()=>{$("status").textContent="That request is no longer stored."}) } box.append(a);
+    line("q","You",t.q);
+    const a=line("a"+(t.id&&t.id===shown?" on":""),"Model",(t===pending?(t.a||"…"):t.a)+(t.stopped?" (stopped early)":""));
+    if(t.id){ a.dataset.id=t.id; a.title="Open this reply in the inspector"; a.onclick=()=>showRequest(t.id).catch(()=>{$("status").textContent="That request is no longer stored."}) }
   });
   box.scrollTop=box.scrollHeight;
 }
@@ -438,6 +561,9 @@ async function send(){
   $("go").disabled=true; $("stop").disabled=false; $("newchat").disabled=true; $("status").textContent="Waiting for the model (it serves one request at a time)…";
   ctrl=new AbortController(); let id=null, note="", finished=false;
   const turn=pending={q,a:"",id:null,stopped:false}; drawConvo();
+  // The middle now belongs to this message: put away whatever was open.
+  if(openSession&&!(runBusy&&runSession===openSession)){ openSession=null; closeRun(); refreshSessions() }  // a run whose readouts are being computed stays open
+  shown=null; liveId="waiting"; clearView(); $("reqmeta").textContent="waiting for the model";
   try{
     const r=await fetch("/v1/chat/completions",{method:"POST",signal:ctrl.signal,headers:{"Content-Type":"application/json"},
       body:JSON.stringify({messages:chatMessages(q),stream:true,max_tokens:+$("max").value,reasoning_effort:$("effort").value})});
@@ -464,7 +590,7 @@ async function send(){
     if(turn.a.trim()){ turns.push(turn); if($("prompt").value.trim()===q) $("prompt").value="" }
     else if(id) note+=" No answer text was written, so this turn was not added to the conversation.";
     drawConvo();
-    if(id) await showWhenStored(id);
+    if(id) await showWhenStored(id); else frame();
     // Send stays off until the request is stored, so a forget cannot run between the reply and its record.
     $("go").disabled=false; $("newchat").disabled=false; $("status").textContent=note;
     refreshSessions();
@@ -472,10 +598,13 @@ async function send(){
 }
 $("runro").onclick=computeRun; $("runstop").onclick=()=>{runStop=true; $("runstop").disabled=true};
 $("rogo").onclick=computeReadout; $("romark").onchange=markAlt;
+$("forget").onclick=()=>forgetOpen($("forget")); $("asked").onclick=()=>{$("asked").className=""}; $("asked").onkeydown=e=>{ if(e.key==="Enter") $("asked").className="" };
+$("copyapi").onclick=async()=>{ try{ await navigator.clipboard.writeText(location.origin+"/v1"); const c=$("api"); c.textContent="copied"; setTimeout(()=>c.textContent=location.origin+"/v1",1200) }catch(e){} };
+$("detail").innerHTML=DETAIL0;
 $("go").onclick=send; $("stop").onclick=()=>ctrl&&ctrl.abort(); $("newchat").onclick=newChat;
 $("prompt").onkeydown=e=>{ if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); send() } };
 $("api").textContent=location.origin+"/v1";
-get("/api/settings").then(s=>{$("keeping").textContent=s.keep_text?`Prompts and replies are kept for ${s.retention_days} days in a file on this Mac, then deleted.`:`Text is not stored. Only numbers about each request are kept, for ${s.retention_days} days, on this Mac.`});
+get("/api/settings").then(s=>{$("keeping").textContent=s.keep_text?`Prompts and replies are kept on this Mac for ${s.retention_days} days, then deleted.`:`Text is not stored; numbers about each request are kept on this Mac for ${s.retention_days} days.`});
 get("/api/map").then(m=>{MAP=m; drawMap(); $("status").textContent="Ready."; refreshSessions(); setInterval(refreshSessions,5000); listenLive()}).catch(e=>$("status").textContent="Could not load the map: "+e.message);
 </script>
 </body>

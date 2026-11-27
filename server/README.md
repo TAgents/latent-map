@@ -65,7 +65,7 @@ include the tool descriptions a client sent) and any computed readout (none of t
 its map cell on each pass, last-pass movement and loop signal, plus the average full-size state
 of the thinking and of the answer (about 110KB).
 
-- **Forget one conversation:** "Forget this session" in the page.
+- **Forget one conversation:** open the session in the page and press "Forget this session" twice (the second press confirms).
 - **Delete everything:** stop the server and remove `~/.latent-map`.
 
 ## What stays on this Mac
@@ -128,7 +128,7 @@ image get no readout.
 
 ### The run view
 
-Opening a session shows the whole run above the request: every step in order with what it
+Opening a session shows the whole run above its last step: every step in order with what it
 replied to, the tool it called, thinking and answer words, time and prompt size, and one button
 that computes the readout for every step in turn (you can stop between steps). It gives numbers
 and pointers, and no score or verdict.
@@ -166,7 +166,7 @@ The chat box holds a conversation: each message is sent with the earlier turns, 
 model's thinking. Click one of the model's turns to open that request in the inspector. A turn
 that produced no answer text (stopped, or the word limit ran out during thinking) is not added.
 The conversation lives in the page only, so reloading the page starts a new one; nothing is put
-in browser storage, and forgetting the session under Sessions also clears it from the chat box.
+in browser storage, and forgetting its session also clears it from the chat box.
 All turns of one conversation appear as one session. Two conversations that start with exactly
 the same first message are also listed as one session.
 
